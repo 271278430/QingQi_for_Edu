@@ -779,6 +779,10 @@ class Store:
         for row in rows:
             state=json.loads(row['state'])
             if state.get('route',{}).get('command') in {'cancel','new_task'}:return None
+            from .conversation import starts_new_problem
+            if not state.get('task_plan',{}).get('only_queries') and not state.get('recommended_selection') and starts_new_problem(state.get('effective_request',{}).get('question','')):
+                # 明确换题同时结束隐式推荐来源；历史候选仍保留，但不能偷偷恢复已结束的任务。
+                return None
             response=json.loads(row['response'])
             value=next((v for v in response.get('student_tasks',[]) if v['kind']=='recommend' and v.get('items')),None)
             if value:

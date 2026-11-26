@@ -105,5 +105,8 @@ try:
         check('durable_result_resumes_without_lesson_or_duplicate_exposure',replayed['cache_hit'] and resumed['student_tasks']==replayed['student_tasks'] and owner.db.execute("SELECT COUNT(*) FROM practice_events WHERE kind='chat_recommendations'").fetchone()[0]==count+1)
         check('native_tool_and_skill_are_observed',resumed['tool_calls']==1 and 'student-recommendation' in json.loads(owner.db.execute('SELECT state FROM runs WHERE id=?',(resumed['run_id'],)).fetchone()[0])['skill_hashes'])
     finally:direct.close()
+    teach(assignment['session'],'换一道新题','task-clear-boundary')
+    cleared=teach(assignment['session'],'推荐一道类似的题目','task-after-boundary')
+    check('explicit_new_task_does_not_resurrect_old_recommendation_sources',cleared['teaching_action']=='clarify' and cleared['student_tasks'][0]['status']=='needs_source')
 finally:owner.close();instance.shutdown();instance.server_close()
 Path('education/.local/reports/current-task-acceptance.local.json').write_text(json.dumps({'checks':checks,'passed':len(checks),'real_http':True},ensure_ascii=False,indent=2),encoding='utf-8')
