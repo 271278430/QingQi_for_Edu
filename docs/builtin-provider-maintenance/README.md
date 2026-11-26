@@ -39,3 +39,32 @@
 一项配置维护完成，需要范围已确认、正式/测试配置同源、相关检查通过、真实验证及缺口明确、MR 合并和交付状态可追溯。缺 Key 可以继续研究、补测试和准备 MR，但必须保留待人工验证状态；不能写成已经可用或已经上线。
 
 固定账号 Provider 与普通模板共享 Release、模型规则和环境转换。本目录说明维护时必须保留的账号权益、配置所有权和生效边界；账号登录产品、会话系统及远控协议的开发不属于模板维护范围。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+builtin provider maintenance 设计与维护文档，属于 docs 目录。
+
+### 文件
+
+| 文件                                               | 简要说明                                                   |
+| -------------------------------------------------- | ---------------------------------------------------------- |
+| [configuration.md](configuration.md)               | 模板与模型规则配置规范：说明文档。                         |
+| [current-state.md](current-state.md)               | 当前配置与维护状态：说明文档。                             |
+| [delivery.md](delivery.md)                         | MR、版本与动态配置交付：说明文档。                         |
+| [expansion-2026-10-15.md](expansion-2026-10-15.md) | 2026-10-15：主流模型默认推荐与供应商、套餐扩展：说明文档。 |
+| [expansion-plan.md](expansion-plan.md)             | 主流供应商与模型扩展计划（2026-10-14）：说明文档。         |
+| [kimi-k3-1-pro.md](kimi-k3-1-pro.md)               | Kimi K3.1 Pro：入口与配置合同：说明文档。                  |
+| [minimax-m31-flash.md](minimax-m31-flash.md)       | MiniMax M3.1 Flash 正式版与旧型号维护：说明文档。          |
+| [openai-terra.md](openai-terra.md)                 | OpenAI GPT-6.1 Terra 配置维护：说明文档。                  |
+| [README.md](README.md)                             | 本目录用途、子目录与逐文件说明。                           |
+| [regression-testing.md](regression-testing.md)     | Provider 与模型自动回归：说明文档。                        |
+| [research.md](research.md)                         | 资料跟踪与研究记录：说明文档。                             |
+| [scope.md](scope.md)                               | 维护范围与原则：说明文档。                                 |
+| [validation.md](validation.md)                     | 配置验证与人工协作：说明文档。                             |
+| [workflow.md](workflow.md)                         | 持续维护工作流：说明文档。                                 |
+
+<!-- qingqi-directory-index:end -->

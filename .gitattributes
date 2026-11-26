@@ -1,4 +1,5 @@
 # 保持脚本文件 LF 换行，避免 Windows CRLF 导致 shebang 解析失败
+**/UPSTREAM_README.md -text -whitespace
 *.mjs text eol=lf
 *.sh  text eol=lf
 

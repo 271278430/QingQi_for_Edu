@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 import { mkdir, writeFile } from "node:fs/promises";
-import { saveFullDiagram } from "./save_full_diagram.mjs";
+import { saveFullDiagram } from "../tests/save_full_diagram.mjs";
 import assert from "node:assert/strict";
 const child = spawn(
   process.env.QINGQI_PYTHON,

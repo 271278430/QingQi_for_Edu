@@ -41,12 +41,12 @@ Python ModelSettings适配教育服务的状态和推理入口，Store/SQLite拥
 ## 验收
 
 ```powershell
-python education/tools/zcode_model_acceptance.py
-python education/tools/model_settings_acceptance.py
-python education/tools/model_settings_edge_acceptance.py
-node education/tools/model_settings_browser.mjs
+python education/tests/zcode_model_acceptance.py
+python education/tests/model_settings_acceptance.py
+python education/tests/model_settings_edge_acceptance.py
+node education/tests/model_settings_browser.mjs
 node education/tools/architecture_v8_browser.mjs
-node education/tools/product_deployment_browser.mjs
+node education/tests/product_deployment_browser.mjs
 pnpm typecheck
 pnpm lint
 pnpm architecture:check --changed

@@ -2,12 +2,12 @@
 
 这是 z-code 与独立打包平台之间的 v1 契约入口。
 
-| 文件 | 用途 |
-| --- | --- |
-| [`release-candidate.v1.schema.json`](./release-candidate.v1.schema.json) | 候选版本和平台制品的机器校验 Schema |
-| [`release-platform.v1.openapi.yaml`](./release-platform.v1.openapi.yaml) | Control plane REST API 的 OpenAPI 3.1 描述 |
-| [`release-platform-api-v1.md`](./release-platform-api-v1.md) | 状态机、校验规则、错误、事件、安全和迁移约束 |
-| [`docs/adr/0004-release-packaging-platform-contract.md`](../../adr/0004-release-packaging-platform-contract.md) | 为什么由平台托管候选状态和正式发布 |
+| 文件                                                                                                            | 用途                                         |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [`release-candidate.v1.schema.json`](./release-candidate.v1.schema.json)                                        | 候选版本和平台制品的机器校验 Schema          |
+| [`release-platform.v1.openapi.yaml`](./release-platform.v1.openapi.yaml)                                        | Control plane REST API 的 OpenAPI 3.1 描述   |
+| [`release-platform-api-v1.md`](./release-platform-api-v1.md)                                                    | 状态机、校验规则、错误、事件、安全和迁移约束 |
+| [`docs/adr/0004-release-packaging-platform-contract.md`](../../adr/0004-release-packaging-platform-contract.md) | 为什么由平台托管候选状态和正式发布           |
 
 ## v1 实现前必须完成
 
@@ -18,3 +18,22 @@
 5. 发布接口必须实现幂等、审计和 `publish_failed_retryable` 重试。
 
 当前 z-code 中的 `release:approve` 和 runner 共享目录属于迁移期兼容路径，不是平台 v1 的最终状态源；仓库内不再额外生成 `candidate-manifest.json`。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+release platform 设计与维护文档，属于 docs 目录。
+
+### 文件
+
+| 文件                                                                 | 简要说明                                       |
+| -------------------------------------------------------------------- | ---------------------------------------------- |
+| [README.md](README.md)                                               | 本目录用途、子目录与逐文件说明。               |
+| [release-candidate.v1.schema.json](release-candidate.v1.schema.json) | release-candidate.v1.schema 的数据或配置定义。 |
+| [release-platform-api-v1.md](release-platform-api-v1.md)             | ZCode 打包平台 API 与契约 v1：说明文档。       |
+| [release-platform.v1.openapi.yaml](release-platform.v1.openapi.yaml) | release-platform.v1.openapi 的数据或配置定义。 |
+
+<!-- qingqi-directory-index:end -->

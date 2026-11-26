@@ -1,69 +1,22 @@
 # kami-landing
 
-A drop-in skill that turns a brief into a print-grade kami one-pager —
-warm parchment canvas, ink-blue accent, serif at one weight, no
-italic, no cool grays. The output reads like a white paper or studio
-one-pager, not an app UI.
+原始目录说明见 [UPSTREAM_README.md](UPSTREAM_README.md)，原文和版权完整保留。
 
-> **Read first** — the agent contract, schema, and self-check live in
-> [`SKILL.md`](./SKILL.md). This README is the human quick-start.
+<!-- qingqi-directory-index:start -->
 
-## What you get
+## 目录与文件
 
-A single self-contained HTML file with:
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
 
-- **Warm parchment canvas** (`#f5f4ed`), never `#ffffff`.
-- **Single chromatic accent** — ink-blue (`#1B365D`), constrained to
-  ≤ 5% of visible surface.
-- **Serif at weight 500** for hierarchy. No italic anywhere.
-- **Tight print rhythm** — line-heights 1.10–1.55, language-aware
-  letter-spacing.
-- **Tabular-nums** on every numeric stack.
-- **Solid-hex tag fills** (no `rgba()`, which print renderers
-  double-paint).
-- **1px rings + whisper shadows** for depth — no hard drop shadows.
-- **Multilingual** by design (EN / zh-CN / ja stacks selectable via
-  the `language` parameter).
+第三方资料中的 kami landing 技能指导和资源，保留原始来源、版权和资源内容。
 
-## 30-second tour
+### 文件
 
-The skill is "agent-driven, no script": there's no `compose.ts`. The
-agent reads `SKILL.md`, gathers the brief, then writes
-`out/index.html` directly using the tokens and components catalogued
-in [`design-systems/kami/DESIGN.md`](../../design-systems/kami/DESIGN.md).
+| 文件                                     | 简要说明                                           |
+| ---------------------------------------- | -------------------------------------------------- |
+| [example.html](example.html)             | example 模块的资源或工程文件。                     |
+| [README.md](README.md)                   | 本目录用途、子目录与逐文件说明。                   |
+| [SKILL.md](SKILL.md)                     | kami-landing：说明文档。                           |
+| [UPSTREAM_README.md](UPSTREAM_README.md) | ZCode 或第三方资料的原始目录说明，保留原文和版权。 |
 
-To preview the canonical Open Design instance:
-
-```bash
-open example.html
-```
-
-To start a fresh project:
-
-1. Open the skill in your agent (Claude · Cursor · Codex · …).
-2. Answer two rounds of brief questions (identity + content).
-3. Write the file. Done.
-
-## Files
-
-```text
-skills/kami-landing/
-├── SKILL.md      # ← agent contract (read this first)
-├── README.md     # ← you are here
-└── example.html  # canonical Open Design rendering
-```
-
-## Boundaries
-
-- No external JavaScript. The page is paper, not an app.
-- No hard drop shadows, no neumorphism, no `backdrop-filter`.
-- No second accent color. No italic. No cool blue-grays.
-- One `.tag.brush` per page maximum (it's the only sanctioned gradient).
-
-## See also
-
-- [`design-systems/kami/DESIGN.md`](../../design-systems/kami/DESIGN.md) — the full token spec.
-- [`skills/kami-deck/`](../kami-deck/) — sibling skill that produces a
-  slide deck in the same kami language.
-- Upstream: [`tw93/kami`](https://github.com/tw93/kami) — original
-  Claude skill (MIT) that the design system adapts.
+<!-- qingqi-directory-index:end -->

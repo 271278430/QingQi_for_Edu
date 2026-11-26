@@ -50,3 +50,22 @@ Provider Refactor 经历了多轮设计、实现、实机反馈和边界修正�
 - 只有完成裁决并进入现行目标的内容才能写入 `design.md`。
 - Draft、Delayed、Research 或正在执行但尚未验证的实现，必须留在考证文档的未完成区。
 - 本目录不引入新的领域对象；“V2”只是文档整理版本，不是运行时版本、Config Schema 版本或迁移协议。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+design v2 设计与维护文档，属于 docs 目录。
+
+### 文件
+
+| 文件                                                             | 简要说明                                     |
+| ---------------------------------------------------------------- | -------------------------------------------- |
+| [builtin-provider-inventory.md](builtin-provider-inventory.md)   | Builtin Provider 历史维护清单：说明文档。    |
+| [design.md](design.md)                                           | Provider Refactor 核心设计：说明文档。       |
+| [evidence-and-contradictions.md](evidence-and-contradictions.md) | Provider Refactor 考证与矛盾审计：说明文档。 |
+| [README.md](README.md)                                           | 本目录用途、子目录与逐文件说明。             |
+
+<!-- qingqi-directory-index:end -->

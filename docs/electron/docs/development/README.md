@@ -6,21 +6,21 @@ For guides on Electron app development, see
 
 ## Table of Contents
 
-* [Issues](issues.md)
-* [Pull Requests](pull-requests.md)
-* [Documentation Styleguide](coding-style.md#documentation)
-* [Source Code Directory Structure](source-code-directory-structure.md)
-* [Coding Style](coding-style.md)
-* [Using clang-tidy on C++ Code](clang-tidy.md)
-* [Build Instructions](build-instructions-gn.md)
-  * [macOS](build-instructions-macos.md)
-  * [Windows](build-instructions-windows.md)
-  * [Linux](build-instructions-linux.md)
-* [Chromium Development](chromium-development.md)
-* [V8 Development](v8-development.md)
-* [Testing](testing.md)
-* [Debugging](debugging.md)
-* [Patches](patches.md)
+- [Issues](issues.md)
+- [Pull Requests](pull-requests.md)
+- [Documentation Styleguide](coding-style.md#documentation)
+- [Source Code Directory Structure](source-code-directory-structure.md)
+- [Coding Style](coding-style.md)
+- [Using clang-tidy on C++ Code](clang-tidy.md)
+- [Build Instructions](build-instructions-gn.md)
+  - [macOS](build-instructions-macos.md)
+  - [Windows](build-instructions-windows.md)
+  - [Linux](build-instructions-linux.md)
+- [Chromium Development](chromium-development.md)
+- [V8 Development](v8-development.md)
+- [Testing](testing.md)
+- [Debugging](debugging.md)
+- [Patches](patches.md)
 
 ## Getting Started
 
@@ -38,14 +38,14 @@ of what each directory is responsible for. The [source code directory structure]
 For any issue, there are generally three ways an individual can contribute:
 
 1. By opening the issue for discussion
-    * If you believe that you have found a new bug in Electron, you should report it by creating a new issue in
-    the [`electron/electron` issue tracker](https://github.com/electron/electron/issues).
+   - If you believe that you have found a new bug in Electron, you should report it by creating a new issue in
+     the [`electron/electron` issue tracker](https://github.com/electron/electron/issues).
 2. By helping to triage the issue
-    * You can do this either by providing assistive details (a reproducible test case that demonstrates a bug) or by providing suggestions to address the issue.
+   - You can do this either by providing assistive details (a reproducible test case that demonstrates a bug) or by providing suggestions to address the issue.
 3. By helping to resolve the issue
-    * This can be done by demonstrating that the issue is not a bug or is fixed;
-      but more often, by opening a pull request that changes the source in `electron/electron`
-      in a concrete and reviewable manner.
+   - This can be done by demonstrating that the issue is not a bug or is fixed;
+     but more often, by opening a pull request that changes the source in `electron/electron`
+     in a concrete and reviewable manner.
 
 See [issues](issues.md) for more information.
 
@@ -78,3 +78,41 @@ There are many different approaches to debugging issues and bugs in Electron, ma
 are platform specific.
 
 For an overview of information related to debugging Electron itself (and not an app _built with Electron_), see [debugging](debugging.md).
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+development 设计与维护文档，属于 docs 目录。
+
+### 文件
+
+| 文件                                                                     | 简要说明                                           |
+| ------------------------------------------------------------------------ | -------------------------------------------------- |
+| [api-history-migration-guide.md](api-history-migration-guide.md)         | Electron API History Migration Guide：说明文档。   |
+| [build-instructions-gn.md](build-instructions-gn.md)                     | Build Instructions：说明文档。                     |
+| [build-instructions-linux.md](build-instructions-linux.md)               | Build Instructions (Linux)：说明文档。             |
+| [build-instructions-macos.md](build-instructions-macos.md)               | Build Instructions (macOS)：说明文档。             |
+| [build-instructions-windows.md](build-instructions-windows.md)           | Build Instructions (Windows)：说明文档。           |
+| [chromium-development.md](chromium-development.md)                       | Chromium Development：说明文档。                   |
+| [clang-tidy.md](clang-tidy.md)                                           | Using clang-tidy on C++ Code：说明文档。           |
+| [coding-style.md](coding-style.md)                                       | Coding Style：说明文档。                           |
+| [creating-api.md](creating-api.md)                                       | Creating a New Electron Browser Module：说明文档。 |
+| [debugging-on-macos.md](debugging-on-macos.md)                           | Debugging on macOS：说明文档。                     |
+| [debugging-on-windows.md](debugging-on-windows.md)                       | Debugging on Windows：说明文档。                   |
+| [debugging-with-symbol-server.md](debugging-with-symbol-server.md)       | Setting Up Symbol Server in Debugger：说明文档。   |
+| [debugging-with-xcode.md](debugging-with-xcode.md)                       | Debugging with XCode：说明文档。                   |
+| [debugging.md](debugging.md)                                             | Electron Debugging：说明文档。                     |
+| [issues.md](issues.md)                                                   | Issues In Electron：说明文档。                     |
+| [patches.md](patches.md)                                                 | Patches in Electron：说明文档。                    |
+| [pull-requests.md](pull-requests.md)                                     | Pull Requests：说明文档。                          |
+| [README.md](README.md)                                                   | 本目录用途、子目录与逐文件说明。                   |
+| [reclient.md](reclient.md)                                               | Reclient：说明文档。                               |
+| [source-code-directory-structure.md](source-code-directory-structure.md) | Source Code Directory Structure：说明文档。        |
+| [style-guide.md](style-guide.md)                                         | Electron Documentation Style Guide：说明文档。     |
+| [testing.md](testing.md)                                                 | Testing：说明文档。                                |
+| [v8-development.md](v8-development.md)                                   | V8 Development：说明文档。                         |
+
+<!-- qingqi-directory-index:end -->

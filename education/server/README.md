@@ -13,3 +13,20 @@
 启动器不会修改系统 VPN 配置。2026-11-19 连接已恢复，采用同一 SSH 会话读取令牌和承载转发；隐藏进程使用显式输入输出管道。服务器临时 Python 读取进程只读令牌，等待输入管道关闭后退出，不写入服务器文件。启动产品前核对三个已认证模型列表；课程、审查和学情完整推理已通过，历史验收已归档；当前入口与复验说明见 ../docs/operations.md 和 ../docs/verification.md。
 
 2026-11-20 本地运行能力改造：服务器适配器仍从 qingqi.domain_tools 导入同一核验实现。发布新版时需同步 service/src/qingqi 与匹配配置，在独立验收通过后再切换自有服务；仅更新 Web 或 server 脚本不会更新当前进程已加载的模块。新版本子表达式核验、模型调用账本与客户端恢复还未执行远端推理验收。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+可选的课程、困难分析与审查模型服务。
+
+### 文件
+
+| 文件                                         | 简要说明                                                                      |
+| -------------------------------------------- | ----------------------------------------------------------------------------- |
+| [README.md](README.md)                       | 本目录用途、子目录与逐文件说明。                                              |
+| [serve_specialists.py](serve_specialists.py) | Loopback OpenAI adapter for original training formats; one model per process. |
+
+<!-- qingqi-directory-index:end -->

@@ -102,3 +102,32 @@ Apache-2.0 复制内容中的 147 个已确认改编文件包含文件内来源�
 
 这两个包由表格解析构建依赖引入；当前生产依赖图未包含它们。若以后进入发行产物，
 仍须收集该版本的完整许可原文。现有 `reviewRequired` 材料缺口继续保留，严格检查不得绕过。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+第三方源码、资源、清单和许可证；保留原版权和资产字节。
+
+### 子目录
+
+| 目录                                      | 存放内容                                                              |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| [native-search/](native-search/README.md) | 第三方资料中的 native search 模块文件，保留原始来源、版权和资源内容。 |
+| [runtime/](runtime/README.md)             | 第三方资料中的 runtime 模块文件，保留原始来源、版权和资源内容。       |
+| [upstream/](upstream/README.md)           | 第三方资料中的 upstream 模块文件，保留原始来源、版权和资源内容。      |
+
+### 文件
+
+| 文件                                                 | 简要说明                               |
+| ---------------------------------------------------- | -------------------------------------- |
+| [copied-components.json](copied-components.json)     | copied-components 的数据或配置定义。   |
+| [embedded-components.json](embedded-components.json) | embedded-components 的数据或配置定义。 |
+| [inventory.json](inventory.json)                     | inventory 的数据或配置定义。           |
+| [npm-overrides.json](npm-overrides.json)             | npm-overrides 的数据或配置定义。       |
+| [README.md](README.md)                               | 本目录用途、子目录与逐文件说明。       |
+| [SPEC.md](SPEC.md)                                   | 第三方许可材料与发行交付：说明文档。   |
+
+<!-- qingqi-directory-index:end -->

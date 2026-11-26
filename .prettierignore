@@ -7,3 +7,4 @@ apps/zcode-cli/
 # oxfmt 解析会报错；只排除这两个文件，其余 graphs fixture 仍参与格式检查。
 apps/zcode-cli/packages/dynamic-workflow/tests/graphs/control-flow-for-await.ts
 apps/zcode-cli/packages/dynamic-workflow/tests/graphs/async-promise-for-await-of.ts
+**/UPSTREAM_README.md

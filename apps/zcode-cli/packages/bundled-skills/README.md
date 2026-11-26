@@ -27,3 +27,25 @@ or the composer's `$` skill picker. The runtime discovers its `skills/` director
 The resolver is `apps/zcode-cli/packages/bootstrap/src/app/bundled-skills.ts`. Every file
 under `skills/dynamic-workflows/` is a required asset: a stage or seed that loses one refuses
 the whole pack and logs a warning instead of shipping a skill with a missing reference file.
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 bundled skills 模块文件。
+
+### 子目录
+
+| 目录                        | 存放内容                                       |
+| --------------------------- | ---------------------------------------------- |
+| [skills/](skills/README.md) | zcode-cli 基础工程中的 skills 技能指导和资源。 |
+
+### 文件
+
+| 文件                   | 简要说明                         |
+| ---------------------- | -------------------------------- |
+| [README.md](README.md) | 本目录用途、子目录与逐文件说明。 |
+
+<!-- qingqi-directory-index:end -->

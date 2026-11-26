@@ -26,3 +26,26 @@ Web 在构建时导入；远端请求失败或缺少有效字段时使用内置�
 不要因此删除线上旧文件或本目录内置文件。内置文件的其他字段与既有消费者保持不变。
 
 详细规则见 [用户社群入口配置](../docs/ui/settings-community-link-config.md)。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+ZCode 基础工程的开发和运行配置模板。
+
+### 子目录
+
+| 目录                            | 存放内容                              |
+| ------------------------------- | ------------------------------------- |
+| [provider/](provider/README.md) | provider 模块文件，属于 config 目录。 |
+
+### 文件
+
+| 文件                         | 简要说明                         |
+| ---------------------------- | -------------------------------- |
+| [default.json](default.json) | default 的数据或配置定义。       |
+| [README.md](README.md)       | 本目录用途、子目录与逐文件说明。 |
+
+<!-- qingqi-directory-index:end -->

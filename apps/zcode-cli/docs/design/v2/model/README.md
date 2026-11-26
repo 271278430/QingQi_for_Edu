@@ -908,3 +908,35 @@ Bot 的 `sendText` / 兼容 `session/send` 可附 `modelSelectionBasis`，表示
 Bot 异步解析 → CLI 核对读取依据 → 冻结 Submission → 执行 / 排队
 已执行及已接纳输入 ─────────────────→ 保留原快照
 ```
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 model 设计与维护文档。
+
+### 文件
+
+| 文件                                                                                 | 简要说明                                                    |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| [anthropic-reasoning-history-replay.md](anthropic-reasoning-history-replay.md)       | Anthropic Reasoning History Replay：说明文档。              |
+| [anthropic-stream-compat.md](anthropic-stream-compat.md)                             | Anthropic Stream Compatibility：说明文档。                  |
+| [assistant-block-order.md](assistant-block-order.md)                                 | Assistant 内容块顺序：说明文档。                            |
+| [context-composition.md](context-composition.md)                                     | Context 组成（Context Composition）：说明文档。             |
+| [glm-5.2-reasoning-depth-plan.md](glm-5.2-reasoning-depth-plan.md)                   | GLM-5.2 Reasoning Depth Implementation Plan：说明文档。     |
+| [glm-5.2-reasoning-depth.md](glm-5.2-reasoning-depth.md)                             | GLM-5.2 Reasoning Depth (思考深度三档)：说明文档。          |
+| [http-proxy.md](http-proxy.md)                                                       | Model HTTP Proxy：说明文档。                                |
+| [lite-model-plan.md](lite-model-plan.md)                                             | Lite Model 级别实施计划：说明文档。                         |
+| [model-capability-resolution.md](model-capability-resolution.md)                     | Model Capability Resolution（历史设计，已退役）：说明文档。 |
+| [models-dev-catalog-source.md](models-dev-catalog-source.md)                         | Models.dev Catalog Source：说明文档。                       |
+| [provider-endpoint-routing.md](provider-endpoint-routing.md)                         | Provider Endpoint Routing：说明文档。                       |
+| [provider-warning-output.md](provider-warning-output.md)                             | Provider warning output policy：说明文档。                  |
+| [README.md](README.md)                                                               | 本目录用途、子目录与逐文件说明。                            |
+| [session-features-header.md](session-features-header.md)                             | 会话能力归因 Header：`x-zcode-session-features`：说明文档。 |
+| [stream-error-retry.md](stream-error-retry.md)                                       | Stream Error Retry：说明文档。                              |
+| [streaming-tool-execution-and-recovery.md](streaming-tool-execution-and-recovery.md) | Streaming Tool Execution And Recovery：说明文档。           |
+| [token-usage.md](token-usage.md)                                                     | Provider Token Usage：说明文档。                            |
+
+<!-- qingqi-directory-index:end -->

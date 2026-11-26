@@ -28,3 +28,28 @@ them when you want image search available during document production.
 - The plugin only declares an MCP server; it ships no commands, skills, hooks, or agents.
 - Search results come from a third-party image index through the ZCode service. Check the license of
   any image before using it in a published deliverable.
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+@zcode/image-search-plugin 基础工程中的 image search plugin 模块文件。
+
+### 子目录
+
+| 目录                                      | 存放内容                                                         |
+| ----------------------------------------- | ---------------------------------------------------------------- |
+| [.zcode-plugin/](.zcode-plugin/README.md) | @zcode/image-search-plugin 基础工程中的 .zcode plugin 模块文件。 |
+
+### 文件
+
+| 文件                         | 简要说明                                              |
+| ---------------------------- | ----------------------------------------------------- |
+| [.mcp.json](.mcp.json)       | .mcp 的数据或配置定义。                               |
+| [package.json](package.json) | @zcode/image-search-plugin 的包信息、依赖和开发命令。 |
+| [README.md](README.md)       | 本目录用途、子目录与逐文件说明。                      |
+| [README_CN.md](README_CN.md) | ZCode 搜图插件：说明文档。                            |
+
+<!-- qingqi-directory-index:end -->

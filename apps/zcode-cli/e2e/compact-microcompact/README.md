@@ -143,3 +143,48 @@ node e2e/compact-microcompact/run.mjs \
 ```
 
 Case selectors accept `all`, `real`, `fake`, or a comma-separated list of case names.
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-compact-microcompact-e2e 基础工程中的 compact microcompact 模块文件。
+
+### 子目录
+
+| 目录                          | 存放内容                                                       |
+| ----------------------------- | -------------------------------------------------------------- |
+| [fixture/](fixture/README.md) | zcode-compact-microcompact-e2e 基础工程中的 fixture 模块文件。 |
+
+### 文件
+
+| 文件                                                                           | 简要说明                                                                                                |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| [args.mjs](args.mjs)                                                           | 实现或公开接口：parseArgs、resolveCaseNames。                                                           |
+| [artifacts.mjs](artifacts.mjs)                                                 | 实现或公开接口：writeJsonFile。                                                                         |
+| [capture-proxy.mjs](capture-proxy.mjs)                                         | 实现或公开接口：startCaptureProxy、stopCaptureProxy、writeCaptureFile。                                 |
+| [case-background-bash.mjs](case-background-bash.mjs)                           | 实现或公开接口：backgroundBashCase。                                                                    |
+| [case-bash-read-state.mjs](case-bash-read-state.mjs)                           | 实现或公开接口：bashReadStateCase。                                                                     |
+| [case-fake-compact.mjs](case-fake-compact.mjs)                                 | 实现或公开接口：compactPtlRetryCase、reactiveCompactCase。                                              |
+| [case-full-compact.mjs](case-full-compact.mjs)                                 | 实现或公开接口：manualFullCompactCase、autoFullCompactCase。                                            |
+| [case-microcompact.mjs](case-microcompact.mjs)                                 | 实现或公开接口：microcompactCase。                                                                      |
+| [case-openai-responses-compact.mjs](case-openai-responses-compact.mjs)         | 实现或公开接口：openAiResponsesCompactCase。                                                            |
+| [case-output-token-continuation.mjs](case-output-token-continuation.mjs)       | 实现或公开接口：outputTokenContinuationCase。                                                           |
+| [case-usage-anchor-assertions.mjs](case-usage-anchor-assertions.mjs)           | 实现或公开接口：assertUsageAnchorScenario。                                                             |
+| [case-usage-anchor-provider.mjs](case-usage-anchor-provider.mjs)               | 实现或公开接口：FULL_DONE、REACTIVE_DONE、INPUT_ONLY_DONE、HYDRATION_SETUP。                            |
+| [case-usage-anchor.mjs](case-usage-anchor.mjs)                                 | 实现或公开接口：usageAnchorCase。                                                                       |
+| [case-utils.mjs](case-utils.mjs)                                               | 实现或公开接口：loadZCodeModules、buildRuntimeConfig、writeProviderConfig、createApp。                  |
+| [constants.mjs](constants.mjs)                                                 | 实现或公开接口：DEFAULT_MODEL、DEFAULT_PROVIDER、DEFAULT_BASE_URL、FAKE_MODEL。                         |
+| [diagnostics.mjs](diagnostics.mjs)                                             | 实现或公开接口：formatError、formatEventDiagnostics。                                                   |
+| [Dockerfile](Dockerfile)                                                       | Dockerfile 模块的资源或工程文件。                                                                       |
+| [output-token-continuation-history.mjs](output-token-continuation-history.mjs) | 实现或公开接口：captureRuntimeHistory、assistantContents、captureDurableAssistantHistory。              |
+| [package.json](package.json)                                                   | zcode-compact-microcompact-e2e 的包信息、依赖和开发命令。                                               |
+| [README.md](README.md)                                                         | 本目录用途、子目录与逐文件说明。                                                                        |
+| [run.mjs](run.mjs)                                                             | run 的实现文件。                                                                                        |
+| [scripted-provider.mjs](scripted-provider.mjs)                                 | 实现或公开接口：startScriptedProvider、stopScriptedProvider、writeScriptedCaptureFile、chatCompletion。 |
+| [suite-cases.mjs](suite-cases.mjs)                                             | 实现或公开接口：getCaseDefinitions。                                                                    |
+| [workspace.mjs](workspace.mjs)                                                 | 实现或公开接口：prepareWorkspace。                                                                      |
+
+<!-- qingqi-directory-index:end -->

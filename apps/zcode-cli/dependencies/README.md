@@ -24,13 +24,13 @@ The active releases and SHA-256 pins are defined in
 [`scripts/native-search-tools-config.mjs`](../../../scripts/native-search-tools-config.mjs)
 and [`scripts/remote-native-search-tools-config.mjs`](../../../scripts/remote-native-search-tools-config.mjs):
 
-| Target | bfs | ugrep | ripgrep |
-| --- | --- | --- | --- |
-| macOS arm64 / x64 | 4.1.1-1 | 7.8.4-1 | 14.1.1-1 |
-| Linux arm64 / x64 | 4.1.1-2 | 7.8.4-1 | 14.1.1-1 |
-| Windows arm64 / x64 | — | 7.8.4-1 | 14.1.1-1 |
-| Remote macOS arm64 / x64 | — | — | 13.0.0-10 |
-| Remote Linux arm64 / x64 | 4.1.1-2 | 7.8.4-1 | 14.1.1-1 |
+| Target                   | bfs     | ugrep   | ripgrep   |
+| ------------------------ | ------- | ------- | --------- |
+| macOS arm64 / x64        | 4.1.1-1 | 7.8.4-1 | 14.1.1-1  |
+| Linux arm64 / x64        | 4.1.1-2 | 7.8.4-1 | 14.1.1-1  |
+| Windows arm64 / x64      | —       | 7.8.4-1 | 14.1.1-1  |
+| Remote macOS arm64 / x64 | —       | —       | 13.0.0-10 |
+| Remote Linux arm64 / x64 | 4.1.1-2 | 7.8.4-1 | 14.1.1-1  |
 
 Remote packaging uses `resolveRemoteNativeSearchPrebuiltPlan` to retain the
 deployed macOS rg13 contract. Its component versions come from the same plan as
@@ -74,3 +74,26 @@ archives and build inputs for bfs and ugrep are recorded in that configuration;
 the producer entry points remain `pnpm build:native-search` and
 `pnpm pack:native-search`. Recheck every affected target and SEA packaging before
 replacing an active release.
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 dependencies 模块文件。
+
+### 子目录
+
+| 目录                                      | 存放内容                                        |
+| ----------------------------------------- | ----------------------------------------------- |
+| [native-search/](native-search/README.md) | zcode-cli 基础工程中的 native search 模块文件。 |
+
+### 文件
+
+| 文件                             | 简要说明                              |
+| -------------------------------- | ------------------------------------- |
+| [.gitattributes](.gitattributes) | 文件换行、二进制资产与 Git 属性规则。 |
+| [README.md](README.md)           | 本目录用途、子目录与逐文件说明。      |
+
+<!-- qingqi-directory-index:end -->

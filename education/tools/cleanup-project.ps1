@@ -24,7 +24,7 @@ $taskDeleteDirs=@()
 foreach ($taskDirectory in Get-ChildItem -LiteralPath (Join-Path $taskRepo 'education/service/runs') -Directory -Force) {
     if ($taskDirectory.Name -match 'acceptance|tests|profiling|probe|browser|adaptive-seed|four-features|source-reuse|routing_tests|system-review|tutoring-evolution-numeric|project-audit') { $taskDeleteDirs += $taskDirectory.FullName }
 }
-foreach ($taskSourceDir in @('education/service/src','education/service/tests','education/tools','education/server')) {
+foreach ($taskSourceDir in @('education/service/src','education/service/tests','education/tests','education/tools','education/server')) {
     if (-not (Test-Path -LiteralPath (Join-Path $taskRepo $taskSourceDir))) { continue }
     $taskDeleteDirs += @(Get-ChildItem -LiteralPath (Join-Path $taskRepo $taskSourceDir) -Directory -Recurse -Force | Where-Object { $_.Name -eq '__pycache__' } | Select-Object -ExpandProperty FullName)
 }

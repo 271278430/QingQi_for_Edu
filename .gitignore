@@ -95,6 +95,7 @@ education/plugin-workspace.local/
 /tmp/
 # 教育本机证据集中存放，只入库目录说明，避免验收截图与运行数据混入源码。
 education/.local/*
+!education/.local/README.md
 !education/.local/reports/
 education/.local/reports/*
 !education/.local/reports/README.md

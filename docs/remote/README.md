@@ -62,3 +62,28 @@ R3 主规格（身份 / 连接 / 迁移）
 - [2026-09-10 历史重跑](../testing/r3-remote-full-rerun-2026-09-10.md)：原基线结果；[历史归档索引](../archive/remote-r3/README.md)可定位更早证据。
 
 记录中的 PASS 只适用于所列源码、构建、场景与环境。文档压缩不补跑测试、不改变状态，也不删除原始 artifact。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+remote 设计与维护文档，属于 docs 目录。
+
+### 文件
+
+| 文件                                                                                             | 简要说明                                                |
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| [data-sync.md](data-sync.md)                                                                     | 数据同步：把本机配置推送到远端设备：说明文档。          |
+| [desktop-remote-session-renderer-reattach.md](desktop-remote-session-renderer-reattach.md)       | 桌面远程 Workspace Renderer 重挂：说明文档。            |
+| [memory-settings.md](memory-settings.md)                                                         | 按设备设置工作区记忆：说明文档。                        |
+| [project-first-remote-navigation-spec.md](project-first-remote-navigation-spec.md)               | 平铺项目导航与连接后选择远程工作区：说明文档。          |
+| [provider-provisioning.md](provider-provisioning.md)                                             | Remote Provider Provisioning：说明文档。                |
+| [README.md](README.md)                                                                           | 本目录用途、子目录与逐文件说明。                        |
+| [server-remote-workspace-connection.md](server-remote-workspace-connection.md)                   | Server Remote Workspace Connection：说明文档。          |
+| [windows-remote-asset-cache-rename-hardening.md](windows-remote-asset-cache-rename-hardening.md) | Windows Remote Asset Cache Rename Hardening：说明文档。 |
+| [wsl-remote-realtime-boundary.md](wsl-remote-realtime-boundary.md)                               | WSL 远程 workspace realtime 边界修复：说明文档。        |
+| [zcode-agent-remote-deployment.md](zcode-agent-remote-deployment.md)                             | Remote Asset Network Policy：说明文档。                 |
+
+<!-- qingqi-directory-index:end -->

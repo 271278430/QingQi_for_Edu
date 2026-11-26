@@ -59,3 +59,27 @@ result.json
 Dream 当前没有产品触发入口，因此不在这里增加测试入口；gate、lock、tool loop 和
 `memory_update` 由 core runtime integration tests 覆盖，最终 Anthropic Messages 请求体由
 `memory-provider-body.test.ts` 覆盖。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-memory-e2e 基础工程中的 memory 模块文件。
+
+### 文件
+
+| 文件                                                         | 简要说明                                                                                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [memory-bench-child.mjs](memory-bench-child.mjs)             | 只注入隔离配置和 scripted provider；参数、Runtime、Extraction、关闭与信号均走真实实现。                                        |
+| [memory-bench.test.mjs](memory-bench.test.mjs)               | memory-bench.test 的实现文件。                                                                                                 |
+| [memory-e2e-evidence.mjs](memory-e2e-evidence.mjs)           | 实现或公开接口：verifyMemoryE2EEvidence、writeMemoryE2EArtifacts、verifyHeadlessRequestBoundary、countStableSelectorRequests。 |
+| [memory-e2e-evidence.test.mjs](memory-e2e-evidence.test.mjs) | memory-e2e-evidence.test 的实现文件。                                                                                          |
+| [memory-e2e-provider.mjs](memory-e2e-provider.mjs)           | 实现或公开接口：memoryE2EText、createMemoryExtractionCloseBarrier、createProviderHandler、classifyRequest。                    |
+| [memory-e2e-runtime.mjs](memory-e2e-runtime.mjs)             | 实现或公开接口：createScenarioPaths、runMemoryScenarios、loadZCodeModules。                                                    |
+| [package.json](package.json)                                 | zcode-memory-e2e 的包信息、依赖和开发命令。                                                                                    |
+| [README.md](README.md)                                       | 本目录用途、子目录与逐文件说明。                                                                                               |
+| [run.mjs](run.mjs)                                           | run 的实现文件。                                                                                                               |
+
+<!-- qingqi-directory-index:end -->

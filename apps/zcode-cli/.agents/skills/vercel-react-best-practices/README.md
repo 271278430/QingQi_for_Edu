@@ -10,22 +10,25 @@ A structured repository for creating and maintaining React Best Practices optimi
   - `area-description.md` - Individual rule files
 - `src/` - Build scripts and utilities
 - `metadata.json` - Document metadata (version, organization, abstract)
-- __`AGENTS.md`__ - Compiled output (generated)
-- __`test-cases.json`__ - Test cases for LLM evaluation (generated)
+- **`AGENTS.md`** - Compiled output (generated)
+- **`test-cases.json`** - Test cases for LLM evaluation (generated)
 
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 2. Build AGENTS.md from rules:
+
    ```bash
    pnpm build
    ```
 
 3. Validate rule files:
+
    ```bash
    pnpm validate
    ```
@@ -55,7 +58,7 @@ A structured repository for creating and maintaining React Best Practices optimi
 
 Each rule file should follow this structure:
 
-```markdown
+````markdown
 ---
 title: Rule Title Here
 impact: MEDIUM
@@ -72,6 +75,7 @@ Brief explanation of the rule and why it matters.
 ```typescript
 // Bad code example
 ```
+````
 
 **Correct (description of what's right):**
 
@@ -121,3 +125,28 @@ When adding or modifying rules:
 ## Acknowledgments
 
 Originally created by [@shuding](https://x.com/shuding) at [Vercel](https://vercel.com).
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 vercel react best practices 技能指导和资源。
+
+### 子目录
+
+| 目录                      | 存放内容                                      |
+| ------------------------- | --------------------------------------------- |
+| [rules/](rules/README.md) | zcode-cli 基础工程中的 rules 技能指导和资源。 |
+
+### 文件
+
+| 文件                           | 简要说明                                |
+| ------------------------------ | --------------------------------------- |
+| [AGENTS.md](AGENTS.md)         | 本目录的开发规范、模块边界与验证要求。  |
+| [metadata.json](metadata.json) | metadata 的数据或配置定义。             |
+| [README.md](README.md)         | 本目录用途、子目录与逐文件说明。        |
+| [SKILL.md](SKILL.md)           | Vercel React Best Practices：说明文档。 |
+
+<!-- qingqi-directory-index:end -->

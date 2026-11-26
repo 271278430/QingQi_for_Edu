@@ -175,23 +175,23 @@ L3 已经补齐两个运行时闭环：
 
 ## 工具矩阵
 
-| Tool | 模型可见名称 | 模型可见范围 | 主要副作用 | 默认只读 | 并发安全 | 结果预算 |
-| --- | --- | --- | --- | --- | --- | --- |
-| Read | `Read` | 主智能体、Explore | 文件读取、read cache 更新、可附加图片/PDF meta message | 是 | 是 | 不落盘，内部自限 |
-| Write | `Write` | 主智能体 | 创建或完整覆盖文件、更新 read cache、file history、LSP/IDE 通知 | 否 | 否 | 100000 chars |
-| Edit | `Edit` | 主智能体 | 精确字符串替换、更新 read cache、file history、LSP/IDE 通知 | 否 | 否 | 100000 chars |
-| Bash | `Bash` | 主智能体 | 子进程、sandbox、cwd、背景任务、可能读写网络和系统 | 按命令动态判断 | 只读命令才安全 | 30000 chars |
-| Glob | `Glob` | 主智能体、Explore（临时） | 文件名和路径模式匹配 | 是 | 是 | 100000 chars |
-| Grep | `Grep` | 主智能体、Explore（临时） | 文件内容正则搜索 | 是 | 是 | 100000 chars |
-| WebFetch | `WebFetch` | 主智能体 | 网络 GET、二级模型处理、二进制落盘 | 是 | 是 | 100000 chars |
-| WebSearch | `WebSearch` / 内部 `web_search` | 主智能体、Explore | 内部模型请求触发 provider 侧 server-side web search | 是 | 是 | 100000 chars |
-| AskUserQuestion | `AskUserQuestion` | 主智能体 | 用户交互，权限 UI 收集答案 | 是 | 是 | 100000 chars |
-| Subagent | `Agent` / `Task` | 主智能体 | agent runtime、后台任务、worktree、transcript、被委托工具的副作用 | 编排层是，只读性需按子工具动态计算 | 编排层是，写入冲突由子工具和 task runtime 管 | 100000 chars |
-| Workflow | `Workflow` | 主智能体（仅显式用户 opt-in 后调用） | workflow run、子 session、后台 runner、session-scoped 脚本副本、被编排 agent 的 workspace 副作用 | 否 | 否 | 小结果，状态走 workflow tables |
-| EnterPlanMode | `EnterPlanMode` | 主智能体 | 请求用户同意并切换 session mode 到 plan | 否 | 否 | 100000 chars |
-| ExitPlanMode | `ExitPlanMode` | 主智能体 | 提交计划、请求用户同意并退出 plan mode | 否 | 否 | 100000 chars |
-| TodoRead | `TodoRead` | 主智能体 | session todo 状态读取 | 是 | 是 | 100000 chars |
-| TodoWrite | `TodoWrite` | 主智能体 | session todo 状态替换 | 是，session-only | 否 | 100000 chars |
+| Tool            | 模型可见名称                    | 模型可见范围                         | 主要副作用                                                                                       | 默认只读                           | 并发安全                                     | 结果预算                       |
+| --------------- | ------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------ | ---------------------------------- | -------------------------------------------- | ------------------------------ |
+| Read            | `Read`                          | 主智能体、Explore                    | 文件读取、read cache 更新、可附加图片/PDF meta message                                           | 是                                 | 是                                           | 不落盘，内部自限               |
+| Write           | `Write`                         | 主智能体                             | 创建或完整覆盖文件、更新 read cache、file history、LSP/IDE 通知                                  | 否                                 | 否                                           | 100000 chars                   |
+| Edit            | `Edit`                          | 主智能体                             | 精确字符串替换、更新 read cache、file history、LSP/IDE 通知                                      | 否                                 | 否                                           | 100000 chars                   |
+| Bash            | `Bash`                          | 主智能体                             | 子进程、sandbox、cwd、背景任务、可能读写网络和系统                                               | 按命令动态判断                     | 只读命令才安全                               | 30000 chars                    |
+| Glob            | `Glob`                          | 主智能体、Explore（临时）            | 文件名和路径模式匹配                                                                             | 是                                 | 是                                           | 100000 chars                   |
+| Grep            | `Grep`                          | 主智能体、Explore（临时）            | 文件内容正则搜索                                                                                 | 是                                 | 是                                           | 100000 chars                   |
+| WebFetch        | `WebFetch`                      | 主智能体                             | 网络 GET、二级模型处理、二进制落盘                                                               | 是                                 | 是                                           | 100000 chars                   |
+| WebSearch       | `WebSearch` / 内部 `web_search` | 主智能体、Explore                    | 内部模型请求触发 provider 侧 server-side web search                                              | 是                                 | 是                                           | 100000 chars                   |
+| AskUserQuestion | `AskUserQuestion`               | 主智能体                             | 用户交互，权限 UI 收集答案                                                                       | 是                                 | 是                                           | 100000 chars                   |
+| Subagent        | `Agent` / `Task`                | 主智能体                             | agent runtime、后台任务、worktree、transcript、被委托工具的副作用                                | 编排层是，只读性需按子工具动态计算 | 编排层是，写入冲突由子工具和 task runtime 管 | 100000 chars                   |
+| Workflow        | `Workflow`                      | 主智能体（仅显式用户 opt-in 后调用） | workflow run、子 session、后台 runner、session-scoped 脚本副本、被编排 agent 的 workspace 副作用 | 否                                 | 否                                           | 小结果，状态走 workflow tables |
+| EnterPlanMode   | `EnterPlanMode`                 | 主智能体                             | 请求用户同意并切换 session mode 到 plan                                                          | 否                                 | 否                                           | 100000 chars                   |
+| ExitPlanMode    | `ExitPlanMode`                  | 主智能体                             | 提交计划、请求用户同意并退出 plan mode                                                           | 否                                 | 否                                           | 100000 chars                   |
+| TodoRead        | `TodoRead`                      | 主智能体                             | session todo 状态读取                                                                            | 是                                 | 是                                           | 100000 chars                   |
+| TodoWrite       | `TodoWrite`                     | 主智能体                             | session todo 状态替换                                                                            | 是，session-only                   | 否                                           | 100000 chars                   |
 
 ## ZCode 的实现取向
 
@@ -208,3 +208,41 @@ L3 已经补齐两个运行时闭环：
 - AskUserQuestion 先实现非阻塞会话状态、可恢复 pending prompt 和 SDK/TUI 统一输出。
 - Subagent 先实现 agent definition registry、tool pool resolver、隔离执行上下文、background task、transcript/resume 和 trace 传播，再考虑 fork、worktree、remote 与 teammate。
 - Todo 已实现 session store 持久化、工具契约、TUI/ZCode app-server 计划投影、resume 上下文注入和 compact summary 附带 todo 状态；后续改动应保持这些投影只消费 runtime/session event，不直接读取 storage。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 tool 设计与维护文档。
+
+### 文件
+
+| 文件                                                                     | 简要说明                                                           |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| [00-tool-change-chain.md](00-tool-change-chain.md)                       | Tool Change Chain Spec：说明文档。                                 |
+| [01-read.md](01-read.md)                                                 | Read Tool：说明文档。                                              |
+| [02-write.md](02-write.md)                                               | Write Tool：说明文档。                                             |
+| [03-edit.md](03-edit.md)                                                 | Edit Tool：说明文档。                                              |
+| [04-bash.md](04-bash.md)                                                 | Bash Tool：说明文档。                                              |
+| [05-webfetch.md](05-webfetch.md)                                         | WebFetch Tool：说明文档。                                          |
+| [06-ask-user-question.md](06-ask-user-question.md)                       | AskUserQuestion Tool：说明文档。                                   |
+| [07-subagent-background-plan.md](07-subagent-background-plan.md)         | Background Subagent 第一版实施规划（历史）：说明文档。             |
+| [07-subagent.md](07-subagent.md)                                         | Subagent Tool：说明文档。                                          |
+| [08-glob.md](08-glob.md)                                                 | Glob Tool：说明文档。                                              |
+| [09-grep.md](09-grep.md)                                                 | Grep Tool：说明文档。                                              |
+| [10-todo.md](10-todo.md)                                                 | TodoRead / TodoWrite Tool 设计：说明文档。                         |
+| [11-ripgrep-wasm-packaging.md](11-ripgrep-wasm-packaging.md)             | Ripgrep WASM Packaging：说明文档。                                 |
+| [12-input-normalization.md](12-input-normalization.md)                   | Tool Input Normalization 设计 v2：说明文档。                       |
+| [13-websearch.md](13-websearch.md)                                       | WebSearch Client Wrapper Tool：说明文档。                          |
+| [14-apply-patch.md](14-apply-patch.md)                                   | ApplyPatch Tool：说明文档。                                        |
+| [15-workflow.md](15-workflow.md)                                         | Workflow Tool：说明文档。                                          |
+| [16-plan-mode.md](16-plan-mode.md)                                       | EnterPlanMode / ExitPlanMode：说明文档。                           |
+| [17-read-file-state-resume.md](17-read-file-state-resume.md)             | Read File State Resume：说明文档。                                 |
+| [18-cli-tool-visibility-denylist.md](18-cli-tool-visibility-denylist.md) | CLI 工具可见性 Denylist Implementation Plan：说明文档。            |
+| [19-tool-search.md](19-tool-search.md)                                   | ToolSearch：启用、持久化与冷恢复：说明文档。                       |
+| [20-node-repl-call-ledger.md](20-node-repl-call-ledger.md)               | node_repl 调用账本：结果里的可信事实只出自 Worker 之外：说明文档。 |
+| [README.md](README.md)                                                   | 本目录用途、子目录与逐文件说明。                                   |
+
+<!-- qingqi-directory-index:end -->

@@ -38,3 +38,22 @@ Recall@10 为前十命中的标注插件占比，nDCG@10 按排名折损，多�
 |     10,000 |     20 |    147.62 |    178.48 |
 
 50 ms 验收线只适用于真实目录；脚本对该 p95 以及留出集排名执行断言。合成规模用于观察本次每次重算的成本。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+@zcode/bootstrap 基础工程中的 plugin discovery search 验收与回归场景。
+
+### 文件
+
+| 文件                         | 简要说明                                                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| [catalog.json](catalog.json) | catalog 的数据或配置定义。                                                                                                                    |
+| [evaluate.mjs](evaluate.mjs) | Run from the repository root: pnpm exec tsx apps/zcode-cli/packages/bootstrap/tests/data/plugin-discovery-search/evaluate.mjs [--performance] |
+| [queries.tsv](queries.tsv)   | queries 模块的资源或工程文件。                                                                                                                |
+| [README.md](README.md)       | 本目录用途、子目录与逐文件说明。                                                                                                              |
+
+<!-- qingqi-directory-index:end -->

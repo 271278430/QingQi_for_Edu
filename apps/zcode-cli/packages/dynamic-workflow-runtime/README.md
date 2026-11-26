@@ -18,13 +18,13 @@ three boundaries" 里点名本包）。
 import { runWorkflowScript } from "@zcode/dynamic-workflow-runtime";
 
 const settlement = await runWorkflowScript({
-  scriptText,                 // 或 lowered: <async 函数体>
+  scriptText, // 或 lowered: <async 函数体>
   caps: { maxConcurrency: 16 },
-  askSpecs,                   // site id ∈ 合成 schemas 记录即 typed
-  validate,                   // @zcode/dynamic-workflow 的 validate（适配到 ValidateFn）
+  askSpecs, // site id ∈ 合成 schemas 记录即 typed
+  validate, // @zcode/dynamic-workflow 的 validate（适配到 ValidateFn）
   makeDriver: (sink) => driver, // driver 自带 journal + emit；sink 是引擎的向上回报面
-  signal,                     // 可选：AbortSignal
-  timeoutMs,                  // 可选：墙钟超时
+  signal, // 可选：AbortSignal
+  timeoutMs, // 可选：墙钟超时
 });
 // settlement: { status: "completed", artifact } | { status: "failed", error } | { status: "cancelled" }
 ```
@@ -56,6 +56,31 @@ world-read）/ `event`（log）/ `complete`；parent→child：`response`。
 
 - run 的裁决归引擎所有。终结失败（脚本抛错 / 子进程崩溃 / 超时 / 协议损坏）都调
   `engine.fail(error)`——结算 `failed`、driver 侧取消在飞 ask、journal 记 `dwf_run.status =
-  "failed"` + `failure_json`，journal 与调用方看到的结果一致。abort 信号是唯一的"真取消"，
+"failed"` + `failure_json`，journal 与调用方看到的结果一致。abort 信号是唯一的"真取消"，
   调 `engine.cancel()`（结算 `cancelled`，可 resume）。harness 侧的 first-wins finalize 只管
   子进程清理（清 timer、关 stdin、kill child），不自造结算。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+@zcode/dynamic-workflow-runtime 基础工程中的 dynamic workflow runtime 模块文件。
+
+### 子目录
+
+| 目录                      | 存放内容                                                            |
+| ------------------------- | ------------------------------------------------------------------- |
+| [src/](src/README.md)     | @zcode/dynamic-workflow-runtime 基础工程中的 src 实现源码。         |
+| [tests/](tests/README.md) | @zcode/dynamic-workflow-runtime 基础工程中的 tests 验收与回归场景。 |
+
+### 文件
+
+| 文件                           | 简要说明                                                   |
+| ------------------------------ | ---------------------------------------------------------- |
+| [package.json](package.json)   | @zcode/dynamic-workflow-runtime 的包信息、依赖和开发命令。 |
+| [README.md](README.md)         | 本目录用途、子目录与逐文件说明。                           |
+| [tsconfig.json](tsconfig.json) | 本模块的 TypeScript 编译、类型检查或构建范围。             |
+
+<!-- qingqi-directory-index:end -->

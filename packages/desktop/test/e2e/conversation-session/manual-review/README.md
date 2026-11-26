@@ -45,3 +45,19 @@ canonical formal target，不重复记录当前 pending 路径。已有 case-loc
 replay；缺 fixture 的 case 才走 live/capture。正式与 pending 的覆盖率全量入口是仓库根目录的
 `pnpm test:e2e:all:coverage`；只有配置了真实 `E2E_PROVIDER_API_KEY` 时，入口才会附带
 独立真实 provider smoke，否则会明确跳过该外部环境项。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+@zcode/desktop 基础工程中的 manual review 测试场景。
+
+### 文件
+
+| 文件                   | 简要说明                         |
+| ---------------------- | -------------------------------- |
+| [README.md](README.md) | 本目录用途、子目录与逐文件说明。 |
+
+<!-- qingqi-directory-index:end -->

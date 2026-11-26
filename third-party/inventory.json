@@ -149,7 +149,7 @@
     ".agents/skills/dogfood/templates/dogfood-report-template.md": "8b5c1672e32354c10c045f68f59f1103891fdf6e1410ed7d3c8220a00d8f9465",
     ".agents/skills/react-best-practices/AGENTS.md": "fc93e7421177bbf869cce892bc60a6c83a4517d974bc3bf65c4e2c1e58a6ccf6",
     ".agents/skills/react-best-practices/metadata.json": "c4e18bac3290fbe1b471a605867d4df68b03144ea26b8befdbe8f9d8fd124354",
-    ".agents/skills/react-best-practices/README.md": "9eafb2123d3b8b2aef41fba0db2648a3f4f49996f8c7c8bb2c86263befd8b48a",
+    ".agents/skills/react-best-practices/UPSTREAM_README.md": "9eafb2123d3b8b2aef41fba0db2648a3f4f49996f8c7c8bb2c86263befd8b48a",
     ".agents/skills/react-best-practices/rules/_sections.md": "01c59969e4e867f0708c8f8ef9c6d87fab9a07d0586244f429ff84013db8a115",
     ".agents/skills/react-best-practices/rules/_template.md": "99df2a3ea088c6c22de2484ddc7e964d0e9923846f44c63380343ecc64455442",
     ".agents/skills/react-best-practices/rules/advanced-effect-event-deps.md": "55ed8f9f27a1bff803d6fa55828176207714b02123cbb97ddb8a90d88024a723",
@@ -450,15 +450,15 @@
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/invoice/example.html": "c7288d480d4d4efee7f12943c0a9a7851eaae56025fde8a892293e12df42ea86",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/invoice/SKILL.md": "6c12ddb7b2b971d62f2bae0051bd98a1f75625af6f7bff5a0169dae0d734c1ee",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-deck/example.html": "7b5f0ba09210e6241b3cef56c2930fcaa39c643bb28ae64e26749b925ba4f112",
-    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-deck/README.md": "51f74583c3db64e7523bdd4af0752e91582d7ba2ace4fec01ff7038aa32931b7",
+    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-deck/UPSTREAM_README.md": "51f74583c3db64e7523bdd4af0752e91582d7ba2ace4fec01ff7038aa32931b7",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-deck/SKILL.md": "1ea4f2bb8c7cd5bd73091cbee944327689134f5f98d417a59c192a0961550dc0",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-landing/example.html": "3eb76b8d94868ebd6fc14afa68c9a00bcfdf8d34ffbd23f664f538ba75e8b573",
-    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-landing/README.md": "daf69425784c53ae77b50581f48d68f82a070aced3fc99c1c6e1d225dc3c564f",
+    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-landing/UPSTREAM_README.md": "daf69425784c53ae77b50581f48d68f82a070aced3fc99c1c6e1d225dc3c564f",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-landing/SKILL.md": "621c3f7f560dd4fb2ea6cfefb9a81eec14d8eeb6e049555bbfc5e4af4fe2f034",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kanban-board/example.html": "ee6a37993b714b0d2baef02bc2504bcc5e0f14f0f166ee459b6933a8277286af",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kanban-board/SKILL.md": "e16c5a931c651d4ea1371dfba9c88dc13ffe7fb1d746402ba7a890705ff505e5",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/assets/templates/clinic-console/data.json": "8b5c4b6f2d0df51385cdbed11bf14d0d02cb7acafa83e84cbd8777095a18f813",
-    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/assets/templates/clinic-console/README.md": "568ae3523e5f5e1bffb7612ad440b6df7bbe1630e76ae57c21bedc032f1b6717",
+    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/assets/templates/clinic-console/UPSTREAM_README.md": "568ae3523e5f5e1bffb7612ad440b6df7bbe1630e76ae57c21bedc032f1b6717",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/assets/templates/clinic-console/template.html": "cd8736bdc1bbb70a1f886e1daa4a6e0444ada055a8f0400105a37896cc7fd0d5",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/examples/baby-health-live.html": "143f994030f1a1e7fcdf9c980d031627ca4b66a0bef8407389d2d57e6e730f90",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/examples/competitor-radar-live.html": "ca76ea6d6c450c873fdb7cae46017d873ee94a14e3e0acb35f5a038d8eefd60f",
@@ -494,7 +494,7 @@
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/motion-frames/SKILL.md": "e500c2459ab87d89aecd43420db48d549fdf819faac7655e9b7a084a91721e81",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/example.html": "5bf5c91b18828840bb7d870310cc5bfde02e0216136ae1bbeabdaf207b454612",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/inputs.example.json": "cba5335f168b30f614937bec23d77003470aa35dcd43f1f7fb88f5f8e01a370a",
-    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/README.md": "01b513841244f3b38cf385faf1babf94ab2057a2c6d7cac45f140c1d08d48743",
+    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/UPSTREAM_README.md": "01b513841244f3b38cf385faf1babf94ab2057a2c6d7cac45f140c1d08d48743",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/schema.ts": "59177aeb18fcbcdfffc43b31082e6604641c1b55ab401292670c4254db80f919",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/scripts/compose.ts": "c2f5de401dc518a4acc1773bd7f5f63ceea4e97a808c32058445f47f1b4c0b05",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/SKILL.md": "0fd9ae1cf94dc3537eed0785bfabbe4e148dd28214ff04f9b6c0572abbc12215",
@@ -581,7 +581,7 @@
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/animation-patterns.md": "1b7b7409893b68c09effb04f20a4603a5168e4956d76c3999c2ba8f86c4bbc8f",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/html-template.md": "db74a3cc38182a5846d65ac51f2ba62718e5edeb39a6c1899001c0d1fc89ad95",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/LICENSE": "62928eb197fe4662d1efc3af0735b3ba5df3c0308badd9a2baf2b619009f5366",
-    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/README.md": "77894ee0c139800b3e798f3c0e8fd78b1a2143e42b5e6f566d8e75e955eec17b",
+    "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/UPSTREAM_README.md": "77894ee0c139800b3e798f3c0e8fd78b1a2143e42b5e6f566d8e75e955eec17b",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/scripts/extract-pptx.py": "4f5e7603c99b8b53e20c5b2a65abdf5edf9422b4c490dca9f2b872a752c17d2a",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/SKILL.md": "f6b22bafac074d8e43d22db5565b5f277b35dbea86bf5ba36c5cc210879b242d",
     "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/STYLE_PRESETS.md": "7a7ce8611d5e1275b08f53a8744f08ec9beb1006665cfe288d9fc9492c3dde56",
@@ -663,7 +663,7 @@
     "docs/knip/docs/public/sponsors/nicoespeon.png": "a7c3a4158c9b1d92cc2b54d68bdedbf25791024767ea7a549938d564b3cfbf98",
     "docs/knip/docs/public/sponsors/ulrichstark.png": "b8c4b8a4160af125b1ba452bfef6d948935a2c69f24a8da02247db2fa3616364",
     "docs/knip/docs/public/sponsors/voxpelli.png": "ce8d9901de2a2db9479b177a9589231cab0dd7ef676c86643ab8aa66bc77658c",
-    "docs/knip/docs/README.md": "d4286a94999a21604cf16e97366c277c01c7ca63b984f3773568d8e923a0c783",
+    "docs/knip/docs/UPSTREAM_README.md": "d4286a94999a21604cf16e97366c277c01c7ca63b984f3773568d8e923a0c783",
     "docs/knip/docs/remark/fixInternalLinks.ts": "eef8aa338b3a8b51a041522a1f9d7e35b9bafbe26cad967a1a6fcf4008916567",
     "docs/knip/docs/remark/transformDirectives.ts": "3f9fb07e534a7359c3120a6d1b26e223da477a3ce3a4c3793f1c18010644e9ee",
     "docs/knip/docs/scripts/generate-plugin-docs.ts": "d7bcc17c40608deb96c331d3ac5033593c090f398812b5095298b3616741de0b",
@@ -2077,7 +2077,7 @@
     "packages/ui/src/components/ui/pptx-selection-action-bar.tsx": "6e7187b7f527e4a97df117cc0df85d2dd8f4408d7415aec2e4907db39a331efd",
     "packages/ui/src/components/ui/progress.tsx": "ba88ffa75ad78eaa23519c7af84e11679ca2b8e4508c57759d769462811c0ec5",
     "packages/ui/src/components/ui/radio-group.tsx": "9f8cb93cfeade262cc6270547ad90adf5237b4750bd2e70c62116d336a55295c",
-    "packages/ui/src/components/ui/README.md": "5b5d554e2ad0c8e095258d70e5c3f35f58b9340a850c767f7b76bbe19c3b42d0",
+    "packages/ui/src/components/ui/UPSTREAM_README.md": "5b5d554e2ad0c8e095258d70e5c3f35f58b9340a850c767f7b76bbe19c3b42d0",
     "packages/ui/src/components/ui/resizable.tsx": "2a9f1a616d57095a6375ae002315151227d34c26074950519d3b0ddc537a72a1",
     "packages/ui/src/components/ui/scroll-area.tsx": "83999d597a4a417aea402e833884826539b9aa1bd1ec966aa2f6dab9a97afb3c",
     "packages/ui/src/components/ui/scroll-fade-viewport.tsx": "50e5984232b6a7d59e872aab4ebb36ae837e2865e3a770adbc234b61c2531da1",
@@ -19732,7 +19732,7 @@
           "sha256": "f1691224d23be4359e1a79bcd81b9dd5ee19c0177b3a4bf750332c620b98ae5c"
         },
         {
-          "file": "packages/ui/src/components/ui/README.md",
+          "file": "packages/ui/src/components/ui/UPSTREAM_README.md",
           "sha256": "5b5d554e2ad0c8e095258d70e5c3f35f58b9340a850c767f7b76bbe19c3b42d0"
         },
         {
@@ -30279,7 +30279,7 @@
           "sha256": "fc93e7421177bbf869cce892bc60a6c83a4517d974bc3bf65c4e2c1e58a6ccf6"
         },
         {
-          "file": ".agents/skills/react-best-practices/README.md",
+          "file": ".agents/skills/react-best-practices/UPSTREAM_README.md",
           "sha256": "9eafb2123d3b8b2aef41fba0db2648a3f4f49996f8c7c8bb2c86263befd8b48a"
         },
         {
@@ -30603,7 +30603,7 @@
           "sha256": "ef3e637bb6cc9fa34bacda2f2d31a794ca65abfe3109c150e00bb10dca25e431"
         },
         {
-          "file": "docs/knip/docs/README.md",
+          "file": "docs/knip/docs/UPSTREAM_README.md",
           "sha256": "d4286a94999a21604cf16e97366c277c01c7ca63b984f3773568d8e923a0c783"
         },
         {
@@ -32261,7 +32261,7 @@
           "sha256": "c7288d480d4d4efee7f12943c0a9a7851eaae56025fde8a892293e12df42ea86"
         },
         {
-          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-deck/README.md",
+          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-deck/UPSTREAM_README.md",
           "sha256": "51f74583c3db64e7523bdd4af0752e91582d7ba2ace4fec01ff7038aa32931b7"
         },
         {
@@ -32273,7 +32273,7 @@
           "sha256": "7b5f0ba09210e6241b3cef56c2930fcaa39c643bb28ae64e26749b925ba4f112"
         },
         {
-          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-landing/README.md",
+          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/kami-landing/UPSTREAM_README.md",
           "sha256": "daf69425784c53ae77b50581f48d68f82a070aced3fc99c1c6e1d225dc3c564f"
         },
         {
@@ -32297,7 +32297,7 @@
           "sha256": "8331a25cbd221d3fd0129f2f737354c65ba34cb501aa64e4c4fa5a632c3a9ffe"
         },
         {
-          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/assets/templates/clinic-console/README.md",
+          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/live-artifact/assets/templates/clinic-console/UPSTREAM_README.md",
           "sha256": "568ae3523e5f5e1bffb7612ad440b6df7bbe1630e76ae57c21bedc032f1b6717"
         },
         {
@@ -32433,7 +32433,7 @@
           "sha256": "fa6a8376730990c64f792602638cff3075aa0c10eb5a938be998d850bc0124d6"
         },
         {
-          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/README.md",
+          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/design-skeletons/open-design-landing-deck/UPSTREAM_README.md",
           "sha256": "01b513841244f3b38cf385faf1babf94ab2057a2c6d7cac45f140c1d08d48743"
         },
         {
@@ -32769,7 +32769,7 @@
           "sha256": "62928eb197fe4662d1efc3af0735b3ba5df3c0308badd9a2baf2b619009f5366"
         },
         {
-          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/README.md",
+          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/UPSTREAM_README.md",
           "sha256": "77894ee0c139800b3e798f3c0e8fd78b1a2143e42b5e6f566d8e75e955eec17b"
         },
         {
@@ -33431,7 +33431,7 @@
           "sha256": "62928eb197fe4662d1efc3af0735b3ba5df3c0308badd9a2baf2b619009f5366"
         },
         {
-          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/README.md",
+          "file": "apps/zcode-cli/packages/design-plugin/skills/design/design-resources/skills/frontend-slides/UPSTREAM_README.md",
           "sha256": "77894ee0c139800b3e798f3c0e8fd78b1a2143e42b5e6f566d8e75e955eec17b"
         },
         {

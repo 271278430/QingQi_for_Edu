@@ -40,3 +40,28 @@ npx skills install https://github.com/vercel-labs/react-view-transitions-skill
 - [React `addTransitionType` docs](https://react.dev/reference/react/addTransitionType)
 - [Next.js `viewTransition` config](https://nextjs.org/docs/app/api-reference/config/next-config-js/viewTransition)
 - [Next.js App Router Playground (view transitions)](https://github.com/vercel/next-app-router-playground/tree/main/app/view-transitions) — Vercel's reference implementation
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 vercel react view transitions 技能指导和资源。
+
+### 子目录
+
+| 目录                                | 存放内容                                     |
+| ----------------------------------- | -------------------------------------------- |
+| [references/](references/README.md) | zcode-cli 基础工程中的 references 参考资料。 |
+
+### 文件
+
+| 文件                           | 简要说明                               |
+| ------------------------------ | -------------------------------------- |
+| [AGENTS.md](AGENTS.md)         | 本目录的开发规范、模块边界与验证要求。 |
+| [metadata.json](metadata.json) | metadata 的数据或配置定义。            |
+| [README.md](README.md)         | 本目录用途、子目录与逐文件说明。       |
+| [SKILL.md](SKILL.md)           | React View Transitions：说明文档。     |
+
+<!-- qingqi-directory-index:end -->

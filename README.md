@@ -1,6 +1,6 @@
 # 清启 · QingQi for Edu
 
-面向学生的数学学习工作台：围绕一道题持续辅导，让学习路径、学情和下一组练习跟着实际作答变化。
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目，面向数学学习。它围绕一道题持续辅导，让学习路径、学情和下一组练习跟着实际作答变化。
 
 ![学情看板](education/docs/media/dashboard.png)
 
@@ -61,7 +61,7 @@ pnpm education:demo
 
 真实教材图谱、题库、画像和对话资料通过导入工具建立只读索引，原始文件保留在自己的机器。配置、数据库、学生历史和模型权重不随源码分发。导入与部署方法见[运行说明](education/docs/operations.md)。
 
-## 架构与源码复用
+## 基于 ZCode 的项目架构
 
 一张系统关系图展示五层、16个模块。Agent Loop包含真正的回路：**决策 → 受控工具调用 → 观察/检查点 → 回到决策**；候选回复经过数学与教学核验，再由Store提交。
 
@@ -74,17 +74,38 @@ pnpm education:demo
 
 </details>
 
-直接复用ZCode的工具注册/执行、调度、PermissionService、MCP和Skill适配器、受控前台子任务、有界记忆筛选，以及模型设置、对话输入和共享UI组件。教育路由、教学策略、学习证据和SQLite状态由本项目适配，未将完整编码Agent原样搬进学生端。
+项目以 ZCode 的运行模块、工具执行、权限、MCP、Skills、子任务、记忆筛选、模型配置与 UI 为基础。教育业务围绕学生问题展开：管理原题与当前小问，选择教学方式，核验数学结果，再把作答证据用于路径、看板和下一组三题。
+
+## 按目录阅读项目
+
+```text
+education/                  学生产品
+├── service/                Python 教学服务与状态
+├── runtime/                基于 ZCode 的 Node 运行层
+├── client/                 HTTP / SSE 通信契约
+├── web/                    四项学生功能及设置页面
+├── tools/                  启动、导入、维护与素材制作
+├── tests/                  验收、浏览器场景、夹具与探针
+├── server/                 可选专项模型服务
+└── docs/                   架构、运行说明、截图与动画
+apps/、packages/            ZCode 基础源码和工作区包
+scripts/、.github/           工程检查、构建与 CI
+docs/、specs/               基础工程文档与产品行为规格
+third-party/                第三方资料、清单和许可证
+```
+
+每个版本化目录都有 README，说明目录用途、子目录和直接文件的职责。先读 [education/README.md](education/README.md)，再进入相应模块。ZCode 基础包保留原目录结构和版权；目录说明标明它们与学生产品的关系。
 
 | 目录                                  | 责任                                                |
 | ------------------------------------- | --------------------------------------------------- |
 | `education/service/src/qingqi`        | 教学循环、路由、模型协议、数学核验、学习服务和Store |
-| `education/runtime/src`               | ZCode公共运行能力的适配边界                         |
+| `education/runtime/src`               | 基于ZCode的工具、权限、MCP、Skills和记忆运行层      |
 | `education/client/src`                | HTTP/SSE契约和统一客户端                            |
 | `education/web/src`                   | 四个学生页面、模型配置与设置管理                    |
-| `education/tools`                     | 启动、导入、演示、回归与发布检查                    |
+| `education/tools`                     | 启动、导入、演示、维护和资料制作                    |
+| `education/tests`                     | 教学验收、浏览器场景、可控模型夹具和真实服务探针    |
 | `specs/education`、`education/docs`   | 行为规格与维护说明                                  |
-| `apps/zcode-cli/packages`、`packages` | 保留的ZCode源码及依赖，按公开入口复用               |
+| `apps/zcode-cli/packages`、`packages` | ZCode基础源码、工作区包及其依赖                     |
 
 Store是唯一可写状态所有者，负责会话、原题、小问、学习事件、配置、租约和幂等回执。Web只持有草稿和展示状态，教材与题库不由Agent改写。
 
@@ -97,12 +118,89 @@ pnpm typecheck
 pnpm lint
 pnpm architecture:check --changed
 node education/tools/review_all.mjs
+python education/tools/directory_docs.py --check
 ```
 
-完整回归使用本机已导入的数学资料；只验证公共演示可运行 `python education/tools/demo_acceptance.py`。运行Python脚本需设置 `PYTHONPATH=education/service/src`，浏览器回归需 `QINGQI_PYTHON`、`QINGQI_NODE` 和Edge。生成报告保留在Git忽略的 `education/.local/reports`。
+完整回归使用本机已导入的数学资料；只验证公共演示可运行 `python education/tests/demo_acceptance.py`。运行Python脚本需设置 `PYTHONPATH=education/service/src`，浏览器回归需 `QINGQI_PYTHON`、`QINGQI_NODE` 和Edge。生成报告保留在Git忽略的 `education/.local/reports`。
 
 当前服务监听本机；对外部署的身份、TLS、备份与容量需要单独配置。维护时保留唯一状态入口，不在前端建立第二份成绩或任务队列。
 
 ## 来源与许可证
 
-基于 [zai-org/ZCode](https://github.com/zai-org/ZCode) 适配。上游版本、来源和复用边界记录在 [education/source.json](education/source.json)。代码沿用 [Apache-2.0](LICENSE)，原有第三方声明和源码版权标注保留。
+本项目基于 [zai-org/ZCode](https://github.com/zai-org/ZCode) 开发。ZCode 的来源版本与模块边界记录在 [education/source.json](education/source.json) 和 [基础说明](education/docs/zcode-foundation.md)。代码沿用 [Apache-2.0](LICENSE)，保留原有第三方声明和源码版权标注。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+清启教育 Agent 项目的工作区入口，连接学生产品、ZCode 基础源码、工程工具和项目文档。
+
+### 子目录
+
+| 目录                                  | 存放内容                                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------------- |
+| [.agents/](.agents/README.md)         | 项目开发规范、技能及其辅助资源。                                                      |
+| [.github/](.github/README.md)         | GitHub 自动构建与仓库协作配置。                                                       |
+| [.husky/](.husky/README.md)           | Git 操作的本地工程检查入口。                                                          |
+| [.vscode/](.vscode/README.md)         | 编辑器工作区配置。                                                                    |
+| [apps/](apps/README.md)               | ZCode 应用和开发文档入口；教育产品的运行模块依赖 apps/zcode-cli/packages 中的基础包。 |
+| [config/](config/README.md)           | ZCode 基础工程的开发和运行配置模板。                                                  |
+| [docs/](docs/README.md)               | ZCode 基础工程的设计、架构与维护资料；教育产品说明位于 education/docs。               |
+| [education/](education/README.md)     | 学生端教育产品，包含个性化辅导、学习路径、学情看板、个性化练习及模型和系统设置。      |
+| [packages/](packages/README.md)       | ZCode 的工作区基础包，包含 UI、协议、服务、客户端和平台实现。                         |
+| [patches/](patches/README.md)         | 包管理器应用的依赖修补文件。                                                          |
+| [public/](public/README.md)           | ZCode 基础界面的静态资源。                                                            |
+| [scripts/](scripts/README.md)         | 工作区构建、架构、格式、发布和工程检查脚本。                                          |
+| [specs/](specs/README.md)             | 版本化行为规格，包括 ZCode 的基础设计与 education 下的教学产品规则。                  |
+| [third-party/](third-party/README.md) | 第三方源码、资源、清单和许可证；保留原版权和资产字节。                                |
+
+### 文件
+
+| 文件                                                                                      | 简要说明                                                                                                |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| [.architecture-baseline.json](.architecture-baseline.json)                                | .architecture-baseline 的数据或配置定义。                                                               |
+| [.dockerignore](.dockerignore)                                                            | .dockerignore 模块的资源或工程文件。                                                                    |
+| [.env.development](.env.development)                                                      | .env 模块的资源或工程文件。                                                                             |
+| [.env.e2e.local.example](.env.e2e.local.example)                                          | .env.e2e.local 模块的资源或工程文件。                                                                   |
+| [.env.example](.env.example)                                                              | .env 模块的资源或工程文件。                                                                             |
+| [.env.production](.env.production)                                                        | .env 模块的资源或工程文件。                                                                             |
+| [.gitattributes](.gitattributes)                                                          | 文件换行、二进制资产与 Git 属性规则。                                                                   |
+| [.gitignore](.gitignore)                                                                  | 不进入 Git 的依赖、缓存、凭据和运行产物规则。                                                           |
+| [.npmrc](.npmrc)                                                                          | pnpm/npm 安装源与工作区链接方式。                                                                       |
+| [.nvmrc](.nvmrc)                                                                          | .nvmrc 模块的资源或工程文件。                                                                           |
+| [.oxfmtrc.json](.oxfmtrc.json)                                                            | .oxfmtrc 的数据或配置定义。                                                                             |
+| [.oxlintrc.json](.oxlintrc.json)                                                          | .oxlintrc 的数据或配置定义。                                                                            |
+| [.prettierignore](.prettierignore)                                                        | .prettierignore 模块的资源或工程文件。                                                                  |
+| [.release-it.mjs](.release-it.mjs)                                                        | .release-it 的实现文件。                                                                                |
+| [AGENTS.md](AGENTS.md)                                                                    | 本目录的开发规范、模块边界与验证要求。                                                                  |
+| [architecture-policy.yaml](architecture-policy.yaml)                                      | 模块所有者、层级、依赖方向与架构检查策略。                                                              |
+| [CONTEXT.md](CONTEXT.md)                                                                  | ZCode 插件商店（Plugin Store）：说明文档。                                                              |
+| [dependency-graph.mmd](dependency-graph.mmd)                                              | dependency-graph 模块的资源或工程文件。                                                                 |
+| [DESIGN.md](DESIGN.md)                                                                    | ZCode Design System：说明文档。                                                                         |
+| [Dockerfile.desktop-e2e](Dockerfile.desktop-e2e)                                          | Dockerfile 模块的资源或工程文件。                                                                       |
+| [knip.json](knip.json)                                                                    | knip 的数据或配置定义。                                                                                 |
+| [LICENSE](LICENSE)                                                                        | 代码许可原文。                                                                                          |
+| [mise.toml](mise.toml)                                                                    | mise 的数据或配置定义。                                                                                 |
+| [NOTICE](NOTICE)                                                                          | 来源与版权声明。                                                                                        |
+| [NOTICE.md](NOTICE.md)                                                                    | 来源与版权声明。                                                                                        |
+| [package-lock.json](package-lock.json)                                                    | ZCode 基础工程保留的 npm 依赖锁文件。                                                                   |
+| [package.json](package.json)                                                              | zcode 的包信息、依赖和开发命令。                                                                        |
+| [pnpm-lock.yaml](pnpm-lock.yaml)                                                          | pnpm 锁定的依赖版本和完整性信息。                                                                       |
+| [pnpm-workspace.yaml](pnpm-workspace.yaml)                                                | 工作区包、平台依赖与构建许可配置。                                                                      |
+| [README.en.md](README.en.md)                                                              | QingQi for Edu：说明文档。                                                                              |
+| [README.md](README.md)                                                                    | 本目录用途、子目录与逐文件说明。                                                                        |
+| [skills-lock.json](skills-lock.json)                                                      | skills-lock 的数据或配置定义。                                                                          |
+| [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)                                          | 第三方依赖和资源的版权与许可声明。                                                                      |
+| [tsconfig.base.json](tsconfig.base.json)                                                  | 工作区 TypeScript 公共编译配置。                                                                        |
+| [UI_PLUGIN.en.md](UI_PLUGIN.en.md)                                                        | UI Plugin: Capabilities, Development, Debugging, and Examples：说明文档。                               |
+| [UI_PLUGIN.md](UI_PLUGIN.md)                                                              | UI Plugin：能力、开发调试与示例：说明文档。                                                             |
+| [vitest.config.ts](vitest.config.ts)                                                      | 测试固定注入事件上报端点，使遥测上报链路在单测中可验证；真实构建由 scripts/build-time-config.mjs 决定。 |
+| [vitest.setup.ts](vitest.setup.ts)                                                        | Bugfix: Git Bash 会把 /usr/bin（GNU tar 1.35）注入 PATH 最前，子进程 spawn "tar"                        |
+| [停止Flash教学.cmd](%E5%81%9C%E6%AD%A2Flash%E6%95%99%E5%AD%A6.cmd)                        | 停止Flash教学 模块的资源或工程文件。                                                                    |
+| [停止教育工作台.cmd](%E5%81%9C%E6%AD%A2%E6%95%99%E8%82%B2%E5%B7%A5%E4%BD%9C%E5%8F%B0.cmd) | 停止教育工作台 模块的资源或工程文件。                                                                   |
+| [打开Flash教学.cmd](%E6%89%93%E5%BC%80Flash%E6%95%99%E5%AD%A6.cmd)                        | 打开Flash教学 模块的资源或工程文件。                                                                    |
+| [打开教育工作台.cmd](%E6%89%93%E5%BC%80%E6%95%99%E8%82%B2%E5%B7%A5%E4%BD%9C%E5%8F%B0.cmd) | 打开教育工作台 模块的资源或工程文件。                                                                   |
+
+<!-- qingqi-directory-index:end -->

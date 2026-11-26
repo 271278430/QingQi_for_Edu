@@ -24,3 +24,21 @@ node apps/zcode-cli/e2e/file-tools-atomic-write/run.mjs
 ```
 
 Windows 会返回 skipped，因为此 case 验证的是 POSIX `0755` mode 语义。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-file-tools-atomic-write-e2e 基础工程中的 file tools atomic write 模块文件。
+
+### 文件
+
+| 文件                         | 简要说明                                                     |
+| ---------------------------- | ------------------------------------------------------------ |
+| [package.json](package.json) | zcode-file-tools-atomic-write-e2e 的包信息、依赖和开发命令。 |
+| [README.md](README.md)       | 本目录用途、子目录与逐文件说明。                             |
+| [run.mjs](run.mjs)           | run 的实现文件。                                             |
+
+<!-- qingqi-directory-index:end -->

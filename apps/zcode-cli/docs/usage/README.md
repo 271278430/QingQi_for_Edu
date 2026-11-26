@@ -31,3 +31,32 @@
 源码构建需要本仓库的 workspace 依赖和运行资源。不要只复制 `zcode.cjs` 就假设插件、模型配置和原生工具资源齐全。Computer Use 在开源导出中使用占位实现，不能据此宣称开源构建具备完整的原生桌面控制能力。Browser Use 是独立能力，仍需可用的 Chrome/Chromium 和对应插件。
 
 示例中的服务地址、API Key、模型 ID 和绝对路径必须换成自己的值。示例不会提供可用凭据。通用模型接口配置与账号登录是不同入口，应按实际使用的 provider 选择。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 usage 设计与维护文档。
+
+### 文件
+
+| 文件                                           | 简要说明                             |
+| ---------------------------------------------- | ------------------------------------ |
+| [01-quickstart.md](01-quickstart.md)           | 01 · 快速开始：说明文档。            |
+| [02-cli-reference.md](02-cli-reference.md)     | 02 · 命令行参考：说明文档。          |
+| [03-config.md](03-config.md)                   | 03 · 配置：说明文档。                |
+| [04-tools.md](04-tools.md)                     | 04 · 工具与评测配置：说明文档。      |
+| [05-permissions.md](05-permissions.md)         | 05 · 权限：说明文档。                |
+| [06-sessions.md](06-sessions.md)               | 06 · 会话：说明文档。                |
+| [07-mcp.md](07-mcp.md)                         | 07 · MCP：说明文档。                 |
+| [08-skills.md](08-skills.md)                   | 08 · Skills 与自定义命令：说明文档。 |
+| [09-hooks.md](09-hooks.md)                     | 09 · Hooks：说明文档。               |
+| [10-plugins.md](10-plugins.md)                 | 10 · Plugins：说明文档。             |
+| [11-memory.md](11-memory.md)                   | 11 · 指令与记忆：说明文档。          |
+| [12-troubleshooting.md](12-troubleshooting.md) | 12 · 排障：说明文档。                |
+| [13-automation.md](13-automation.md)           | 13 · 批量任务与运行记录：说明文档。  |
+| [README.md](README.md)                         | 本目录用途、子目录与逐文件说明。     |
+
+<!-- qingqi-directory-index:end -->

@@ -1,0 +1,23 @@
+# ripgrep-v14.1.1-1
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 ripgrep v14.1.1 1 模块文件。
+
+### 文件
+
+| 文件                                                                                                       | 简要说明                                                                |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [README.md](README.md)                                                                                     | 本目录用途、子目录与逐文件说明。                                        |
+| [ripgrep-v14.1.1-1-aarch64-apple-darwin.tar.gz](ripgrep-v14.1.1-1-aarch64-apple-darwin.tar.gz)             | ripgrep-v14.1.1-1-aarch64-apple-darwin.tar 模块的资源或工程文件。       |
+| [ripgrep-v14.1.1-1-aarch64-pc-windows-msvc.zip](ripgrep-v14.1.1-1-aarch64-pc-windows-msvc.zip)             | ripgrep-v14.1.1-1-aarch64-pc-windows-msvc 模块的资源或工程文件。        |
+| [ripgrep-v14.1.1-1-aarch64-unknown-linux-musl.tar.gz](ripgrep-v14.1.1-1-aarch64-unknown-linux-musl.tar.gz) | ripgrep-v14.1.1-1-aarch64-unknown-linux-musl.tar 模块的资源或工程文件。 |
+| [ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz](ripgrep-v14.1.1-1-x86_64-apple-darwin.tar.gz)               | ripgrep-v14.1.1-1-x86_64-apple-darwin.tar 模块的资源或工程文件。        |
+| [ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip](ripgrep-v14.1.1-1-x86_64-pc-windows-msvc.zip)               | ripgrep-v14.1.1-1-x86_64-pc-windows-msvc 模块的资源或工程文件。         |
+| [ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz](ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar.gz)   | ripgrep-v14.1.1-1-x86_64-unknown-linux-musl.tar 模块的资源或工程文件。  |
+
+<!-- qingqi-directory-index:end -->

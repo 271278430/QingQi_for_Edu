@@ -310,3 +310,22 @@ ZCode v2 的基本原则：
 - Rewind 能力必须基于 active chain 和 checkpoint metadata 明确声明范围。
 - Compact 失败默认向上冒泡到有能力处理的层；只有可恢复、可重试或可降级时才捕获。
 - 所有 compact 子任务都必须继承同一个 `traceId`。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+zcode-cli 基础工程中的 compact 设计与维护文档。
+
+### 文件
+
+| 文件                                                         | 简要说明                                   |
+| ------------------------------------------------------------ | ------------------------------------------ |
+| [compact-phase-memory-plan.md](compact-phase-memory-plan.md) | Compact 阶段与 Memory 改造计划：说明文档。 |
+| [e2e.md](e2e.md)                                             | Compact E2E Harness：说明文档。            |
+| [plan.md](plan.md)                                           | ZCode CLI Compact 实施规划 v2：说明文档。  |
+| [README.md](README.md)                                       | 本目录用途、子目录与逐文件说明。           |
+
+<!-- qingqi-directory-index:end -->

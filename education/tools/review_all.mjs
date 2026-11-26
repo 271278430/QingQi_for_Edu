@@ -40,7 +40,11 @@ async function worker() {
         return resolve({ code: -1, log: "QINGQI_PYTHON is required" });
       const child = spawn(
         executable,
-        [fileURLToPath(new URL(suite.script, import.meta.url))],
+        [
+          fileURLToPath(
+            new URL(suite.script, new URL("../tests/", import.meta.url)),
+          ),
+        ],
         {
           windowsHide: true,
           stdio: ["ignore", "pipe", "pipe"],

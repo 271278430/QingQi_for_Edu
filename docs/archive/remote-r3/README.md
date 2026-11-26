@@ -29,15 +29,49 @@
 `git show <commit>:<path>` 读取；历史章节和行号均以该快照为准。此提交是文档快照，
 不是这些实跑共同的产品基线。读取需要包含该提交的原始仓库历史；浅克隆或导出副本缺少对象时，应明确报告证据不可用，不能据入口推定验证通过。旧评审的未决项以当前问题台账逐项核对，不因压缩正文关闭。
 
-| 证据 | 必须保留的解释边界 |
-| --- | --- |
-| 2026-08-20/21 SSH 实跑 | 基线并非当前分支祖先，不能证明当前 HEAD；R3-ISSUE-020 仍待验证。原始环境、artifact 路径、通过与阻塞项在对应快照。 |
-| 2026-09-08 首批验证 | 产品基线 `2af3a51991`；原三项 SSH E2E 为 0/3，后续代表通过不等于整套通过。原 artifact 根为 `packages/desktop/.e2e-artifacts/r3-20260907-155200/`。 |
-| 环境准备度 / 早期全量 | 连接、登录、配对探针只能证明前置；历史 FAIL、BLOCKED 与清理记录保留在原快照，不转换为当前 PASS。 |
-| Provider 合并决策 | 采用本地编辑、自动 Provisioning；当前合同见 [Provider Provisioning](../../remote/provider-provisioning.md)，遗留项见主规格 §15。 |
-| 旧发布计划和审查 | 用例稳定 ID 由 case 目录承接；执行要求见当前测试方案。历史评论不是新增实施授权。 |
+| 证据                   | 必须保留的解释边界                                                                                                                                 |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-20/21 SSH 实跑 | 基线并非当前分支祖先，不能证明当前 HEAD；R3-ISSUE-020 仍待验证。原始环境、artifact 路径、通过与阻塞项在对应快照。                                  |
+| 2026-09-08 首批验证    | 产品基线 `2af3a51991`；原三项 SSH E2E 为 0/3，后续代表通过不等于整套通过。原 artifact 根为 `packages/desktop/.e2e-artifacts/r3-20260907-155200/`。 |
+| 环境准备度 / 早期全量  | 连接、登录、配对探针只能证明前置；历史 FAIL、BLOCKED 与清理记录保留在原快照，不转换为当前 PASS。                                                   |
+| Provider 合并决策      | 采用本地编辑、自动 Provisioning；当前合同见 [Provider Provisioning](../../remote/provider-provisioning.md)，遗留项见主规格 §15。                   |
+| 旧发布计划和审查       | 用例稳定 ID 由 case 目录承接；执行要求见当前测试方案。历史评论不是新增实施授权。                                                                   |
 
 当前验证入口为[测试方案](../../testing/r3-remote-automation-plan.md)、
 [9 月 10 日历史重跑](../../testing/r3-remote-full-rerun-2026-09-10.md)和
 [10 月桌面 SSH 指南回归](../../testing/desktop-ssh-guide-regression.md)。各报告独立保留基线、范围与未验证项；
 不同基线的 PASS 不相加为当前全量通过。原始日志、录像不在本次整理中移动或删除。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+remote r3 设计与维护文档，属于 docs 目录。
+
+### 文件
+
+| 文件                                                                                                                                             | 简要说明                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| [r3-controller-remote-row-migration-inventory.md](r3-controller-remote-row-migration-inventory.md)                                               | R3 控制端旧 remote 行逐表盘点：说明文档。                                                  |
+| [r3-provider-refactor-merge.md](r3-provider-refactor-merge.md)                                                                                   | R3 × Provider 重构合并记录（2026-09-07）：说明文档。                                       |
+| [r3-remote-automation-live-run-2026-09-08.md](r3-remote-automation-live-run-2026-09-08.md)                                                       | R3 首批实际验证记录（2026-09-08）：说明文档。                                              |
+| [r3-remote-automation-readiness-2026-09-07.md](r3-remote-automation-readiness-2026-09-07.md)                                                     | R3 远程自动化材料与准备记录（2026-09-07）：说明文档。                                      |
+| [r3-remote-environment-readiness-2026-09-08.md](r3-remote-environment-readiness-2026-09-08.md)                                                   | R3 远程测试环境验证（2026-09-08）：说明文档。                                              |
+| [r3-remote-full-validation-2026-09-08.md](r3-remote-full-validation-2026-09-08.md)                                                               | R3 92项完整实际验证执行记录：说明文档。                                                    |
+| [r3-remote-ui-implementation.md](r3-remote-ui-implementation.md)                                                                                 | R3 远程 UI 实施记录：说明文档。                                                            |
+| [r3-remote-ui-prototype-gap-audit-review.md](r3-remote-ui-prototype-gap-audit-review.md)                                                         | R3 远程 UI 原型差异修复文档审核记录：说明文档。                                            |
+| [r3-remote-ui-prototype-gap-audit.md](r3-remote-ui-prototype-gap-audit.md)                                                                       | R3 远程 UI 原型还原度全量差异审查（2026-08-22）：说明文档。                                |
+| [r3-source-server-expanded-live-test-record-2026-08-21.md](r3-source-server-expanded-live-test-record-2026-08-21.md)                             | R3 Source Server 扩展实机测试记录（2026-08-21）：说明文档。                                |
+| [r3-source-server-release-test-plan.md](r3-source-server-release-test-plan.md)                                                                   | R3 Source Server 发布测试方案：说明文档。                                                  |
+| [r3-source-server-remote-completion-plan.md](r3-source-server-remote-completion-plan.md)                                                         | R3 Source Server 收尾工作计划：说明文档。                                                  |
+| [r3-source-server-remote-completion-review.md](r3-source-server-remote-completion-review.md)                                                     | R3 收尾实现审查报告（提交 1193e16ee4..d5fdd719da）：说明文档。                             |
+| [r3-source-server-remote-impact-brief.md](r3-source-server-remote-impact-brief.md)                                                               | R3 Source Server 远程主链 Impact Brief：说明文档。                                         |
+| [r3-source-server-remote-implementation-review.md](r3-source-server-remote-implementation-review.md)                                             | R3 实现审查报告（commit e3896b60e4）：说明文档。                                           |
+| [r3-source-server-ssh-live-test-record-2026-08-20.md](r3-source-server-ssh-live-test-record-2026-08-20.md)                                       | R3 Source Server SSH 实机测试记录（2026-08-20）：说明文档。                                |
+| [README.md](README.md)                                                                                                                           | 本目录用途、子目录与逐文件说明。                                                           |
+| [remote-domain-simplification-and-conversation-workspace-spec-review.md](remote-domain-simplification-and-conversation-workspace-spec-review.md) | Review：Remote Domain Simplification and Non-Project Conversation 规格审查报告：说明文档。 |
+| [ssh-project-entry-helper.md](ssh-project-entry-helper.md)                                                                                       | SSH 项目入口的 E2E 编排：说明文档。                                                        |
+
+<!-- qingqi-directory-index:end -->

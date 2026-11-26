@@ -41,3 +41,30 @@ CLI 包内，分别描述本地 SQLite 事实源和本地调试设施。它们�
    对应专题参考；完整字段字典必须随代码变更同步维护。
 3. 阶段性评审和迁移方案完成后移入 `archive/`，不在主目录保留多个版本。
 4. 代码、测试、ARMS 查询和 Dashboard 不得依赖归档文档。
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+trace 设计与维护文档，属于 docs 目录。
+
+### 子目录
+
+| 目录                              | 存放内容                                   |
+| --------------------------------- | ------------------------------------------ |
+| [archive/](archive/README.md)     | archive 设计与维护文档，属于 docs 目录。   |
+| [reference/](reference/README.md) | reference 设计与维护文档，属于 docs 目录。 |
+
+### 文件
+
+| 文件                                                                           | 简要说明                                       |
+| ------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [chat-error-banner-attribution.md](chat-error-banner-attribution.md)           | Chat Error Banner ARMS 结构化归因：说明文档。  |
+| [cli-agent-telemetry.md](cli-agent-telemetry.md)                               | CLI Agent Telemetry 设计与开发规范：说明文档。 |
+| [desktop-renderer-user-action-trace.md](desktop-renderer-user-action-trace.md) | Desktop Renderer 用户操作 Trace：说明文档。    |
+| [model-attempt-error-diagnostics.md](model-attempt-error-diagnostics.md)       | Model attempt 错误诊断字段：说明文档。         |
+| [README.md](README.md)                                                         | 本目录用途、子目录与逐文件说明。               |
+
+<!-- qingqi-directory-index:end -->

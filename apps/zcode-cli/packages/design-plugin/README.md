@@ -34,8 +34,8 @@ When a pptx is needed, design hands it to the presentations plugin.
 
 ## Components
 
-| Component | Type  | Purpose                                                                         |
-| --------- | ----- | ------------------------------------------------------------------------------- |
+| Component | Type  | Purpose                                                                                    |
+| --------- | ----- | ------------------------------------------------------------------------------------------ |
 | `design`  | Skill | Design workflow entry: intake, new designs and redesigns, exploration, review and delivery |
 
 ## Network, files and side effects
@@ -56,3 +56,31 @@ The plugin code is released under Apache-2.0. The design resources include third
 - The HTML deck template series, MIT (`LICENSE` in each skeleton folder and `design-resources/LICENSE-html-ppt`).
 - Some sub-skills carry their own licenses, such as Apache-2.0; see each sub-skill folder.
 - Design systems use third-party brands as style references and imply no affiliation; see `design-resources/design-systems/BRAND-DISCLAIMER.md`.
+
+<!-- qingqi-directory-index:start -->
+
+## 目录与文件
+
+清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。
+
+@zcode/design-plugin 基础工程中的 design plugin 模块文件。
+
+### 子目录
+
+| 目录                                        | 存放内容                                                     |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| [.claude-plugin/](.claude-plugin/README.md) | @zcode/design-plugin 基础工程中的 .claude plugin 模块文件。  |
+| [.zcode-plugin/](.zcode-plugin/README.md)   | @zcode/design-plugin 基础工程中的 .zcode plugin 模块文件。   |
+| [hooks/](hooks/README.md)                   | @zcode/design-plugin 基础工程中的 hooks 生命周期与操作入口。 |
+| [skills/](skills/README.md)                 | @zcode/design-plugin 基础工程中的 skills 技能指导和资源。    |
+| [test/](test/README.md)                     | @zcode/design-plugin 基础工程中的 test 测试场景。            |
+
+### 文件
+
+| 文件                         | 简要说明                                        |
+| ---------------------------- | ----------------------------------------------- |
+| [package.json](package.json) | @zcode/design-plugin 的包信息、依赖和开发命令。 |
+| [README.md](README.md)       | 本目录用途、子目录与逐文件说明。                |
+| [README_CN.md](README_CN.md) | 设计：说明文档。                                |
+
+<!-- qingqi-directory-index:end -->
