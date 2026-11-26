@@ -1,0 +1,51 @@
+{
+  "turn_seconds": 240,
+  "lease_seconds": 260,
+  "models": {
+    "vision": {
+      "enabled": false,
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model": "glm-5.3-flash",
+      "key_env": "EDU_GLM_API_KEY",
+      "protocol": "openai",
+      "allowed_hosts": ["open.bigmodel.cn"],
+      "timeout": 90,
+      "max_tokens": 4096,
+      "reasoning_effort": "high",
+      "json_mode": true
+    },
+    "glm": {
+      "enabled": false,
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model": "glm-5.3",
+      "key_env": "EDU_GLM_API_KEY",
+      "protocol": "openai",
+      "allowed_hosts": ["open.bigmodel.cn"],
+      "timeout": 90,
+      "max_tokens": 4096,
+      "reasoning_effort": "high",
+      "json_mode": true
+    },
+    "course8b": {
+      "enabled": false,
+      "base_url": "http://127.0.0.1:18008/v1",
+      "model": "CONFIGURE_COURSE_CHECKPOINT",
+      "key_env": "EDU_WORKER_KEY",
+      "allowed_hosts": ["127.0.0.1"]
+    },
+    "difficulty8b": {
+      "enabled": false,
+      "base_url": "http://127.0.0.1:18009/v1",
+      "model": "CONFIGURE_OLD_COURSE_CHECKPOINT_PLUS_TEACHING_LORA",
+      "key_env": "EDU_WORKER_KEY",
+      "allowed_hosts": ["127.0.0.1"]
+    },
+    "review27b": {
+      "enabled": false,
+      "base_url": "http://127.0.0.1:18027/v1",
+      "model": "CONFIGURE_QWEN35_27B_REVIEW_LORA",
+      "key_env": "EDU_WORKER_KEY",
+      "allowed_hosts": ["127.0.0.1"]
+    }
+  }
+}

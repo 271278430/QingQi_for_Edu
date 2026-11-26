@@ -1,0 +1,13 @@
+{
+  "id": "learning-difficulty",
+  "version": "1.0.0",
+  "intents": [
+    "diagnosis"
+  ],
+  "tools": [
+    "difficulty_candidates"
+  ],
+  "optional_tools": [
+    "worker_difficulty8b"
+  ]
+}

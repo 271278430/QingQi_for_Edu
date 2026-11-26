@@ -1,0 +1,1 @@
+{"id":"visual-teaching","version":"1.0.0","intents":["tutor","review"],"tools":["render_teaching_visual"],"optional_tools":[]}

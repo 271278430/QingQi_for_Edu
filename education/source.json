@@ -1,0 +1,47 @@
+{
+  "upstream": {
+    "repository": "https://github.com/zai-org/ZCode",
+    "commit": "fec975905a2abd4c07e35c40d51fa097a2258ec9",
+    "version": "3.18.2",
+    "license": "Apache-2.0"
+  },
+  "education": {
+    "product": "清启 · ZCode Education",
+    "design": "Student mathematics tutoring with owned problem context, verified tools and evidence-driven learning",
+    "core_source": "Education Python service adapted from QingQi experiments and versioned in this repository",
+    "state_owner": "qingqi.product + Agent/Store",
+    "web_component": "@qingqi/education-web",
+    "interaction": "Web only; education CLI/plugin/external MCP retired",
+    "product_features": [
+      "personalized tutoring",
+      "learning path",
+      "learning dashboard",
+      "personalized practice"
+    ],
+    "practice_scope": "Current local math_student index: 3097 math graph nodes, 71 initialized profile topics; 189 eligible source items + 96 labeled rule variants = 285 candidates, 268 student-ready grade-7 items. Counts are snapshot statistics, not calibrated mastery or complete textbook coverage.",
+    "runtime_adapter": "education/runtime; public @zcode/core, @zcode/adapters/mcp, @zcode/adapters/skills, @zcode/core/memory",
+    "reuse_boundary": "Tool execution/scheduling, skill/MCP adapters, controlled foreground subagent lifecycle and recall filtering; Python owns education state; full AgentRuntime and automatic extraction/dream are not integrated",
+    "initial_seed_scope": "Historical numeric_seed_v1 acceptance fixture: 5 math topics and 45 seed items; not the current production dataset.",
+    "model_adaptation": "Direct reuse of ZCode ModelProviderSectionLayout, ProviderCardHeader/ConnectionSection/ApiKeySection, ModelRowInput, ProviderModelMetadataDialog and draft validators through the public UI export; Store owns provider connections, nested models and concrete role selections.",
+    "model_state_owner": "Same Store SQLite; per-deployment-scope versioned provider/role settings; encrypted local credentials; frozen per-turn JSONModel clients",
+    "architecture": "source_architecture_v11; one system relationship diagram, explicit decide-call-observe cycle, sixteen source-bound module scopes"
+  },
+  "curriculum": {
+    "file": "service/data/curriculum.sqlite",
+    "bytes": 31051776,
+    "sha256": "95ca669f24d755c7089d5e46bc081d3d3f7bd462ca1fbe0aacecf8a56a29a32c",
+    "nodes": 35467,
+    "edges": 33809,
+    "prerequisite_candidates": 74,
+    "prerequisite_status": "title aligned candidates, not expert confirmed",
+    "distribution": "Local data, not uploaded or committed",
+    "scope": "Legacy all-subject curriculum import snapshot; not the current 3097-node student math graph."
+  },
+  "models": {
+    "glm": "Configurable text tutor; high reasoning by default, low selectable in composer",
+    "course8b": "expanded full SFT checkpoint",
+    "difficulty8b": "selected original full SFT base plus teaching LoRA, no rebased substitution",
+    "review27b": "Qwen3.5-27B plus expanded review LoRA, original step IDs converted and independently checked",
+    "selection": "User-configurable text/vision split or shared multimodal model; original 8B/27B specialist deployments retained"
+  }
+}

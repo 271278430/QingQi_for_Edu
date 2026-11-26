@@ -1,0 +1,38 @@
+[
+  {
+    "id": "curriculum-navigation",
+    "intents": [
+      "course"
+    ],
+    "sha256": "e3ebbeb17c472e18a73e692355aeac492ffcf55e8f06d8ddf882adc69a808c37"
+  },
+  {
+    "id": "work-review",
+    "intents": [
+      "review"
+    ],
+    "sha256": "12d36afcf4d5f9a87bf0a40a8986a042765e3b16b21c1626182ac2a941eb8d52"
+  },
+  {
+    "id": "learning-difficulty",
+    "intents": [
+      "diagnosis"
+    ],
+    "sha256": "3c8b197256d27cd028c742015d65b2564e772b8b1822fab492d020c6d6651b50"
+  },
+  {
+    "id": "socratic-tutoring",
+    "intents": [
+      "tutor"
+    ],
+    "sha256": "98ef9c6ff7412d3c0fab145c52e328f2c4367fc87097a28d99962d9a3f20cef4"
+  },
+  {
+    "id": "visual-teaching",
+    "intents": [
+      "tutor",
+      "review"
+    ],
+    "sha256": "429abc2cddc2fd5483b8822b963541df353dba4257a46e7e06cb87c490dbdf86"
+  }
+]

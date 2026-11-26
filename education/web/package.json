@@ -1,0 +1,31 @@
+{
+  "name": "@qingqi/education-web",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 18773",
+    "build": "tsc -b ../../packages/ui && tsc --noEmit && vite build",
+    "typecheck": "tsc -b ../../packages/ui && tsc --noEmit"
+  },
+  "dependencies": {
+    "@qingqi/education-client": "workspace:*",
+    "@zcode/ui": "workspace:*",
+    "lucide-react": "^1.17.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.2"
+  }
+}

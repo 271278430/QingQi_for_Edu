@@ -1,0 +1,13 @@
+# ZCode模型设置源码复用与统一架构 v8
+
+模型设置采用ZCode原有供应商/模型分层。直接通过公共出口使用ModelProviderSectionLayout、ProviderCardHeader、ProviderConnectionSection、ProviderApiKeySection、ModelRowInput、ProviderModelMetadataDialog及useProviderModelDraft。连接拥有协议、地址、凭据；连接下的多个模型分别拥有ID、输入能力、上下文、输出预算与启停。文本/视觉角色选择具体模型。
+
+Store/model_settings仍为唯一配置owner。旧单型号连接在读取时投影为main模型，旧选择ID保持有效。多型号使用稳定模型key，切换/编辑须保留版本、幂等、在途快照、密钥加密和旧请求model_changed语义。共享连接凭据不复制为每模型密钥。GET兼容原providers列表，增加connections与嵌套models投影；实现从同一owner解析具体Endpoint。
+
+教育端仅开放真实支持的文字/图片、上下文与输出预算、JSON约束和工具能力。ZCode编辑器增加可选展示参数，现有编码产品默认行为不变。配置的token预算和能力进入真实模型调用。供应商UI使用已有Intl和公共服务命令，保留未提交草稿。
+
+文本导师与图片理解模型均有可见标签；供应商导航的选中项与详情保持一致。模型改名时，ZCode草稿中的undefined表示未定义，不覆盖已有能力；显式false仍须持久保存。未知保存结果恢复原命令，迟到的GET不得覆盖较新版本。
+
+所有总图与16内部图重新生成。系统结构、请求时序、四功能业务流程分别表达对应关系。记忆是Store上的读写逻辑；工具与模型是Loop调用的能力，图示产物随回复提交。学习路径/学情/推荐直接从Store事件派生，练习提示才进入Agent Loop。权限先于业务准入，模型设置管理流程与每轮推理分别有入口。总图与子图共用声明的模块职责、步骤和源码绑定，所有箭头明确调用、读取或提交。
+
+验收通过正常Web入口完成供应商/多模型增删改、ZCode原编辑器、密钥保留与错误、文本/视觉选择、图片传递、版本/并发/旧数据兼容。逐图检查方向、文字、箭头与源码一致。运行既有四功能、模型协议、CLI/HTTP/浏览器、typecheck、lint/Hooks、构建和正式两入口检查。

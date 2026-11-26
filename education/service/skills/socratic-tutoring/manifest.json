@@ -1,0 +1,9 @@
+{
+  "id": "socratic-tutoring",
+  "version": "1.0.0",
+  "intents": [
+    "tutor"
+  ],
+  "tools": [],
+  "optional_tools": ["solve_geometry", "analyze_function"]
+}

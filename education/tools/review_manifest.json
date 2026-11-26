@@ -1,0 +1,238 @@
+{
+  "version": "education_release_review_v1",
+  "scope": "current education product; isolated controlled endpoints, no live student writes",
+  "suites": [
+    {
+      "script": "contextual_teaching_acceptance.py",
+      "domain": "contextual teaching modes and one goal-selected picture or animation"
+    },
+    {
+      "script": "contextual_teaching_browser.mjs",
+      "domain": "one picture or animation per reply, real playback, refresh and mobile annotation"
+    },
+    {
+      "script": "composer_models_acceptance.py",
+      "domain": "session model choices, high/low HTTP fields and ZCode CEL mapping"
+    },
+    {
+      "script": "composer_models_browser.mjs",
+      "domain": "ZCode composer menus, frozen submission and mobile selection"
+    },
+    {
+      "script": "runtime_reuse_acceptance.py",
+      "domain": "ZCode runtime, tools, MCP, Skills, memory and specialists"
+    },
+    {
+      "script": "four_feature_acceptance.py",
+      "domain": "four student features and verified learning events"
+    },
+    {
+      "script": "student_data_acceptance.py",
+      "domain": "math graph, question bank and initialization"
+    },
+    {
+      "script": "learning_evidence_acceptance.py",
+      "domain": "mastery evidence, independent work and review intervals"
+    },
+    {
+      "script": "adaptive_learning_acceptance.py",
+      "domain": "dynamic path and diverse recommendations"
+    },
+    {
+      "script": "route_quality_acceptance.py",
+      "domain": "intent routing and pedagogical policy"
+    },
+    {
+      "script": "grounded_hint_acceptance.py",
+      "domain": "problem-bound hints and student attribution"
+    },
+    {
+      "script": "history_tutor_acceptance.py",
+      "domain": "owned historical problems and conversation continuity"
+    },
+    {
+      "script": "multimodal_acceptance.py",
+      "domain": "image upload, ownership and recognition"
+    },
+    {
+      "script": "vision_schema_acceptance.py",
+      "domain": "multimodal protocol and malformed model output"
+    },
+    {
+      "script": "scoped_stream_acceptance.py",
+      "domain": "per-part permissions and genuine provider deltas"
+    },
+    {
+      "script": "concept_definition_acceptance.py",
+      "domain": "concept explanation and default Socratic teaching"
+    },
+    {
+      "script": "conversation_problem_acceptance.py",
+      "domain": "persistent problem and follow-up references"
+    },
+    {
+      "script": "conversation_function_acceptance.py",
+      "domain": "source-bound function teaching"
+    },
+    {
+      "script": "precise_math_acceptance.py",
+      "domain": "exact fractions, radicals and display"
+    },
+    {
+      "script": "problem_reasoning_acceptance.py",
+      "domain": "solution steps and useful teaching animations"
+    },
+    {
+      "script": "geometry_grounding_acceptance.py",
+      "domain": "geometry conditions and no fabricated diagrams"
+    },
+    {
+      "script": "geometry_product_acceptance.py",
+      "domain": "geometry tools and instructional output"
+    },
+    {
+      "script": "combined_presentation_acceptance.py",
+      "domain": "static, animated and situational teaching intent"
+    },
+    {
+      "script": "story_context_acceptance.py",
+      "domain": "story scenes and current problem memory"
+    },
+    {
+      "script": "identity_animation_acceptance.py",
+      "domain": "identity teaching and disclosure permissions"
+    },
+    {
+      "script": "model_settings_acceptance.py",
+      "domain": "model adapters, encrypted settings and role selection"
+    },
+    {
+      "script": "model_settings_edge_acceptance.py",
+      "domain": "in-flight snapshots and recovery"
+    },
+    {
+      "script": "zcode_model_acceptance.py",
+      "domain": "multiple models under one provider connection"
+    },
+    {
+      "script": "provider_protocol_acceptance.py",
+      "domain": "OpenAI/Anthropic adapters"
+    },
+    {
+      "script": "model_stream_budget_acceptance.py",
+      "domain": "token and stream budgets"
+    },
+    {
+      "script": "system_management_acceptance.py",
+      "domain": "settings and administrative permissions"
+    },
+    {
+      "script": "history_clear_acceptance.py",
+      "domain": "history epoch, cleanup receipts and replay"
+    },
+    {
+      "script": "launcher_acceptance.py",
+      "domain": "reproducible start/stop"
+    },
+    {
+      "script": "system_review.py",
+      "domain": "independent numeric, routing and faulty-output probes"
+    },
+    {
+      "script": "source_reuse_acceptance.mjs",
+      "domain": "original ZCode UI, theme, Intl and inputs"
+    },
+    {
+      "script": "interaction_inventory_browser.mjs",
+      "domain": "all current student controls and failure recovery"
+    },
+    {
+      "script": "four_feature_browser.mjs",
+      "domain": "four feature workflows, three items and mobile"
+    },
+    {
+      "script": "multimodal_browser.mjs",
+      "domain": "multiple images, previews, retry and model transport"
+    },
+    {
+      "script": "history_tutor_browser.mjs",
+      "domain": "historical question selection"
+    },
+    {
+      "script": "grounded_hint_browser.mjs",
+      "domain": "practice hints and teaching continuity"
+    },
+    {
+      "script": "problem_reasoning_browser.mjs",
+      "domain": "curve/geometry playback, stepping and zoom"
+    },
+    {
+      "script": "scoped_stream_browser.mjs",
+      "domain": "visible stream and per-part tutoring"
+    },
+    {
+      "script": "browser_recovery_acceptance.mjs",
+      "domain": "timeout and recovery without duplicate grading"
+    },
+    {
+      "script": "model_settings_browser.mjs",
+      "domain": "original provider UI and settings races"
+    },
+    {
+      "script": "architecture_browser.mjs",
+      "domain": "one system relationship map, explicit agent cycle and module inspection"
+    },
+    {
+      "script": "solid_web_browser.mjs",
+      "domain": "surface cleanup, settings lifecycle and responsive navigation"
+    },
+    {
+      "script": "acceptance.py",
+      "domain": "core request, authority, tool and replay boundaries"
+    },
+    {
+      "script": "runtime_build_acceptance.mjs",
+      "domain": "native ZCode adapter contracts and build"
+    },
+    {
+      "script": "product_usability_acceptance.py",
+      "domain": "student-facing endpoints and secure practice binding"
+    },
+    {
+      "script": "student_data_browser.mjs",
+      "domain": "real imported math data across four pages"
+    },
+    {
+      "script": "product_usability_browser.mjs",
+      "domain": "history, evidence, goal selection and empty states"
+    },
+    {
+      "script": "visual_discussion_acceptance.py",
+      "domain": "symbolic readiness, precise coordinates and owned visual discussion"
+    },
+    {
+      "script": "visual_discussion_browser.mjs",
+      "domain": "annotation tools, PNG return and responsive discussion"
+    },
+    {
+      "script": "codex_stream_acceptance.py",
+      "domain": "Codex-style incremental text, terminal errors and preserved reasoning options"
+    },
+    {
+      "script": "codex_stream_browser.mjs",
+      "domain": "real partial stream, persisted incomplete replies and explicit restart"
+    },
+    {
+      "script": "demo_acceptance.py",
+      "domain": "fresh public demo with authored data and no credentials"
+    }
+  ],
+  "separate_checks": [
+    "root typecheck/lint/architecture",
+    "Web/runtime build",
+    "Web Hooks scan",
+    "saved real text/image/Socratic adapter probe",
+    "read-only deployed entries",
+    "protected configuration/data fingerprints"
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "scope": "Hand-authored audit cases, not a representative K12 benchmark; gold labels are never sent to models.",
+  "real_cases": [
+    {
+      "id": "N1",
+      "kind": "numeric",
+      "supported": true,
+      "input": {
+        "question": "请检查实际步骤，给我一条提示，先不要告诉我答案。",
+        "expression": "2+3*4",
+        "steps": [{ "equation": "2+3*4=20" }],
+        "mode": "socratic"
+      },
+      "gold": {
+        "status": "incorrect",
+        "first_error": 0,
+        "answer": "14",
+        "actions": ["ask"],
+        "withhold_answer": true
+      }
+    },
+    {
+      "id": "N2",
+      "kind": "numeric",
+      "supported": true,
+      "input": {
+        "question": "请核对我的作答是否正确。",
+        "expression": "2+2",
+        "steps": [{ "equation": "2+2=4" }],
+        "mode": "explain"
+      },
+      "gold": {
+        "status": "correct",
+        "first_error": -1,
+        "answer": "4",
+        "actions": ["confirm"]
+      }
+    },
+    {
+      "id": "N3",
+      "kind": "numeric",
+      "supported": true,
+      "input": {
+        "question": "请检查每个实际步骤并给一条提示。",
+        "expression": "2+3*4",
+        "steps": [{ "equation": "2+3*4=2+12" }, { "equation": "2+12=15" }],
+        "mode": "socratic"
+      },
+      "gold": {
+        "status": "incorrect",
+        "first_error": 1,
+        "answer": "14",
+        "actions": ["ask"],
+        "withhold_answer": true
+      }
+    },
+    {
+      "id": "N4",
+      "kind": "numeric",
+      "supported": true,
+      "input": {
+        "question": "请核对我的作答是否正确。",
+        "expression": "0.1+0.2",
+        "steps": [{ "equation": "0.1+0.2=0.3" }],
+        "mode": "explain"
+      },
+      "gold": {
+        "status": "correct",
+        "first_error": -1,
+        "answer": "3/10",
+        "actions": ["confirm"]
+      }
+    },
+    {
+      "id": "N5",
+      "kind": "numeric",
+      "supported": true,
+      "input": {
+        "question": "请核对我的作答是否正确。",
+        "expression": "1/2+1/3",
+        "steps": [{ "equation": "1/2+1/3=5/6" }],
+        "mode": "explain"
+      },
+      "gold": {
+        "status": "correct",
+        "first_error": -1,
+        "answer": "5/6",
+        "actions": ["confirm"]
+      }
+    },
+    {
+      "id": "N6",
+      "kind": "numeric",
+      "supported": true,
+      "input": {
+        "question": "请核对我的作答是否正确。",
+        "expression": "(-3)*(-2)",
+        "steps": [{ "equation": "(-3)*(-2)=6" }],
+        "mode": "explain"
+      },
+      "gold": {
+        "status": "correct",
+        "first_error": -1,
+        "answer": "6",
+        "actions": ["confirm"]
+      }
+    },
+    {
+      "id": "C1",
+      "kind": "course",
+      "supported": true,
+      "input": {
+        "question": "请核对教材里的课程关联，帮我找到三角形概念的章节依据。",
+        "course_query": "13.1 三角形的概念",
+        "subject": "数学"
+      },
+      "gold": {
+        "required_tools": [
+          "course_search",
+          "worker_course8b",
+          "course_context"
+        ],
+        "citations_required": true
+      }
+    },
+    {
+      "id": "C2",
+      "kind": "course_missing",
+      "supported": true,
+      "input": {
+        "question": "请查询这个知识点在教材中的章节。",
+        "course_query": "不存在的评测章节_ZXY987654",
+        "subject": "数学"
+      },
+      "gold": {
+        "required_tools": ["course_search"],
+        "forbidden_tools": ["course_context"],
+        "actions": ["clarify", "ask"]
+      }
+    },
+    {
+      "id": "D1",
+      "kind": "difficulty",
+      "supported": true,
+      "input": {
+        "question": "根据我的实际学习记录分析学习困难，先给我针对性的追问。",
+        "history": [
+          {
+            "kind": "self_report",
+            "text": "我总是先从左往右计算，没有分清先乘除后加减。"
+          }
+        ],
+        "mode": "socratic"
+      },
+      "gold": {
+        "required_tools": ["worker_difficulty8b"],
+        "actions": ["ask", "clarify"],
+        "note": "Candidate output and evidence binding only; no teacher gold label for classification accuracy."
+      }
+    },
+    {
+      "id": "B1",
+      "kind": "boundary",
+      "supported": false,
+      "input": {
+        "question": "请检查我的分项计算步骤。",
+        "expression": "2+3*4",
+        "steps": [{ "equation": "3*4=12" }, { "equation": "2+12=14" }],
+        "mode": "explain"
+      },
+      "gold": {
+        "human_work_correct": true,
+        "preferred_action": "confirm",
+        "note": "Natural subexpression steps fall outside the implemented whole-value-preserving contract."
+      }
+    },
+    {
+      "id": "B2",
+      "kind": "boundary",
+      "supported": false,
+      "input": {
+        "question": "请检查我的代数作答步骤。",
+        "expression": "2*x+1",
+        "steps": [{ "equation": "2*x+1=5" }],
+        "mode": "socratic"
+      },
+      "gold": {
+        "preferred_action": "clarify",
+        "note": "Algebra is outside the numeric contract; should abstain clearly."
+      }
+    },
+    {
+      "id": "B3",
+      "kind": "boundary",
+      "supported": false,
+      "input": {
+        "question": "请检查我的作答步骤。",
+        "expression": "1/0",
+        "steps": [{ "equation": "1/0=0" }],
+        "mode": "socratic"
+      },
+      "gold": {
+        "preferred_action": "clarify",
+        "note": "Undefined arithmetic should abstain clearly."
+      }
+    }
+  ]
+}

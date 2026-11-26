@@ -1,0 +1,13 @@
+{
+  "id": "work-review",
+  "version": "1.0.0",
+  "intents": [
+    "review"
+  ],
+  "tools": [
+    "review_arithmetic"
+  ],
+  "optional_tools": [
+    "worker_review27b"
+  ]
+}

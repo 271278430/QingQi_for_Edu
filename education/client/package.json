@@ -1,0 +1,8 @@
+{
+  "name": "@qingqi/education-client",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

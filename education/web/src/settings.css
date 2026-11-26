@@ -1,0 +1,189 @@
+.edu-settings {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.edu-architecture-figure {
+  min-width: 0;
+  overflow: auto;
+}
+.edu-architecture-figure svg {
+  max-width: 100%;
+  height: auto;
+}
+.edu-architecture-dialog {
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+.edu-panorama-toolbar {
+  margin-bottom: 12px;
+}
+.edu-panorama-viewport {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  max-height: 78dvh;
+}
+.edu-architecture-figure .edu-panorama-svg {
+  display: block;
+  max-width: none;
+  height: auto;
+}
+.edu-panorama-background {
+  fill: var(--color-background);
+}
+.edu-panorama-layer {
+  fill: color-mix(in srgb, var(--color-icon-blue) 3%, var(--color-background));
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+.edu-panorama-layer-name {
+  fill: var(--color-foreground-subtle);
+}
+.edu-panorama-node > rect {
+  fill: var(--color-card);
+  stroke: var(--color-border);
+  stroke-width: 1;
+  filter: drop-shadow(
+    0 2px 3px color-mix(in srgb, var(--color-foreground) 6%, transparent)
+  );
+}
+.edu-panorama-node-frame > rect {
+  fill: transparent;
+}
+.edu-panorama-icon {
+  color: var(--color-icon-blue);
+  fill: none;
+  stroke: currentColor;
+}
+.edu-panorama-label-background {
+  fill: var(--color-background);
+  stroke: var(--color-border);
+  stroke-width: 0.5;
+}
+.edu-panorama-node-loop > rect {
+  fill: var(--color-accent);
+  stroke: var(--color-icon-blue);
+  stroke-width: 2;
+}
+.edu-panorama-node-frame[data-architecture-module="loop"] > rect {
+  fill: var(--color-accent);
+  stroke: var(--color-icon-blue);
+  stroke-width: 2;
+}
+.edu-panorama-node-process > rect {
+  fill: color-mix(in srgb, var(--color-icon-blue) 4%, var(--color-card));
+  stroke: var(--color-icon-blue);
+  stroke-width: 1.6;
+}
+.edu-panorama-node-terminal > rect {
+  fill: color-mix(in srgb, var(--color-icon-blue) 7%, var(--color-card));
+  stroke: var(--color-icon-blue);
+  stroke-width: 1.6;
+}
+.edu-flow-step-badge {
+  fill: var(--color-icon-blue);
+}
+.edu-flow-step-number {
+  fill: var(--color-background);
+}
+.edu-panorama-node[data-architecture-module="permissions"] > rect {
+  stroke: var(--color-icon-purple);
+  stroke-width: 2;
+}
+.edu-panorama-node[data-architecture-module="memory"] > rect,
+.edu-panorama-node[data-architecture-module="persistence"] > rect {
+  fill: color-mix(in srgb, var(--color-icon-purple) 5%, var(--color-card));
+  stroke: var(--color-icon-purple);
+}
+.edu-panorama-node[data-architecture-module="tools"] > rect,
+.edu-panorama-node[data-architecture-module="models"] > rect {
+  fill: color-mix(in srgb, var(--color-icon-blue) 4%, var(--color-card));
+  stroke: var(--color-icon-blue);
+}
+.edu-panorama-node[data-architecture-module="data"] > rect {
+  fill: var(--color-background-alt);
+}
+.edu-panorama-node-step > rect {
+  fill: var(--color-card);
+  stroke: var(--color-icon-blue);
+}
+.edu-panorama-node-service > rect {
+  stroke-dasharray: 5 4;
+}
+.edu-panorama-node[role="button"] {
+  cursor: pointer;
+}
+.edu-panorama-node-step,
+.edu-panorama-node-rail,
+.edu-panorama-layer-name,
+[data-panorama-edge] {
+  pointer-events: none;
+}
+.edu-panorama-node[role="button"]:hover > rect,
+.edu-panorama-node[role="button"]:focus-visible > rect {
+  stroke: var(--color-brand);
+  stroke-width: 3;
+}
+.edu-panorama-name {
+  fill: var(--color-foreground);
+}
+.edu-panorama-description {
+  fill: var(--color-foreground-subtle);
+}
+.edu-panorama-line {
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.edu-panorama-line-call {
+  stroke: var(--color-icon-blue);
+}
+.edu-panorama-line-read {
+  stroke: var(--color-foreground-subtle);
+  stroke-dasharray: 6 5;
+}
+.edu-panorama-line-write {
+  stroke: var(--color-icon-purple);
+}
+.edu-panorama-line-constraint {
+  stroke: var(--color-foreground-subtle);
+  stroke-dasharray: 2 4;
+}
+.edu-panorama-arrow {
+  stroke: none;
+}
+.edu-panorama-arrow-call {
+  fill: var(--color-icon-blue);
+}
+.edu-panorama-arrow-read,
+.edu-panorama-arrow-constraint {
+  fill: var(--color-foreground-subtle);
+}
+.edu-panorama-arrow-write {
+  fill: var(--color-icon-purple);
+}
+.edu-panorama-bridge {
+  fill: none;
+  stroke: var(--color-background);
+  stroke-width: 6;
+}
+.edu-panorama-edge-label {
+  paint-order: stroke;
+  stroke: none;
+  stroke-linejoin: round;
+}
+.edu-panorama-label-call {
+  fill: var(--color-icon-blue);
+}
+.edu-panorama-label-read,
+.edu-panorama-label-constraint {
+  fill: var(--color-foreground-subtle);
+}
+.edu-panorama-label-write {
+  fill: var(--color-icon-purple);
+}

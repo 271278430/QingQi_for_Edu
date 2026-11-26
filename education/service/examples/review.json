@@ -1,0 +1,8 @@
+{
+  "request_id": "review-example-1",
+  "question": "请根据我的作答进行个性化辅导，给我一个提示。",
+  "mode": "socratic",
+  "expression": "2+3*4",
+  "steps": [{"equation": "2+3*4=20"}],
+  "history": [{"kind": "self_report", "text": "我总是先算加法，乘除顺序弄不清。"}]
+}

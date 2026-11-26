@@ -1,0 +1,11 @@
+QingQi for Edu is adapted from ZCode (https://github.com/zai-org/ZCode).
+
+ZCode source files, copyright headers, the Apache License 2.0, and third-party
+notices are retained. Education-specific additions and modifications are under
+education/ and specs/education/, with limited public exports and UI adaptations
+in the upstream packages. See education/source.json and education/docs/reuse.md
+for the source revision and reuse boundaries.
+
+The distributed demo questions and student profile are authored synthetic data.
+Private student records, credentials, original datasets, and model weights are
+not included in this source distribution.

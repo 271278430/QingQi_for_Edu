@@ -1,0 +1,25 @@
+{
+  "name": "@qingqi/education-runtime",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./contract": "./dist/contract.js"
+  },
+  "scripts": {
+    "build": "tsc --emitDeclarationOnly && node build.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@zcode/adapters": "workspace:*",
+    "@zcode/contracts": "workspace:*",
+    "@zcode/core": "workspace:*",
+    "@zcode/shared": "workspace:*",
+    "typescript": "^6.0.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "esbuild": "0.25.12"
+  }
+}

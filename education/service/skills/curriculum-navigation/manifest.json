@@ -1,0 +1,14 @@
+{
+  "id": "curriculum-navigation",
+  "version": "1.0.0",
+  "intents": [
+    "course"
+  ],
+  "tools": [
+    "course_search",
+    "course_context"
+  ],
+  "optional_tools": [
+    "worker_course8b"
+  ]
+}
