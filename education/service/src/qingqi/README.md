@@ -65,6 +65,8 @@
 | [secret_store.py](secret_store.py)                   | 在本机加密保存 API 密钥。                                                 |
 | [skills.py](skills.py)                               | 教学 Skill 清单、指导内容与能力范围加载。                                 |
 | [storage.py](storage.py)                             | 唯一可写状态所有者：会话、学习事件、模型配置、租约、幂等账本和提交事务。  |
+| [student_task_tools.py](student_task_tools.py)       | 推荐练习、学习路线预览和学情读取的同学生工具端口。                        |
+| [student_tasks.py](student_tasks.py)                 | 当前输入的任务识别、资料引用、查询 Controller 与任务产物校验。            |
 | [teaching_goals.py](teaching_goals.py)               | 识别学生当前需要概念解释、步骤帮助、核对或其他教学目标。                  |
 | [teaching_plan.py](teaching_plan.py)                 | 控制本轮教学目标、正文长度、追问数量、答案许可和可视化输出。              |
 | [teaching_policy.py](teaching_policy.py)             | 根据会话、难度与学情选择提示、追问、讲解或解答方式。                      |

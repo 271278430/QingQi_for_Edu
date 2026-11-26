@@ -31,15 +31,17 @@ import { LearningPanel } from "./learning.js";
 import { MathContent } from "./learning-content.js";
 import { TutorExtras, TutorIncompleteResponse } from "./tutor-extras.js";
 import { TutorMessageImages } from "./tutor-message-images.js";
-import { TeachingVisuals } from "./teaching-visuals.js";
-import { actionLabels, errorText, feedbackText, retryBlocked } from "./format.js";
+import { errorText, retryBlocked } from "./format.js";
 import { useEducationWorkspace } from "./use-workspace.js";
 import { SettingsPanel } from "./settings-panel.js";
 import { ComposerModels } from "./composer-models.js";
+import { TutorReplyContent, tutoringLabel } from "./student-task-results.js";
 
 // 共享消息模块含数学、代码与图表插件；按需加载，避免空白工作台预载全部模块。
 const loadMessages = () => import("@zcode/ui/message");
-const Message = lazy(() => loadMessages().then((module) => ({ default: module.Message })));
+const Message = lazy(() =>
+  loadMessages().then((module) => ({ default: module.Message })),
+);
 const MessageContent = lazy(() =>
   loadMessages().then((module) => ({ default: module.MessageContent })),
 );
@@ -105,12 +107,15 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
     messages,
     resumeMessage,
     restartMessage,
+    repeatStudentTask,
     chatModels,
   } = useEducationWorkspace(service);
   const { load: reloadChatModels } = chatModels;
   const updateSystemSettings = useCallback(
     (value: SystemSettings) => {
-      setBoot((current) => (current ? { ...current, settings: value } : current));
+      setBoot((current) =>
+        current ? { ...current, settings: value } : current,
+      );
     },
     [setBoot],
   );
@@ -123,7 +128,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
       }>("/api/bootstrap")
       .then((value) =>
         setBoot((current) =>
-          current ? { ...current, models: value.models, mode: value.mode } : current,
+          current
+            ? { ...current, models: value.models, mode: value.mode }
+            : current,
         ),
       )
       .catch((e) => setError(errorText(e)));
@@ -132,11 +139,15 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
   const uniqueHistory = sessions.filter(
     (item, index) =>
       !item.practice_item ||
-      sessions.findIndex((other) => other.practice_item === item.practice_item) === index,
+      sessions.findIndex(
+        (other) => other.practice_item === item.practice_item,
+      ) === index,
   );
   const history = historySearch.trim()
     ? sessions.filter((item) =>
-        item.title.toLocaleLowerCase().includes(historySearch.trim().toLocaleLowerCase()),
+        item.title
+          .toLocaleLowerCase()
+          .includes(historySearch.trim().toLocaleLowerCase()),
       )
     : showHistoryAll
       ? sessions
@@ -185,8 +196,12 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
             <GraduationCap className="size-5" />
           </span>
           <div>
-            <h1 className="text-ui-lg font-semibold">{boot.settings?.app_name || "清启"}</h1>
-            <p className="text-ui-xs text-foreground-subtlest">个性化学习助手</p>
+            <h1 className="text-ui-lg font-semibold">
+              {boot.settings?.app_name || "清启"}
+            </h1>
+            <p className="text-ui-xs text-foreground-subtlest">
+              个性化学习助手
+            </p>
           </div>
           <Button
             className="edu-mobile-button ml-auto"
@@ -234,8 +249,14 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
             );
           })}
         </nav>
-        <div className="min-h-0 flex-1 overflow-y-auto" role="region" aria-label="最近学习对话">
-          <p className="mb-3 px-2 text-ui-xs text-foreground-subtle">最近的学习对话</p>
+        <div
+          className="min-h-0 flex-1 overflow-y-auto"
+          role="region"
+          aria-label="最近学习对话"
+        >
+          <p className="mb-3 px-2 text-ui-xs text-foreground-subtle">
+            最近的学习对话
+          </p>
           {!!sessions.length && (
             <label className="relative mb-3 block">
               <Search className="pointer-events-none absolute left-2 top-2.5 size-3.5 text-foreground-subtle" />
@@ -254,7 +275,11 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                 key={item.id}
                 data-testid="history-item"
                 title={item.title}
-                variant={detail?.session.id === item.id && view === "chat" ? "secondary" : "ghost"}
+                variant={
+                  detail?.session.id === item.id && view === "chat"
+                    ? "secondary"
+                    : "ghost"
+                }
                 size="lg"
                 className="mb-1 w-full justify-start"
                 disabled={busy}
@@ -265,7 +290,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
               </Button>
             ))
           ) : (
-            <p className="px-2 text-ui-sm text-foreground-subtlest">开始对话后自动保存在这里。</p>
+            <p className="px-2 text-ui-sm text-foreground-subtlest">
+              开始对话后自动保存在这里。
+            </p>
           )}
           {sessions.length > 6 && !historySearch.trim() && (
             <Button
@@ -279,7 +306,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
             </Button>
           )}
           {historySearch.trim() && !history.length && (
-            <p className="px-2 text-ui-sm text-foreground-subtle">没有匹配的对话。</p>
+            <p className="px-2 text-ui-sm text-foreground-subtle">
+              没有匹配的对话。
+            </p>
           )}
         </div>
         <div className="space-y-3 border-t border-border pt-4">
@@ -370,7 +399,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
             className="mx-5 mt-3 rounded-md border border-border p-3 text-ui-caption"
             role="status"
           >
-            {boot.settings.maintenance ? "系统维护中，已有学习记录可继续查看。 " : ""}
+            {boot.settings.maintenance
+              ? "系统维护中，已有学习记录可继续查看。 "
+              : ""}
             {boot.settings.notice}
           </div>
         )}
@@ -381,13 +412,21 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
           >
             <span className="flex-1">{error}</span>
             {requestErrorCode === "model_truncated" && (
-              <Button variant="outline" disabled={busy} onClick={() => void send(false)}>
+              <Button
+                variant="outline"
+                disabled={busy}
+                onClick={() => void send(false)}
+              >
                 <RefreshCw />
                 重新回答
               </Button>
             )}
             {pending && retryAllowed && (
-              <Button variant="outline" disabled={busy} onClick={() => void send(true)}>
+              <Button
+                variant="outline"
+                disabled={busy}
+                onClick={() => void send(true)}
+              >
                 <RefreshCw />
                 重试当前请求
               </Button>
@@ -408,17 +447,27 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
           <div className="edu-body">
             <section className="edu-conversation">
               {openingSession && (
-                <p role="status" className="mx-5 mt-3 text-ui-sm text-foreground-subtle">
+                <p
+                  role="status"
+                  className="mx-5 mt-3 text-ui-sm text-foreground-subtle"
+                >
                   正在读取这段学习对话…
                 </p>
               )}
               {detail?.practice && (
-                <section className="edu-question-reference" aria-label="正在讨论的题目">
+                <section
+                  className="edu-question-reference"
+                  aria-label="正在讨论的题目"
+                >
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <p className="text-ui-sm font-medium">
                       正在讨论 · {detail.practice.item.title}
                     </p>
-                    <Button variant="ghost" size="sm" onClick={() => setView("practice")}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setView("practice")}
+                    >
                       返回练习
                     </Button>
                   </div>
@@ -430,7 +479,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                       <MathContent content={detail.practice.item.expression} />
                       {detail.practice.item.options?.map((option, index) => (
                         <div className="mt-2 flex gap-2" key={index}>
-                          <span className="text-ui-base">{String.fromCharCode(65 + index)}.</span>
+                          <span className="text-ui-base">
+                            {String.fromCharCode(65 + index)}.
+                          </span>
                           <MathContent content={option} />
                         </div>
                       ))}
@@ -447,14 +498,19 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                 <div className="edu-message-list">
                   <Suspense
                     fallback={
-                      <p className="text-ui-sm text-foreground-subtle" role="status">
+                      <p
+                        className="text-ui-sm text-foreground-subtle"
+                        role="status"
+                      >
                         正在加载学习内容…
                       </p>
                     }
                   >
                     {!messages.length && !busy && (
                       <div className="mx-auto max-w-2xl pt-8">
-                        <h2 className="text-ui-xl font-semibold">把困惑说出来，一起找到下一步。</h2>
+                        <h2 className="text-ui-xl font-semibold">
+                          把困惑说出来，一起找到下一步。
+                        </h2>
                         <p className="mt-3 max-w-lg text-ui-base leading-relaxed text-foreground-subtle">
                           直接贴题目、说思路或告诉我哪里卡住了。我们可以一起想，也可以帮你核对答案。
                         </p>
@@ -465,14 +521,19 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                         <Message from="user">
                           <MessageContent className="edu-user text-ui-base">
                             <TutorMessageImages images={item.images || []} />
-                            <MathContent theme={theme} content={item.original_input.question} />
+                            <MathContent
+                              theme={theme}
+                              content={item.original_input.question}
+                            />
                             {item.recognized_question && (
                               <details className="mt-3 border-t border-border pt-2">
                                 <summary className="cursor-pointer text-ui-xs text-foreground-subtle">
                                   图片识别的题目 · 可在对话中纠正
                                 </summary>
                                 <div className="mt-2">
-                                  <MathContent content={item.recognized_question} />
+                                  <MathContent
+                                    content={item.recognized_question}
+                                  />
                                 </div>
                               </details>
                             )}
@@ -494,27 +555,28 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                                   </span>
                                 )}
                                 <span className="text-ui-xs text-foreground-subtlest">
-                                  {item.response.route?.teaching?.label ||
-                                    actionLabels[item.response.teaching_action]}
+                                  {tutoringLabel(item.response)}
                                 </span>
-                                {item.response.teaching_action === "confirm" && (
+                                {item.response.teaching_action ===
+                                  "confirm" && (
                                   <Check className="size-3.5 text-success" />
                                 )}
                               </div>
                               {/* 助手也走同一数学适配，避免原题正常而模型回复仍显示 $■$。 */}
-                              <MathContent
+                              <TutorReplyContent
+                                response={item.response}
+                                stepCount={item.input.steps?.length ?? 0}
                                 theme={theme}
-                                content={feedbackText(
-                                  item.response.text,
-                                  item.input.steps?.length ?? 0,
-                                )}
-                              />
-                              <TeachingVisuals
-                                theme={theme}
-                                visuals={item.response.visuals}
-                                runId={item.response.run_id}
+                                locked={
+                                  busy ||
+                                  openingSession ||
+                                  imagePreparing ||
+                                  Boolean(pending)
+                                }
+                                onRepeat={() => repeatStudentTask(item)}
+                                onPick={pickHistorical}
+                                onNavigate={setView}
                                 onAnnotate={attachAnnotation}
-                                locked={busy || imagePreparing || Boolean(pending)}
                               />
                             </MessageContent>
                           </Message>
@@ -564,7 +626,8 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                         {/* 刷新侧栏也会占用 busy；只有实际待提交输入才能显示为用户消息。 */}
                         {pending &&
                           !messages.some(
-                            (item) => item.request_id === pending.request.request_id,
+                            (item) =>
+                              item.request_id === pending.request.request_id,
                           ) && (
                             <Message from="user">
                               <MessageContent className="edu-user">
@@ -574,7 +637,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                                     .filter(
                                       (image) =>
                                         image.uploadedId &&
-                                        pending.request.images?.includes(image.uploadedId),
+                                        pending.request.images?.includes(
+                                          image.uploadedId,
+                                        ),
                                     )
                                     .map((image) => ({
                                       id: image.requestId,
@@ -582,14 +647,19 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                                       url: image.dataUrl,
                                     }))}
                                 />
-                                <MathContent theme={theme} content={pending.request.question} />
+                                <MathContent
+                                  theme={theme}
+                                  content={pending.request.question}
+                                />
                               </MessageContent>
                             </Message>
                           )}
                         <p className="mt-5 flex items-center gap-2 text-foreground-subtle">
                           <LoaderCircle className="edu-spin size-4" />
                           {streamStatus ||
-                            (pending ? "正在核对问题与学习依据…" : "正在更新学习对话…")}
+                            (pending
+                              ? "正在核对问题与学习依据…"
+                              : "正在更新学习对话…")}
                         </p>
                       </div>
                     )}
@@ -597,7 +667,10 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                   {/* 临时流独立于历史消息的懒加载边界，首次打开也能立即看到真实增量。 */}
                   {!!streamDraft && (busy || !!requestErrorCode) && (
                     <div className="edu-message">
-                      <div data-testid="tutor-stream-draft" className="edu-assistant">
+                      <div
+                        data-testid="tutor-stream-draft"
+                        className="edu-assistant"
+                      >
                         <p className="mb-2 text-ui-caption text-foreground-subtle">
                           {!busy
                             ? "回复未完成"
@@ -605,7 +678,11 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                               ? `当前辅导第（${streamScope.active_part}）问`
                               : "清启正在回复"}
                         </p>
-                        <MathContent theme={theme} content={streamDraft} streaming={busy} />
+                        <MathContent
+                          theme={theme}
+                          content={streamDraft}
+                          streaming={busy}
+                        />
                       </div>
                     </div>
                   )}
@@ -632,7 +709,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                     setDraftImages((value) => [...value, ...images].slice(0, 3))
                   }
                   onRemove={(id) =>
-                    setDraftImages((value) => value.filter((image) => image.requestId !== id))
+                    setDraftImages((value) =>
+                      value.filter((image) => image.requestId !== id),
+                    )
                   }
                   onPick={pickHistorical}
                 />
@@ -699,7 +778,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
             service={service}
             onNavigate={setView}
             onChanged={() => {
-              void refresh(generation.current).catch((e) => setError(errorText(e)));
+              void refresh(generation.current).catch((e) =>
+                setError(errorText(e)),
+              );
             }}
             onTutor={async (assignment) => {
               await openSession(

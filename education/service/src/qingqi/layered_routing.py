@@ -15,7 +15,7 @@ from dataclasses import replace
 from .contracts import ContractError, Route, SHORT, TEXT, obj, validate
 from .routing import Router
 
-INTENTS = ('course', 'review', 'diagnosis', 'tutor', 'chat', 'clarify')
+INTENTS = ('course', 'review', 'diagnosis', 'recommend', 'learning_path', 'learning_dashboard', 'tutor', 'chat', 'clarify')
 COMMANDS = {'取消': 'cancel', '取消当前任务': 'cancel', '开始新题': 'new_task', '你能做什么': 'capabilities', '帮助': 'capabilities'}
 CANDIDATES = {'教材': 'course', '课标': 'course', '先修': 'course', '作答': 'review', '核对': 'review',
               '讲解': 'tutor', '提示': 'tutor', '学情': 'diagnosis', '困难': 'diagnosis', '聊天': 'chat'}
@@ -23,6 +23,9 @@ EXAMPLES = {
     'course': ['查询教材课程章节', '这个知识点对应哪章课标', '先修知识前置关系', '查找课程知识点'],
     'review': ['检查我的作答步骤', '核对答案算错在哪里', '这道数学题怎么做怎么算', '第一步第二步对不对'],
     'diagnosis': ['分析我的学情学习困难', '我总是算错漏步骤', '哪些知识还不会哪里薄弱', '根据学习记录分析困难'],
+    'recommend': ['现在练什么比较合适', '有哪些题适合现在做', '给我推荐同类型的练习'],
+    'learning_path': ['我应该按什么路线学习', '规划学习路径和时间', '查看当前学习路线'],
+    'learning_dashboard': ['看看我的掌握情况', '总结目前学情', '哪些知识点需要关注'],
     'tutor': ['给我一个提示启发式追问', '个性化辅导引导我思考', '从头分步讲解一步一步解释', '我还是不明白请再讲'],
     'chat': ['你好谢谢', '聊聊天你在吗', '今天有点累心情不好', '讲一个笑话你是谁'],
 }
@@ -109,7 +112,7 @@ def validate_dag(dag):
     nodes = {n['id']: n for n in dag['nodes']}
     if len(nodes) != len(dag['nodes']):
         raise ContractError('duplicate DAG node')
-    ranks = {'course': 0, 'review': 1, 'diagnosis': 2, 'tutor': 3, 'chat': 4, 'clarify': 5}
+    ranks = {'course':0,'review':1,'diagnosis':2,'recommend':3,'learning_path':3,'learning_dashboard':3,'tutor':4,'chat':5,'clarify':6}
     for node in nodes.values():
         for dep in node['depends_on']:
             if dep in nodes and ranks[nodes[dep]['intent']] >= ranks[node['intent']]:
@@ -187,6 +190,12 @@ class LayeredRouter:
                     if candidate == 'chat':
                         result = Route(('chat',), ('vector_candidate_gate',))
                         channel = 'local_recall_gate'
+                    elif candidate in {'recommend','learning_path','learning_dashboard'}:
+                        from .student_tasks import task_candidate
+                        if task_candidate(request):
+                            result=Route((candidate,),('high_margin_student_operation_candidate',))
+                            channel='local_recall_gate'
+                        else:channel='clarification_required'
                     else:
                         channel = 'clarification_required'
                 elif score >= self.t_low:

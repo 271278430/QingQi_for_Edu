@@ -41,7 +41,7 @@ class Agent:
         self.store = Store(root, lease_seconds=lease_seconds)
         self.turn_seconds = turn_seconds
         self.budgets = {"max_calls": max_calls, "context_bytes": context_bytes, "turn_seconds": turn_seconds, "lease_seconds": lease_seconds}
-        self.registry = Registry(graph, workers, root=root)
+        self.registry = Registry(graph, workers, root=root,student_store=self.store)
         self.skills = Skills(PROJECT / "skills", self.registry.runtime)
         self.controller = controller or OfflineController()
         self.vision_model = vision_model
@@ -53,8 +53,38 @@ class Agent:
         self.registry.close()
         self.store.close()
 
+    def _prepare_student_query(self,identity,request,problem,state,operation,run_id):
+        from .student_tasks import bind_plan,source_reference,decision,StudentTaskController,VERSION
+        from .contracts import Route
+        source=source_reference(self.store,identity,problem,request,vision=state.get('vision'))
+        if request.images and state.get('vision',{}).get('unclear'):source={'kind':'none','item_id':'','question':''}
+        plan=bind_plan(operation,source,request,self.store.catalogue.topics)
+        plan['bank_version']=self.store.catalogue.version
+        intents=tuple(a['kind'] for a in plan['actions']) or ('clarify',)
+        route=Route(intents,('current_user_operation_before_problem_binding',),method=VERSION,task_dag=make_dag(intents),continuity='current_task')
+        selected=self.skills.load(intents,set(self.registry.specs))
+        allowed=sorted({t for skill in selected for t in skill.tools} & set(self.registry.specs))
+        memory=self.registry.runtime.rpc('recall',self.store.retrieve(identity,request.question))
+        strategy=decision(plan)
+        context=compose(request,memory,selected,self.context_bytes,routing={'task_dag':route.task_dag,'task_type':strategy['display_mode']},teaching_plan=strategy['plan'])
+        self.controller=StudentTaskController()
+        state.update(phase='routed',task_plan=plan,route={**route.dump(),'teaching':strategy},allowed_tools=allowed,skill_hashes={s.id:s.digest for s in selected},
+                     context=context,teaching_plan=strategy['plan'],effective_request=request.dump(),input_provenance=[{'source':'current_user_operation','reference_only':source['kind']}],
+                     policy_version=POLICY_VERSION,controller=self.controller.name,deployment_signature=self.controller.name,
+                     request_fingerprint=fingerprint(request.dump()),diagnosis_history=[],runtime_version=RUNTIME_VERSION,visual_version=VISUAL_VERSION,
+                     registry_hash=fingerprint({n:asdict(self.registry.specs[n]) for n in allowed}),budgets=self.budgets,
+                     native_schedule=self.registry.runtime.rpc('plan',route.task_dag),contextual_followup=False,
+                     presentation={'kind':'plain','animation':'off','requested':False,'source':'current_task'})
+        for key in ('visual_task','function_task','geometry_task','tutoring_scope','practice_entry','practice_assessment'):
+            state.pop(key,None)
+        self.store.checkpoint(run_id,state,'current_task_and_context')
+
     def _bind(self, request, state, action):
         tool, args = action["tool"], action["arguments"]
+        from .student_tasks import TOOLS
+        if tool in TOOLS.values():
+            expected=next((a['arguments'] for a in state.get('task_plan',{}).get('actions',[]) if a['tool']==tool),None)
+            if args!=expected:raise Denied('student tool must match the current request and owned reference')
         current = next_tool_intent(state)
         if tool=='solve_geometry' and args!=(state.get('geometry_task') or {}).get('arguments'):
             raise Denied('geometry tool parameters must match the current owned construction')
@@ -96,6 +126,12 @@ class Agent:
 
     def _validate_reply(self, request, state, result):
         validate(result, REPLY_SCHEMA)
+        if state.get('task_plan',{}).get('only_queries'):
+            from .student_tasks import validate_outcome
+            validate_outcome(state,result)
+            known={e['ref'] for o in state['observations'] for e in o['result'].get('evidence',[])}
+            if not set(result['evidence_refs'])<=known or result['step_refs']:raise ContractError('query reply cites unobserved work')
+            return
         scope=state.get('tutoring_scope')
         if scope and len(state.get('scope_replies',[]))==len(scope['units']):
             # 每段已按所属小问独立核验；不能再用最后一问的提示许可否决前一问的明确解答。
@@ -158,6 +194,7 @@ class Agent:
         if cached:
             return {**cached, "cache_hit": True}
         self.registry.runtime.bind_scope(identity, original_request.request_id)
+        self.registry.student_tasks.bind(identity)
         for client in clients:
             client.journal = (self.store, run_id)
         try:
@@ -175,6 +212,18 @@ class Agent:
                 raise RuntimeFailure('model_protocol', '此前模型回复格式异常，该请求已停止。请编辑后作为新问题发送。')
             snapshot = self.store.dialogue(identity)
             current_problem=self.store.current_problem(identity)
+            from .student_tasks import inspect_request,task_candidate,from_route
+            current_task=inspect_request(original_request)
+            if not current_task['actions'] and not current_task['unsupported'] and task_candidate(original_request):
+                # 不明确的学习操作也先按本轮输入分类；旧题绑定不能覆盖模型识别的工具任务。
+                operation_route=self.router.route(original_request,{'pending':None,'active_task':None})
+                current_task=from_route(current_task,operation_route,original_request)
+            query_turn=current_task['only_queries']
+            selection=self.store.recommended_selection(identity,original_request) if not query_turn else None
+            if selection:
+                state['recommended_selection']=selection
+                current_problem={'source':'owned_catalogue_question','assignment_id':selection['assignment']['id'],'source_run_id':run_id}
+                snapshot={'pending':None,'active_task':None,'verified_work':current_problem,'expired':False,'practice_detached':False,'teaching_mode':None,'presentation':None,'no_final_requested':False,'no_questions':False}
             annotation=self.store.visual_source(identity,request.visual_context) if request.visual_context else None
             if annotation:
                 if not request.images:raise Denied('标注讨论需要附带修改后的图片。')
@@ -188,6 +237,7 @@ class Agent:
             if current_problem and not snapshot.get('verified_work'):snapshot={**snapshot,'verified_work':current_problem}
             state['current_problem']=current_problem
             state['explicit_problem_boundary']=starts_new_problem(request.question)
+            if selection:state['explicit_problem_boundary']=True
             from .tutoring_scope import REF
             following_problem=bool(current_problem and not request.images and (problem_followup(request.question) or re.search(REF,request.question) and not starts_new_problem(request.question)))
             new_definition=bool(re.search(r'(?:f\s*\(x\)|y)\s*[=＝]',request.question,re.I))
@@ -201,14 +251,14 @@ class Agent:
             state['contextual_followup']=contextual_followup
             from .tutor_images import describes_image, refers_to_image
             prior_image = (snapshot.get('verified_work') or {}).get('image_question')
-            if not prior_image and refers_to_image(request.question) and not starts_new_problem(request.question):
-                prior_image=self.store.referenced_image(identity)
+            if refers_to_image(request.question) and not starts_new_problem(request.question):
+                prior_image=self.store.referenced_image(identity) or prior_image
             # “小数应改为分数”是展示调整，不能被当作题干更正而覆盖整道原题。
             explicit_correction=re.search(r'识别(?:错|有误)|更正(?:题目|题干)|纠正(?:题目|题干)',request.question)
             correction_statement=re.search(r'(?:题目|题干|条件)(?:应(?:该)?(?:是|为)|改为)|题干是(?!什么|否|怎样|怎么)',request.question)
             formatting_change=re.search(r'小数位|(?:小数|数值).*(?:分数|根号)|(?:改成|改为|换成).*(?:分数|根号|精确)',request.question)
             correcting_image = bool(prior_image and (explicit_correction or correction_statement and not formatting_change))
-            image_context = state.get('image_question') or (prior_image if prior_image and not new_definition and not starts_new_problem(request.question) and (following_problem or correcting_image or refers_to_image(request.question) or uses_question(request.question, {'expression': prior_image['text']})) else None)
+            image_context = state.get('image_question') or (prior_image if prior_image and not query_turn and not selection and not new_definition and not starts_new_problem(request.question) and (following_problem or correcting_image or refers_to_image(request.question) or uses_question(request.question, {'expression': prior_image['text']})) else None)
             if annotation:
                 image_context={'text':annotation['question'],'images':request.images,'unclear':False,'note':'原题来自已接受教学图，标注仅为待讨论的学生输入。'}
                 state['vision']={k:image_context[k] for k in ('text','unclear','note')}
@@ -250,9 +300,11 @@ class Agent:
                 if len(combined) > 2000:
                     raise ContractError('图片题目与提问过长，请缩短提问或分题上传。')
                 request = replace(request, question=combined)
+            if query_turn and state['phase']=='new':
+                self._prepare_student_query(identity,original_request,current_problem,state,current_task,run_id)
             if state["phase"] == "new":
                 emit({'kind':'progress','text':'题目已就绪，正在安排当前问的辅导。'})
-                task, dialogue, recent = prepare(request, snapshot, self.store.recent_turns(identity, limit=5))
+                task, dialogue, recent = prepare(request, snapshot, [] if selection else self.store.recent_turns(identity, limit=24))
                 if contextual_followup and (task.expression or task.steps or task.course_query or task.history):
                     # 已解析出的独立任务保留原执行链，资料参考不能覆盖数值审查或课程查询。
                     contextual_followup=False;state['contextual_followup']=False
@@ -265,7 +317,7 @@ class Agent:
                             if turn['request'].get('images'):
                                 break
                     state['vision_turns'] = list(reversed(turns))
-                bound = self.store.practice_entry(identity) if self.store.catalogue.config and not image_context else None
+                bound = {'assignment_id':selection['assignment']['id'],'entry':selection['entry']} if selection else self.store.practice_entry(identity) if self.store.catalogue.config and not image_context else None
                 live_owned=bool(bound and (current_problem or {}).get('source')=='owned_catalogue_question' and current_problem.get('assignment_id')==bound['assignment_id'])
                 if live_owned and not state['explicit_problem_boundary']:
                     # 题目归属独立于临时pending；修复旧版未知路由造成的误解绑。
@@ -325,6 +377,7 @@ class Agent:
                         # 按题目资源过滤，而非把同会话换题前的导师结论带到新题。
                         prior=[]
                         for t in self.store.recent_turns(identity,limit=24):
+                            if t.get('query_turn'):continue
                             if t.get('command') in {'cancel','new_task'} or starts_new_problem(t['student_question']):break
                             # 旧版错误澄清不是新题资源，不能截断此前有效的同题对话。
                             if t['response']['teaching_action']=='clarify':continue
@@ -332,7 +385,7 @@ class Agent:
                             prior.append({'question':t['student_question'],'reply':t['response']['text']})
                             if len(prior)>=8:break
                         state['practice_turns']=list(reversed(prior))
-                        state['practice_hint_history']=self.store.practice_hint_history(identity.student,bound['assignment_id'])
+                        state['practice_hint_history']=[] if selection and selection['new_assignment'] else self.store.practice_hint_history(identity.student,bound['assignment_id'])
                 if task.expression:
                     try:
                         if check_supported_work(task.expression, task.steps, "socratic")["status"] == "unsupported":
@@ -342,7 +395,8 @@ class Agent:
                         route = replace(route, intents=("clarify",), clarify="当前无法判断这份作答是否正确。核验支持数值四则运算及对应步骤；请检查除数、等号或题型，并补充可核验的作答。", task_dag=make_dag(("clarify",)))
                 from .visual_tasks import plan as plan_visual
                 from .presentation import resolve as resolve_presentation
-                state['presentation']=resolve_presentation(original_request.question,snapshot,self.store.recent_turns(identity,limit=24),continuing=bool(owned or following_problem or general_followup or prior_entry and entry is prior_entry))
+                # 明确选择候选题建立新的教学边界，旧题的故事/动画偏好不进入新题。
+                state['presentation']=resolve_presentation(original_request.question,snapshot,[] if selection else self.store.recent_turns(identity,limit=24),continuing=not selection and bool(owned or following_problem or general_followup or prior_entry and entry is prior_entry))
                 # 图片仍有不确定条件时保留澄清，不能用部分坐标强行覆盖识别状态。
                 # 路由归一化仅用于意图；绘图须保持原输入中的²/³等数学幂。
                 # 文字题与图片题都已绑定完整资源；短动画追问不能只把“请演示”当成题面。
@@ -355,10 +409,10 @@ class Agent:
                     state['visual_task']=visual_task
                     intents=('clarify',) if visual_task.get('clarify') else ('tutor',) if entry or image_context or set(route.intents)<={'clarify','tutor'} else tuple(dict.fromkeys((*route.intents,'tutor')))
                     route=replace(route,intents=intents,clarify=visual_task.get('clarify') if set(intents)<={'clarify','tutor'} else route.clarify,task_dag=make_dag(intents))
-                same_problem = bool(annotation) or following_problem or general_followup or bool(owned and (snapshot.get('verified_work') or {}).get('assignment_id') == bound['assignment_id']) or not snapshot.get('expired') and bool(
+                same_problem = not selection and (bool(annotation) or following_problem or general_followup or bool(owned and (snapshot.get('verified_work') or {}).get('assignment_id') == bound['assignment_id']) or not snapshot.get('expired') and bool(
                     prior_entry and entry is prior_entry
                     or image_context and not original_request.images and not correcting_image
-                    or task.expression and task.expression == (snapshot.get('verified_work') or {}).get('expression'))
+                    or task.expression and task.expression == (snapshot.get('verified_work') or {}).get('expression')))
                 if not entry and not image_context and not route.command:
                     from .practice_tutoring import identity_lesson
                     if identity_lesson({'expression':original_request.question}):
@@ -455,6 +509,11 @@ class Agent:
                                               'allow_final_answer':False,'plan':practice_hint_plan(unit['teaching']['plan'])}
                 # 提示与反问共用已审查的工具边界；表达差异由教学策略控制，不扩张工具权限。
                 request = replace(task, mode='socratic' if decision['mode'] == 'heuristic' else decision['mode'])
+                if current_task['actions']:
+                    from .student_tasks import bind_plan,source_reference
+                    state['task_plan']=bind_plan(current_task,source_reference(self.store,identity,current_problem,original_request,vision=state.get('image_question'),selection=selection),original_request,self.store.catalogue.topics)
+                    intents=tuple(dict.fromkeys([*(a['kind'] for a in current_task['actions']),*route.intents]))
+                    route=replace(route,intents=intents,task_dag=make_dag(intents))
                 skills = self.skills.load(route.intents, set(self.registry.specs))
                 allowed = sorted(set(t for s in skills for t in s.tools) & set(self.registry.specs))
                 if practice_hint:
@@ -507,7 +566,10 @@ class Agent:
                 self.store.checkpoint(run_id, state, "route_and_context")
             else:
                 # Don't resume with changed skill code, controller, budgets or tool schema.
-                if state.get('function_task'):
+                if state.get('task_plan',{}).get('only_queries'):
+                    from .student_tasks import StudentTaskController
+                    self.controller=StudentTaskController()
+                elif state.get('function_task'):
                     from .function_solver import FunctionTutorController
                     self.controller=FunctionTutorController()
                 elif state.get('geometry_task'):
@@ -549,20 +611,24 @@ class Agent:
             if state.get('geometry_task') and not state['route'].get('clarify'):action=None
             visual_task=state.get('visual_task') or {}
             if visual_task.get('arguments') and not find(state,'render_teaching_visual') and next_tool_intent(state) in {None,'tutor'}:
-                if action:state['visual_deferred_reply']=action
+                if action:state['deferred_reply']=action
                 action={'kind':'call','tool':'render_teaching_visual','arguments':visual_task['arguments']}
             for _ in range(16):
                 if time.perf_counter() - start > self.turn_seconds:
                     raise TimeoutError("turn wall budget exceeded")
                 try:
-                    # 本地图示先保存原回复，工具观察完成后消费；恢复时优先执行账本中未完成的动作。
-                    deferred = state.get('visual_deferred_reply') if find(state, 'render_teaching_visual') else None
+                    # 候选回复共用一个暂存位；复合请求执行完必要工具后再消费，不能丢失教学。
+                    deferred = state.get('deferred_reply') if next_tool_intent(state) is None and (not visual_task.get('arguments') or find(state,'render_teaching_visual')) else None
                     if visual_task.get('arguments') and not find(state,'render_teaching_visual') and next_tool_intent(state) in {None,'tutor'} and not state.get('pending_action'):
                         action={'kind':'call','tool':'render_teaching_visual','arguments':visual_task['arguments']}
                     from .visual_tasks import receipt
                     visual_receipt=receipt(state)
                     if visual_receipt:state['reply_source']='validated_visual_receipt'
-                    action = state.get("pending_action") or visual_receipt or deferred or action or self.controller.next(request, state, state["context"], self.registry)
+                    from .student_tasks import next_action as next_student_action
+                    student_action=next_student_action(state)
+                    if student_action and action and action['kind'] in {'respond','clarify'}:state['deferred_reply']=action
+                    # 刚决定的工具调用必须先执行；不能用暂存回复覆盖它而重复提议同一工具。
+                    action = state.get("pending_action") or student_action or visual_receipt or action or deferred or self.controller.next(request, state, state["context"], self.registry)
                     if action.get('kind')=='call' and action.get('tool')=='render_teaching_visual':
                         from .teaching_visual_pair import prepare as prepare_visual_pair
                         action={**action,'arguments':prepare_visual_pair(action['arguments'],state)}
@@ -577,11 +643,14 @@ class Agent:
                             prompt='你能从这两个条件分别求出变量吗？' if (state.get('visual_task') or {}).get('operation')=='nonnegative_story' else '你能用当前这个依据推进下一步吗？'
                             result={**result,'text':result['text']+('\n'+prompt if not any(c in result['text'] for c in '?？') else ''),'teaching_action':'ask'}
                         self._validate_reply(request, state, result)
+                        if state.get('task_plan'):
+                            from .student_tasks import validate_outcome
+                            validate_outcome(state,result)
                         visual=find(state,'render_teaching_visual')
                         proposed=suggest_visual(request,state) if action['kind']=='respond' and not visual and 'render_teaching_visual' in state['allowed_tools'] and state['tool_calls']<self.max_calls else None
                         if proposed:
                             validate_visual_binding(proposed,state)
-                            state['visual_deferred_reply']=action
+                            state['deferred_reply']=action
                             action={'kind':'call','tool':'render_teaching_visual','arguments':proposed}
                             continue
                         if find(state, "course_context") or find(state, "review_arithmetic") or find(state, "worker_review27b"):
@@ -598,6 +667,12 @@ class Agent:
                                   "model_usage": [u for c in clients for u in c.usage[usage_start[id(c)]:]]}
                         checked = find(state, 'review_arithmetic') or find(state, 'worker_review27b')
                         result['teaching_decision'] = final_decision(state['route']['teaching'], result, checked)
+                        if state.get('task_plan'):
+                            from .student_tasks import outputs,LABELS
+                            result['student_tasks']=outputs(state)
+                            if state['task_plan']['only_queries']:
+                                kind=state['task_plan']['actions'][0]['kind'] if state['task_plan']['actions'] else 'unsupported'
+                                result['teaching_decision']['label']=LABELS[kind]
                         diagnosed = find(state, "difficulty_candidates") or find(state, "worker_difficulty8b")
                         result["difficulty_candidates"] = diagnosed["candidates"] if diagnosed else []
                         if visual:
@@ -611,7 +686,7 @@ class Agent:
                             result['tutoring_scope']=public(state['tutoring_scope'])
                         if on_event:emit({'kind':'reset','text':result['text']})
                         state.update(phase="completed", pending_action=None)
-                        state.pop('visual_deferred_reply', None)
+                        state.pop('deferred_reply', None)
                         self.store.commit(run_id, identity, request, state, result)
                         return result
                     name, args = action["tool"], action["arguments"]

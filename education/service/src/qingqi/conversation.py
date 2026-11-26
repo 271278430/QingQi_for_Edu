@@ -23,6 +23,8 @@ def problem_followup(question):
 
 
 def prepare(request, snapshot, recent):
+    # 查询保留在会话记录中，但不截断或冒充同题教学历史。
+    recent=[turn for turn in recent if not turn.get('query_turn')]
     p = preprocess(request.question)
     task = replace(request, question=p['normalized'])
     new_task = starts_new_problem(task.question)

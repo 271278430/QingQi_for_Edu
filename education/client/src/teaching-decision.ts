@@ -47,5 +47,7 @@ export interface TeachingResponse {
   visuals?: TeachingVisual[];
   visual_version?: string;
   tutoring_scope?: TeachingScope;
+  student_tasks?: import("./student-task-contract.js").StudentTask[];
+  task_notice?: string;
   [key: string]: unknown;
 }

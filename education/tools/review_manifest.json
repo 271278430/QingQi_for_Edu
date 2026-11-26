@@ -3,6 +3,18 @@
   "scope": "current education product; isolated controlled endpoints, no live student writes",
   "suites": [
     {
+      "script": "current_task_images_acceptance.py",
+      "domain": "multi-image task references, OCR-only recommendation and subsequent teaching"
+    },
+    {
+      "script": "current_task_acceptance.py",
+      "domain": "current user operations, actual recommended questions, learning queries and preserved teaching context"
+    },
+    {
+      "script": "current_task_browser.mjs",
+      "domain": "question cards, quantity, refresh, mobile and real exercise selection"
+    },
+    {
       "script": "contextual_teaching_acceptance.py",
       "domain": "contextual teaching modes and one goal-selected picture or animation"
     },

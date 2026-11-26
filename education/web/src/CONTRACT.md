@@ -81,3 +81,4 @@ Detail.practice 是按学生与会话绑定的题目参照，用户自然消息�
 标注草稿与已提交笔迹共用一个React状态队列；回调内取指针坐标，延迟更新不保留事件对象。重绘按浏览器帧合并，导出前同步刷新。当前指针取消/丢失捕获只移除当前草稿，不影响原图和已提交笔迹。快速move/up批处理、长曲线与触摸中断使用浏览器验收覆盖。
 
 Codex流式教学遵循specs/education/codex-streaming-recovery-v1.md。MathContent转发上游MessageResponse.streaming；增量不等整句或公式。失败后读取Store快照，partial_response明确作为未完成片段显示；网络无法读快照时保留本地流式草稿。切会话失效旧流，已知输出截断可明确重新回答，原题、图片及visual_context保留。
+对话中的student_tasks是服务端已接受的任务产物，Web仅展示题卡/摘要/路线并通过已有服务选择题目或导航；没有结果时不能自行生成替代题。查询不触发旧题动画或讲解。见specs/education/current-task-tools-v1.md。

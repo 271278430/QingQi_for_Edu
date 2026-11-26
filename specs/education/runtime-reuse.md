@@ -2,6 +2,8 @@
 
 构建先在内存生成独立 ESM bundle，再在同目录临时文件写完后 rename 替换入口；运行中的产品不能在重构建时读到半个 server.js。历史题验收出现过一次 runtime_unavailable，完整诊断尚不足以确认该次原因，不能将重跑通过写成原因已证实。
 
+Windows 的并发读句柄可能暂时拒绝 rename，完整构建验收已观察到 EPERM。参照 ZCode atomicFileUtils 的原子发布与有限重试设计，仅对 Windows 的 EPERM/EBUSY/EACCES 以异步短间隔重试最多四次；不删除正式入口或改为原地覆盖。永久失败保留原入口并清理临时文件，其他错误立即失败。这个文件发布边界不改变教学、模型或请求的执行预算。
+
 2026-11-20。唯一用户交互为 Web。教学 Python 服务继续唯一拥有学生身份、接受的请求、会话顺序、检查点、回复和教师事实。新增内部 Node adapter 直接调用 ZCode 的公共 ToolRegistry/ToolExecutor/ToolScheduler、Skills adapter、MCP adapter、前台 SubagentPort，以及记忆候选过滤与预算函数。它不提供用户终端、外部插件或 MCP 产品入口，不另建学生业务数据库。
 
 教育意图规则、题型判断和教学策略保留领域实现；ZCode 本身没有教育分类器。规则/上下文识别意图后，受控 DAG 使用上游调度器，GLM 通过上游 registry 生成的能力契约选择工具，专项任务使用上游前台子 Agent 生命周期。子 Agent 只执行绑定的专项能力，不能自行注册工具、改身份、调用 Shell、扫描全局 Skills 或写入掌握事实。每个 child 关联父 run/trace，结果仍须通过原题/步骤/图谱核验。只复用生命周期，不宣称教育主控已经迁入完整 AgentRuntime。

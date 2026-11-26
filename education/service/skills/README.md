@@ -10,13 +10,15 @@ skills 技能指导和资源，属于 education 目录。
 
 ### 子目录
 
-| 目录                                                      | 存放内容                                                    |
-| --------------------------------------------------------- | ----------------------------------------------------------- |
-| [curriculum-navigation/](curriculum-navigation/README.md) | curriculum navigation 技能指导和资源，属于 education 目录。 |
-| [learning-difficulty/](learning-difficulty/README.md)     | learning difficulty 技能指导和资源，属于 education 目录。   |
-| [socratic-tutoring/](socratic-tutoring/README.md)         | socratic tutoring 技能指导和资源，属于 education 目录。     |
-| [visual-teaching/](visual-teaching/README.md)             | visual teaching 技能指导和资源，属于 education 目录。       |
-| [work-review/](work-review/README.md)                     | work review 技能指导和资源，属于 education 目录。           |
+| 目录                                                        | 存放内容                                                     |
+| ----------------------------------------------------------- | ------------------------------------------------------------ |
+| [curriculum-navigation/](curriculum-navigation/README.md)   | curriculum navigation 技能指导和资源，属于 education 目录。  |
+| [learning-difficulty/](learning-difficulty/README.md)       | learning difficulty 技能指导和资源，属于 education 目录。    |
+| [socratic-tutoring/](socratic-tutoring/README.md)           | socratic tutoring 技能指导和资源，属于 education 目录。      |
+| [student-learning-views/](student-learning-views/README.md) | student learning views 技能指导和资源，属于 education 目录。 |
+| [student-recommendation/](student-recommendation/README.md) | student recommendation 技能指导和资源，属于 education 目录。 |
+| [visual-teaching/](visual-teaching/README.md)               | visual teaching 技能指导和资源，属于 education 目录。        |
+| [work-review/](work-review/README.md)                       | work review 技能指导和资源，属于 education 目录。            |
 
 ### 文件
 

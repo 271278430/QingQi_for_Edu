@@ -69,5 +69,9 @@ try:
     check('gui_model_is_used_for_hints_without_cli_configuration',len(calls)==1 and calls[0]['model']=='demo-hint' and bool(hint['text']))
     check('gui_text_alias_does_not_add_a_model_router_call','只返回JSON' not in calls[0]['messages'][0]['content'])
     check('configured_hint_replay_is_still_idempotent',post('/api/practice/hint',body)==hint and len(calls)==1)
+    recommended=post('/api/teach',{'session':a['session'],'request':{'request_id':'demo-chat-recommend','question':'给我推荐一道类似的题目，不用讲解。','expression':a['item']['expression']}})['response']
+    items=recommended['student_tasks'][0]['items']
+    check('public_chat_recommends_a_real_authored_question',recommended['teaching_action']=='recommend' and len(items)==1 and items[0]['id']!=a['item']['id'] and items[0]['topic']==a['item']['topic'] and all(k not in items[0] for k in ('key','answer','analysis')))
+    check('public_recommendation_skips_the_lesson_model_and_keeps_grades',len(calls)==1 and not recommended.get('model_inference') and not recommended.get('visuals') and get('/api/learning')['summary']['attempts']==1)
 finally:instance.shutdown();instance.server_close();model.shutdown();model.server_close()
 Path('education/.local/reports/demo-acceptance.local.json').write_text(json.dumps({'passed':len(checks),'checks':checks},indent=2),encoding='utf-8')

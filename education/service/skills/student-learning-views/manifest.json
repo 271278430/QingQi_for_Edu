@@ -1,0 +1,5 @@
+{
+  "id": "student-learning-views",
+  "intents": ["learning_path", "learning_dashboard"],
+  "tools": ["preview_learning_path", "read_learning_dashboard"]
+}

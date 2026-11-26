@@ -12,6 +12,10 @@ START='<!-- qingqi-directory-index:start -->'
 END='<!-- qingqi-directory-index:end -->'
 BASIS='清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。'
 COMMON={
+ 'student_tasks.py':'当前输入的任务识别、资料引用、查询 Controller 与任务产物校验。',
+ 'student_task_tools.py':'推荐练习、学习路线预览和学情读取的同学生工具端口。',
+ 'student-task-contract.ts':'题卡、学习摘要和学生任务结果的公共类型。',
+ 'student-task-results.tsx':'对话中的题卡、学情和路线展示，以及旧错误回复的明确重执行入口。',
  'README.md':'本目录用途、子目录与逐文件说明。',
  'AGENTS.md':'本目录的开发规范、模块边界与验证要求。',
  'CONTRACT.md':'模块职责、公共接口、依赖方向和状态约定。',
@@ -29,6 +33,7 @@ COMMON={
  'architecture-policy.yaml':'模块所有者、层级、依赖方向与架构检查策略。',
 }
 DOMAIN={
+ 'current_task':'本轮任务优先、多图查询、推荐与同题续聊',
  'architecture':'系统关系图、真实循环和模块职责',
  'acceptance':'Agent 请求、权限、工具和提交边界',
  'product_deployment':'已部署入口、四页面和管理界面',

@@ -28,7 +28,7 @@ def status(action,expected):
 try:
     check('local_owner_has_management_capability',boot['can_manage'] and boot['settings']['app_name']=='清启')
     overview=get('/api/settings');arch=get('/api/settings/architecture')
-    check('real_source_modules_tools_and_skills_are_present',len(arch['modules'])==16 and {'loop','routing','tools','skills','memory','models','visuals','data','management','permissions'}<={m['id'] for m in arch['modules']} and len(arch['tools'])==7 and len(arch['skills'])==5)
+    check('real_source_modules_tools_and_skills_are_present',len(arch['modules'])==16 and {'loop','routing','tools','skills','memory','models','visuals','data','management','permissions'}<={m['id'] for m in arch['modules']} and len(arch['tools'])==10 and len(arch['skills'])==7 and {'recommend_practice','preview_learning_path','read_learning_dashboard'}<={t['name'] for t in arch['tools']})
     check('one_system_map_has_actual_source_and_owner',bool(arch['panorama']['nodes']) and not any(k in arch for k in ('request_flow','business_flow')) and all(m['files'] and m['owner'] and m['scope']['steps'] and m['reuse'] and m['limits'] for m in arch['modules']))
     check('admin_projection_contains_no_credentials_or_endpoint_urls',all(word not in json.dumps(overview) for word in ('password_hash','api_key','base_url','key_env')))
     body={'request_id':'setting-one',**overview['settings'],'app_name':'清启数学','notice':'按当前题目进行精确数学辅导','maintenance':True}

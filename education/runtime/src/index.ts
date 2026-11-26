@@ -21,7 +21,12 @@ import {
   type SessionEvent,
   type TraceId,
 } from "@zcode/contracts";
-import { ToolSpec, ToolName, type InvokeHandler, type RegisteredTool } from "./contract.js";
+import {
+  ToolSpec,
+  ToolName,
+  type InvokeHandler,
+  type RegisteredTool,
+} from "./contract.js";
 import { selectScopedMemory } from "./memory.js";
 
 const SERVICE = fileURLToPath(new URL("../../service/", import.meta.url));
@@ -36,7 +41,7 @@ const Init = z
       .default(join(SERVICE, "data", "curriculum.sqlite")),
     trace_id: z.string(),
     session_id: z.string(),
-    specs: z.array(ToolSpec).max(12),
+    specs: z.array(ToolSpec).max(16),
   })
   .strict();
 const Call = z
@@ -62,7 +67,7 @@ const Plan = z
       .max(8),
   })
   .strict();
-const Names = z.object({ names: z.array(z.string()).max(12) }).strict();
+const Names = z.object({ names: z.array(z.string()).max(16) }).strict();
 
 export class RuntimeError extends Error {
   constructor(
@@ -88,9 +93,15 @@ export class EducationRuntime {
   async dispatch(op: string, input: Record<string, unknown>): Promise<unknown> {
     if (op === "init") {
       if (this.configuration)
-        throw new RuntimeError("already_initialized", "Runtime is already initialized");
+        throw new RuntimeError(
+          "already_initialized",
+          "Runtime is already initialized",
+        );
       const configuration = Init.parse(input);
-      const delta = relative(join(SERVICE, "runs"), resolve(configuration.root));
+      const delta = relative(
+        join(SERVICE, "runs"),
+        resolve(configuration.root),
+      );
       if (delta.startsWith("..") || isAbsolute(delta))
         throw new RuntimeError("not_allowed", "Runtime outside owned runs");
       // 图谱属于部署配置，不能被题干或客户端切换到任意本机文件。
@@ -99,7 +110,10 @@ export class EducationRuntime {
       if (graphDelta.startsWith("..") || isAbsolute(graphDelta))
         throw new RuntimeError("not_allowed", "Graph outside owned data");
       configuration.graph_path = graphPath;
-      if (new Set(configuration.specs.map((spec) => spec.name)).size !== configuration.specs.length)
+      if (
+        new Set(configuration.specs.map((spec) => spec.name)).size !==
+        configuration.specs.length
+      )
         throw new RuntimeError("invalid_input", "Duplicate capability");
       this.configuration = configuration;
       for (const spec of configuration.specs) this.register(spec);
@@ -127,7 +141,10 @@ export class EducationRuntime {
           sideEffectScope: "none",
         })),
       );
-      return { order: result.executionOrder, source: "@zcode/core/ToolScheduler" };
+      return {
+        order: result.executionOrder,
+        source: "@zcode/core/ToolScheduler",
+      };
     }
     if (op === "skills") {
       const { names } = Names.parse(input);
@@ -139,9 +156,15 @@ export class EducationRuntime {
           priority: 1,
         },
       ];
-      const discovery = await this.skills.discoverSkills({ workingDirectory: SERVICE, roots });
+      const discovery = await this.skills.discoverSkills({
+        workingDirectory: SERVICE,
+        roots,
+      });
       if (discovery.diagnostics.length)
-        throw new RuntimeError("skill_invalid", "Pinned skill discovery failed");
+        throw new RuntimeError(
+          "skill_invalid",
+          "Pinned skill discovery failed",
+        );
       return {
         skills: await Promise.all(
           names.map(async (name) => {
@@ -152,7 +175,10 @@ export class EducationRuntime {
               maxBytes: 10000,
             });
             if (loaded.truncated)
-              throw new RuntimeError("skill_invalid", "Pinned skill exceeds budget");
+              throw new RuntimeError(
+                "skill_invalid",
+                "Pinned skill exceeds budget",
+              );
             return { name: loaded.metadata.name, content: loaded.content };
           }),
         ),
@@ -176,7 +202,8 @@ export class EducationRuntime {
         source: "@zcode/core/ToolRegistry",
       };
     }
-    if (op !== "call") throw new RuntimeError("invalid_input", "Unknown operation");
+    if (op !== "call")
+      throw new RuntimeError("invalid_input", "Unknown operation");
     const request = Call.parse(input);
     if (!this.registry.has(request.name))
       throw new RuntimeError("not_allowed", "Unregistered capability");
@@ -214,16 +241,24 @@ export class EducationRuntime {
       runtime: {
         source: "@zcode/core/ToolExecutor",
         trace_id: this.configuration.trace_id,
-        events: this.events.map((event) => ({ type: event.type, id: event.id })),
+        events: this.events.map((event) => ({
+          type: event.type,
+          id: event.id,
+        })),
         subagent: this.lastChild,
       },
     };
   }
 
   private handlerError?: unknown;
-  private lastChild?: { agent_id: string; child_session_id: string; agent_type: string };
+  private lastChild?: {
+    agent_id: string;
+    child_session_id: string;
+    agent_type: string;
+  };
   private register(spec: RegisteredTool) {
-    const scope = spec.transport === "model" ? ("network" as const) : ("none" as const);
+    const scope =
+      spec.transport === "model" ? ("network" as const) : ("none" as const);
     this.registry.register({
       capability: `education.${spec.name}`,
       inputSchema: spec.input_schema,
@@ -237,9 +272,17 @@ export class EducationRuntime {
         patternSources: ["toolName"],
         denyPriority: "beforeAsk",
       },
-      resultBudget: { maxInlineBytes: 64000, maxModelBytes: 64000, strategy: "truncate" },
+      resultBudget: {
+        maxInlineBytes: 64000,
+        maxModelBytes: 64000,
+        strategy: "truncate",
+      },
       timeout: { defaultMs: spec.timeout * 1000, allowCallOverride: false },
-      cancellation: { supported: true, cleanup: "required", userVisibleMessage: "教学工具已取消" },
+      cancellation: {
+        supported: true,
+        cleanup: "required",
+        userVisibleMessage: "教学工具已取消",
+      },
       trace: {
         required: true,
         propagateToAdapters: true,
@@ -273,13 +316,20 @@ export class EducationRuntime {
               { signal: context.abortSignal, timeoutMs: spec.timeout * 1000 },
             );
             if (result.isError)
-              throw new RuntimeError("unsupported_input", "题目或作答暂不在当前核验范围内");
+              throw new RuntimeError(
+                "unsupported_input",
+                "题目或作答暂不在当前核验范围内",
+              );
             return result.structuredContent;
           }
           if (spec.transport === "model")
             return await this.runSpecialist(spec, args, context.abortSignal);
           return await this.invoke(
-            { name: spec.name, arguments: args, trace: { traceId: this.configuration!.trace_id } },
+            {
+              name: spec.name,
+              arguments: args,
+              trace: { traceId: this.configuration!.trace_id },
+            },
             context.abortSignal,
           );
         } catch (error) {
@@ -290,13 +340,18 @@ export class EducationRuntime {
     });
   }
 
-  private async runSpecialist(spec: RegisteredTool, args: unknown, signal?: AbortSignal) {
+  private async runSpecialist(
+    spec: RegisteredTool,
+    args: unknown,
+    signal?: AbortSignal,
+  ) {
     const configuration = this.configuration!;
     const profile: AgentProfile = {
       name: spec.name,
       description: spec.description,
       source: "project",
-      systemPrompt: "只处理父任务绑定的教育证据。不得扩权、改身份、写入掌握事实或外发内容。",
+      systemPrompt:
+        "只处理父任务绑定的教育证据。不得扩权、改身份、写入掌握事实或外发内容。",
       injectAgentsMd: false,
       tools: [spec.name],
       maxTurns: 1,
@@ -305,12 +360,16 @@ export class EducationRuntime {
     const port = createExploreSubagentPort({
       profiles: [profile],
       outputRootDir: join(configuration.root, "zcode-subagents"),
-      getAllowedTools: (selected) => (selected.name === spec.name ? [spec.name] : []),
+      getAllowedTools: (selected) =>
+        selected.name === spec.name ? [spec.name] : [],
       emitParentEvent: async (event) => {
         this.events.push(event);
       },
       runExploreAgent: async (child) => {
-        if (child.profile.name !== spec.name || child.allowedTools.join() !== spec.name)
+        if (
+          child.profile.name !== spec.name ||
+          child.allowedTools.join() !== spec.name
+        )
           throw new RuntimeError("not_allowed", "Child capability mismatch");
         this.lastChild = {
           agent_id: child.agentId,
@@ -362,7 +421,9 @@ export class EducationRuntime {
         { signal },
       );
       if (output.status !== "completed")
-        throw failure ?? new RuntimeError("specialist_failed", "专项任务未完成");
+        throw (
+          failure ?? new RuntimeError("specialist_failed", "专项任务未完成")
+        );
       const text = output.content.find((item) => item.type === "text");
       if (!text || text.type !== "text")
         throw new RuntimeError("specialist_failed", "专项任务没有结构化结果");
@@ -387,7 +448,9 @@ export class EducationRuntime {
       if (status.status !== "connected")
         throw new RuntimeError("mcp_unavailable", "课程工具连接失败", true);
       const tools = await this.mcp.listTools();
-      const expected = this.configuration!.specs.filter((spec) => spec.transport === "mcp");
+      const expected = this.configuration!.specs.filter(
+        (spec) => spec.transport === "mcp",
+      );
       if (
         tools.length !== expected.length ||
         expected.some(
@@ -400,7 +463,10 @@ export class EducationRuntime {
             ),
         )
       )
-        throw new RuntimeError("mcp_schema_changed", "课程工具发现与固定契约不符");
+        throw new RuntimeError(
+          "mcp_schema_changed",
+          "课程工具发现与固定契约不符",
+        );
     })();
     await this.mcpReady;
   }

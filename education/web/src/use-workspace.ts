@@ -134,7 +134,11 @@ export function useEducationWorkspace(service: EducationService) {
       if (["ArrowUp", "PageUp", "Home"].includes(e.key)) follow = false;
     };
     const moved = () => {
-      if (viewport.scrollHeight - viewport.clientHeight - viewport.scrollTop < 32) follow = true;
+      if (
+        viewport.scrollHeight - viewport.clientHeight - viewport.scrollTop <
+        32
+      )
+        follow = true;
     };
     const observer = new ResizeObserver(scroll);
     observer.observe(list);
@@ -198,7 +202,9 @@ export function useEducationWorkspace(service: EducationService) {
     setView("chat");
     setSideOpen(false);
     try {
-      const value = await service.get<Detail>(`/api/session?id=${encodeURIComponent(id)}`);
+      const value = await service.get<Detail>(
+        `/api/session?id=${encodeURIComponent(id)}`,
+      );
       if (generation.current === current && selection.current === seq) {
         setDetail(value);
         setQuestion(draftQuestion);
@@ -209,7 +215,8 @@ export function useEducationWorkspace(service: EducationService) {
     } catch (e) {
       if (generation.current === current) setError(errorText(e));
     } finally {
-      if (generation.current === current && selection.current === seq) setOpeningSession(false);
+      if (generation.current === current && selection.current === seq)
+        setOpeningSession(false);
     }
     return false;
   };
@@ -257,10 +264,13 @@ export function useEducationWorkspace(service: EducationService) {
   const attachAnnotation = async ({ file, reference }: AnnotatedImage) => {
     if (busy || openingSession || imagePreparing || pending)
       throw new Error("当前请求处理中，请完成后再返回标注。");
-    if (draftImages.length >= 3) throw new Error("输入框已有三张图片，请先移除一张。");
+    if (draftImages.length >= 3)
+      throw new Error("输入框已有三张图片，请先移除一张。");
     if (
       draftImages.some(
-        (image) => image.visualContext && image.visualContext.run_id !== reference.run_id,
+        (image) =>
+          image.visualContext &&
+          image.visualContext.run_id !== reference.run_id,
       )
     )
       throw new Error("请分别讨论不同题目的标注。");
@@ -285,14 +295,19 @@ export function useEducationWorkspace(service: EducationService) {
         },
       ]);
       setQuestion(
-        (q) => q || "我在这张教学图上做了标注，请结合原题讨论标记的位置，先给我一点提示。",
+        (q) =>
+          q ||
+          "我在这张教学图上做了标注，请结合原题讨论标记的位置，先给我一点提示。",
       );
     } finally {
       revokeChatComposerAttachment(attachment);
       if (current === generation.current) setImagePreparing(false);
     }
   };
-  const send = async (retry = false, recovered?: { session: string; request: TeachingRequest }) => {
+  const send = async (
+    retry = false,
+    recovered?: { session: string; request: TeachingRequest },
+  ) => {
     if (
       busy ||
       initializing ||
@@ -305,7 +320,8 @@ export function useEducationWorkspace(service: EducationService) {
     if (retry && !recovered && retryBlocked(requestErrorCode)) return;
     const current = generation.current,
       selected = selection.current;
-    const isCurrent = () => current === generation.current && selected === selection.current;
+    const isCurrent = () =>
+      current === generation.current && selected === selection.current;
     let job = recovered ?? (retry ? pending : null);
     setBusy(true);
     setError("");
@@ -339,7 +355,9 @@ export function useEducationWorkspace(service: EducationService) {
           imageIds.push(accepted.id);
           setDraftImages((value) =>
             value.map((item) =>
-              item.requestId === image.requestId ? { ...item, uploadedId: accepted.id } : item,
+              item.requestId === image.requestId
+                ? { ...item, uploadedId: accepted.id }
+                : item,
             ),
           );
         }
@@ -347,13 +365,17 @@ export function useEducationWorkspace(service: EducationService) {
           session: session.id,
           request: {
             request_id: crypto.randomUUID(),
-            question: question.trim() || "请引导我理解这张题目图片，先不要直接给最终答案。",
+            question:
+              question.trim() ||
+              "请引导我理解这张题目图片，先不要直接给最终答案。",
             mode: "auto",
             model_selection: modelSelection,
             ...(imageIds.length ? { images: imageIds } : {}),
             ...(draftImages.find((image) => image.visualContext)?.visualContext
               ? {
-                  visual_context: draftImages.find((image) => image.visualContext)!.visualContext,
+                  visual_context: draftImages.find(
+                    (image) => image.visualContext,
+                  )!.visualContext,
                 }
               : {}),
           },
@@ -361,20 +383,26 @@ export function useEducationWorkspace(service: EducationService) {
         setPending(job);
       }
       const value = service.stream
-        ? await service.stream<{ session: Detail }>("/api/teach", job, (event) => {
-            // 流文字是临时投影；仅同一generation可更新，done的Store投影才成为历史。
-            if (!isCurrent()) return;
-            if (event.kind === "scope" && event.scope) {
-              setStreamScope({
-                ...event.scope,
-                active_part: event.part ?? event.scope.active_part,
-              });
-              setStreamStatus(`正在辅导第（${event.part}）问`);
-            }
-            if (event.kind === "progress") setStreamStatus(event.text || "正在思考…");
-            if (event.kind === "reset") setStreamDraft(event.text || "");
-            if (event.kind === "delta") setStreamDraft((text) => text + (event.text || ""));
-          })
+        ? await service.stream<{ session: Detail }>(
+            "/api/teach",
+            job,
+            (event) => {
+              // 流文字是临时投影；仅同一generation可更新，done的Store投影才成为历史。
+              if (!isCurrent()) return;
+              if (event.kind === "scope" && event.scope) {
+                setStreamScope({
+                  ...event.scope,
+                  active_part: event.part ?? event.scope.active_part,
+                });
+                setStreamStatus(`正在辅导第（${event.part}）问`);
+              }
+              if (event.kind === "progress")
+                setStreamStatus(event.text || "正在思考…");
+              if (event.kind === "reset") setStreamDraft(event.text || "");
+              if (event.kind === "delta")
+                setStreamDraft((text) => text + (event.text || ""));
+            },
+          )
         : await service.post<{ session: Detail }>("/api/teach", job);
       if (isCurrent()) {
         setDetail(value.session);
@@ -389,11 +417,15 @@ export function useEducationWorkspace(service: EducationService) {
     } catch (e) {
       if (isCurrent()) {
         setError(errorText(e));
-        setRequestErrorCode(e instanceof EducationRequestError ? e.code : undefined);
+        setRequestErrorCode(
+          e instanceof EducationRequestError ? e.code : undefined,
+        );
         // 已知回复格式失败不能重发同编号；保留文字和图片，让学生编辑新问题。
         if (
           e instanceof EducationRequestError &&
-          ["model_protocol", "model_truncated", "model_changed"].includes(e.code)
+          ["model_protocol", "model_truncated", "model_changed"].includes(
+            e.code,
+          )
         )
           setPending(null);
         // 失败消息也由Store投影接管，避免只看见上一轮回复；读失败时保留当前流式草稿。
@@ -406,7 +438,9 @@ export function useEducationWorkspace(service: EducationService) {
               setDetail(snapshot);
               if (
                 snapshot.messages.some(
-                  (item) => item.request_id === job?.request.request_id && item.partial_response,
+                  (item) =>
+                    item.request_id === job?.request.request_id &&
+                    item.partial_response,
                 )
               ) {
                 setStreamDraft("");
@@ -426,18 +460,32 @@ export function useEducationWorkspace(service: EducationService) {
     }
   };
   const pickHistorical = async (item: HistoricalPractice) => {
+    if (busy || openingSession || pending) return;
     const current = generation.current;
-    const session =
-      item.session ||
-      (
-        await service.post<PracticeAssignment>("/api/practice/start", {
-          item_id: item.item.id,
-          request_id: crypto.randomUUID(),
-        })
-      ).session;
-    if (current !== generation.current) return;
-    if (await openSession(session, "返回原练习，我想复习这道历史题，请先和我讨论解题思路。")) {
-      await refresh(current);
+    const seq = selection.current;
+    // 选题准入期间锁定输入，避免选题和旧会话发送同时完成后互相覆盖。
+    setBusy(true);
+    try {
+      const session =
+        item.session ||
+        (
+          await service.post<PracticeAssignment>("/api/practice/start", {
+            item_id: item.item.id,
+            request_id: crypto.randomUUID(),
+          })
+        ).session;
+      if (current !== generation.current || seq !== selection.current) return;
+      const draft =
+        item.source === "对话推荐"
+          ? "这道题我想先自己试试，请先给一点提示。"
+          : "返回原练习，我想复习这道历史题，请先和我讨论解题思路。";
+      if (await openSession(session, draft)) {
+        await refresh(current);
+        if (item.source === "对话推荐" && current === generation.current)
+          setView("practice");
+      }
+    } finally {
+      if (current === generation.current) setBusy(false);
     }
   };
   const messages = detail?.messages ?? [];
@@ -458,6 +506,18 @@ export function useEducationWorkspace(service: EducationService) {
     )
       return;
     // 明确重新回答是新尝试，不能重放已截断的付费调用；原题和标注引用保持不变。
+    void send(true, {
+      session: detail.session.id,
+      request: {
+        ...item.original_input,
+        model_selection: chatModels.snapshot(),
+        request_id: crypto.randomUUID(),
+      },
+    });
+  };
+  const repeatStudentTask = (item: Message) => {
+    if (!detail || chatModels.blocked || !item.response?.task_notice) return;
+    // 旧失败结果保持原样；学生点击后以当前配置发起一个有新编号的查询。
     void send(true, {
       session: detail.session.id,
       request: {
@@ -518,5 +578,6 @@ export function useEducationWorkspace(service: EducationService) {
     messages,
     resumeMessage,
     restartMessage,
+    repeatStudentTask,
   };
 }

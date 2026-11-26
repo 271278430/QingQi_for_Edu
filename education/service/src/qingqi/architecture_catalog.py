@@ -6,6 +6,7 @@ from .domain_tools import SPECS
 from .visual_teaching import TOOL as VISUAL
 from .geometry_solver import TOOL as GEOMETRY
 from .function_solver import TOOL as FUNCTION
+from .student_task_tools import SPECS as STUDENT_TOOLS
 VERSION='source_architecture_v11'
 
 def item(id,title,group,owner,summary,files,interfaces,reuse,limits):
@@ -18,7 +19,7 @@ def item(id,title,group,owner,summary,files,interfaces,reuse,limits):
 def architecture(deployment):
     modules=[
       item('tutoring','个性化辅导','学生业务','Agent.run + Store当前题资源','自然对话、图片和历史题，沿用同会话原题',
-           [P+'agent.py',P+'conversation.py',P+'providers.py',P+'tutoring_grounding.py',W+'workspace.tsx'],
+           [P+'agent.py',P+'student_tasks.py',P+'conversation.py',P+'providers.py',P+'tutoring_grounding.py',W+'workspace.tsx',W+'student-task-results.tsx'],
            ['POST /api/teach','POST /api/tutor/images','GET /api/practice/history'],
            ['ZCode消息、附件、工具运行时'],['聊天推断不是已核验学生成绩']),
       item('path','学习路径','学生业务','Store学习快照 + branch_plan','图谱约束与学情驱动的分支路线，选择影响练习',
@@ -44,7 +45,7 @@ def architecture(deployment):
            ['ZCode Registry、Executor、Scheduler与Trace'],
            ['教育Loop由Python适配，未原样运行ZCode编码Agent全部功能']),
       item('tools','工具系统','核心系统','Registry授权 + ZCodeRuntime执行','受控本地工具、图谱MCP和8B/27B模型Worker',
-           [P+'tools.py',P+'mcp.py',P+'zcode_runtime.py',R+'index.ts'],
+           [P+'tools.py',P+'student_task_tools.py',P+'mcp.py',P+'zcode_runtime.py',R+'index.ts'],
            ['Registry.authorize/call','createToolRegistry/createToolExecutor','createMcpAdapter'],
            ['真实复用@zcode/core与@zcode/adapters/mcp'],
            ['固定只读白名单；业务写入由Store命令负责，无任意Shell']),
@@ -116,7 +117,7 @@ def architecture(deployment):
     for module in modules:
         module['group']=next(group for group,ids in hierarchy.items() if module['id'] in ids)
     skills=json.loads((REPO/'education/service/skills/index.json').read_text(encoding='utf-8'))
-    tools=[*SPECS.values(),VISUAL,GEOMETRY,FUNCTION]
+    tools=[*SPECS.values(),VISUAL,GEOMETRY,FUNCTION,*STUDENT_TOOLS.values()]
     from .workers import make_workers
     from .providers import JSONModel
     tools += [spec for spec,_ in make_workers({name:JSONModel(e) for name,e in deployment.endpoints.items() if e.enabled}).values()]

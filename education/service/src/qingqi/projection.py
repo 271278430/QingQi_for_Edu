@@ -10,12 +10,16 @@ def safe_route(route):
 def project_response(response,state=None):
     if response is None:
         return None
-    keys = ("text", "teaching_action", "evidence_refs", "step_refs", "run_id", "controller", "duration_ms", "cache_hit", "model_inference", "tool_calls", "repairs", "visuals", "visual_version", "tutoring_scope")
+    keys = ("text", "teaching_action", "evidence_refs", "step_refs", "run_id", "controller", "duration_ms", "cache_hit", "model_inference", "tool_calls", "repairs", "visuals", "visual_version", "tutoring_scope", "student_tasks")
     result = {key: response[key] for key in keys if key in response}
     route=response.get('route')
     decision=response.get('teaching_decision')
     if route and decision:route={**route,'teaching':{**route.get('teaching',{}),**{k:decision[k] for k in ('label','display_mode','reason') if k in decision}}}
     result["route"] = safe_route(route)
+    from .student_tasks import is_query_turn
+    if state and not state.get('task_plan') and is_query_turn(state) and not response.get('student_tasks'):
+        # 保留旧接受记录；明确告知它没有执行查询，不把旧讲解伪造成推荐结果。
+        result['task_notice']='这条旧回复没有完成你的查询任务，原回复已保留。可以重新发送这条请求。'
     if result.get('visuals'):
         import re
         # 旧接受消息只修正展示标题与类型措辞；不把静态历史图伪造成一段新动画。

@@ -129,7 +129,8 @@ def recommend(goal, profiles, bank, initial, events, active, plan, now, version,
     connected = [e for e in pool if e['topic'] in set(plan.get('related_topics', status))]
     # 知识点不足时通过题型与模板补齐；无关联题不能冒充目标练习。
     pool = connected
-    seen = [item for batch in batches[-10:] for item in [*batch.get('previous', []), *[r['id'] for r in batch['result']['items']]]]
+    exposures=[e['data'] for e in events if e['kind'] in {'recommendations','chat_recommendations'}]
+    seen = [item for batch in exposures[-10:] for item in [*batch.get('previous', []), *[r['id'] for r in batch['result']['items']]]]
     recent = [e['data']['item_id'] for e in events if e['kind'] == 'answer'][-12:]
     def group(entry):
         return status[entry['topic']].get('path', '数学基础').split('/')[0]

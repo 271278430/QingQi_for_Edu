@@ -10,12 +10,23 @@ export const TOOL_NAMES = [
   "render_teaching_visual",
   "solve_geometry",
   "analyze_function",
+  "recommend_practice",
+  "preview_learning_path",
+  "read_learning_dashboard",
 ] as const;
 export const ToolName = z.enum(TOOL_NAMES);
 export const Frame = z
   .object({
     id: z.number().int(),
-    op: z.enum(["init", "skills", "plan", "recall", "contracts", "call", "close"]),
+    op: z.enum([
+      "init",
+      "skills",
+      "plan",
+      "recall",
+      "contracts",
+      "call",
+      "close",
+    ]),
     input: z.record(z.string(), z.unknown()),
   })
   .strict();
@@ -38,7 +49,10 @@ export interface HandlerRequest {
   arguments: unknown;
   trace: { agentId?: string; childSessionId?: string; traceId: string };
 }
-export type InvokeHandler = (request: HandlerRequest, signal?: AbortSignal) => Promise<unknown>;
+export type InvokeHandler = (
+  request: HandlerRequest,
+  signal?: AbortSignal,
+) => Promise<unknown>;
 export interface RuntimeFailure {
   code: string;
   message: string;

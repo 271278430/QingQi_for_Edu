@@ -499,6 +499,7 @@ class Store:
 
     def recent_turns(self, identity: Identity, limit: int = 6) -> list[dict]:
         """Only completed turns from this authenticated student's SAME session."""
+        from .student_tasks import is_query_turn
         rows = self.db.execute("SELECT id,request,state,response FROM runs WHERE student=? AND session=? AND response IS NOT NULL ORDER BY id DESC LIMIT ?",
                                (identity.student, identity.session, limit)).fetchall()
         return [{"run_id": r["id"], "request": json.loads(r["state"]).get("effective_request", json.loads(r["request"])),
@@ -506,6 +507,7 @@ class Store:
                  "geometry_task": json.loads(r["state"]).get("geometry_task"),
                  "command": json.loads(r["state"]).get("route",{}).get("command"),
                  "presentation": json.loads(r["state"]).get("presentation"),
+                 "query_turn":is_query_turn(json.loads(r['state']),json.loads(r['request'])['question']),
                  "practice_item_id":json.loads(r['state']).get('practice_entry',{}).get('id')} for r in rows]
 
     def referenced_image(self,identity,ttl=1800):
@@ -516,6 +518,12 @@ class Store:
             state=json.loads(row['state'])
             # 取消/新题是上下文边界，不能用旧图片恢复已结束的教学任务。
             if state.get('route',{}).get('command') in {'cancel','new_task'}:return None
+            source=state.get('task_plan',{}).get('source',{})
+            if source.get('kind')=='image' and source.get('question'):
+                images=state['effective_request'].get('images',[])
+                # 再推荐只沿用资料文字；读取真正上传该资料的接受记录，不能构造空图片请求。
+                if images:return {'text':source['question'],'images':images,'unclear':False,'note':''}
+                continue
             if state.get('image_question'):return state['image_question']
         return None
 
@@ -526,6 +534,8 @@ class Store:
         rows=self.db.execute('SELECT id,state,request,response FROM runs WHERE student=? AND session=? AND response IS NOT NULL ORDER BY id DESC LIMIT 50',(identity.student,identity.session)).fetchall()
         for row in rows:
             state=json.loads(row['state']);route=state.get('route',{});response=json.loads(row['response'])
+            from .student_tasks import is_query_turn
+            if is_query_turn(state,json.loads(row['request'])['question']):continue
             if route.get('command') in {'cancel','new_task'}:return None
             from .conversation import starts_new_problem
             if response.get('teaching_action')=='clarify' and starts_new_problem(json.loads(row['request'])['question']):return None
@@ -574,6 +584,8 @@ class Store:
         turns=[]
         for row in rows:
             state=json.loads(row['state']);route=state.get('route',{});request=json.loads(row['request']);response=json.loads(row['response'])
+            from .student_tasks import is_query_turn
+            if is_query_turn(state,request['question']):continue
             from .conversation import starts_new_problem
             if route.get('command') in {'cancel','new_task'} or starts_new_problem(request['question']):break
             if response.get('teaching_action')=='clarify' or route.get('intents')==['chat']:continue
@@ -661,6 +673,8 @@ class Store:
             for kind, text, source in [("question", request.question, "student_request"), ("agent_reply", response["text"], "agent_inference_not_mastery")]:
                 self.db.execute("INSERT OR IGNORE INTO episodes(student,session,run_id,kind,text,provenance,at) VALUES(?,?,?,?,?,?,?)",
                                 (identity.student, identity.session, run_id, kind, text, source, time.time()))
+            self._commit_selected_practice(identity,state)
+            self._commit_student_tasks(identity,state,response,run_id)
             self._commit_dialogue(identity, request, state, response, run_id)
             self._commit_model_hint(identity,state,response)
             self._commit_practice_work(identity, request, state, run_id)
@@ -668,6 +682,8 @@ class Store:
             self.db.execute("INSERT INTO events(run_id,kind,data,at) VALUES(?,?,?,?)", (run_id, "committed", canonical(response), time.time()))
 
     def _commit_dialogue(self, identity, request, state, response, run_id):
+        # 查询任务保存为本轮产物，不覆盖/续期原题、未完成步骤和教法偏好。
+        if state.get('task_plan',{}).get('only_queries'):return
         command = state['route'].get('command')
         if command in {'cancel', 'new_task'}:
             data = {'pending': None, 'active_task': None, 'verified_work': None, 'practice_detached': True}
@@ -757,6 +773,63 @@ class Store:
             work['no_final_requested']=data['no_final_requested']
         self.db.execute('INSERT INTO dialogue_state(student,session,data,updated) VALUES(?,?,?,?) ON CONFLICT(student,session) DO UPDATE SET data=excluded.data,updated=excluded.updated',
                         (identity.student, identity.session, canonical(data), time.time()))
+
+    def latest_student_recommendation(self,identity):
+        rows=self.db.execute('SELECT id,state,response FROM runs WHERE student=? AND session=? AND response IS NOT NULL ORDER BY id DESC LIMIT 50',(identity.student,identity.session)).fetchall()
+        for row in rows:
+            state=json.loads(row['state'])
+            if state.get('route',{}).get('command') in {'cancel','new_task'}:return None
+            response=json.loads(row['response'])
+            value=next((v for v in response.get('student_tasks',[]) if v['kind']=='recommend' and v.get('items')),None)
+            if value:
+                task=state.get('task_plan',{});action=next((a for a in task.get('actions',[]) if a['kind']=='recommend'),{})
+                query=action.get('arguments',{}).get('query')
+                source={'kind':'topic','item_id':'','question':query} if query else task.get('source')
+                return {'run_id':row['id'],'items':value['items'],'latest':row is rows[0],'source':source}
+        return None
+
+    def recommended_selection(self,identity,request):
+        import re
+        if request.images or request.expression or request.course_query:return None
+        q=request.question
+        explicit=bool(re.search(r'推荐(?:的|过的)?|新题|刚才给',q))
+        match=re.search(r'第\s*([一二两三123])\s*(?:道|个)?题',q)
+        if not match and explicit and re.search(r'这(?:道|个)?题',q):index=0
+        elif match:index={'一':0,'二':1,'两':1,'三':2,'1':0,'2':1,'3':2}[match[1]]
+        else:return None
+        value=self.latest_student_recommendation(identity)
+        if not value or not explicit and not value['latest']:return None
+        if index>=len(value['items']):raise ContractError('上次推荐没有这一道题，请选择实际展示的题目。')
+        candidate=value['items'][index]
+        if candidate['version']!=self.catalogue.version:raise Denied('recommended bank version changed')
+        entry=self.catalogue.item(candidate['id'])
+        if self.catalogue.config and entry.get('grade')!=self.catalogue.initial['grade']:raise Denied('recommended question outside student grade')
+        existing=self.db.execute('SELECT id,created FROM practice_assignments WHERE student=? AND session=? AND item_id=? AND version=? ORDER BY created DESC LIMIT 1',(identity.student,identity.session,entry['id'],self.catalogue.version)).fetchone()
+        assignment=self.practice_assignment(identity.student,existing['id']) if existing else None
+        new=not assignment or bool(assignment['feedback'] and assignment['feedback']['correct'] and time.time()-existing['created']>=3*86400)
+        if new:
+            from .learning import public_item
+            assignment={'id':uuid.uuid5(uuid.NAMESPACE_URL,fingerprint({'student':identity.student,'session':identity.session,'request':request.request_id,'item':entry['id']})).hex,
+                        'session':identity.session,'item':public_item(entry),'feedback':None,'guidance':'','hint_count':0}
+        return {'entry':entry,'assignment':assignment,'new_assignment':new,'proposal_run_id':value['run_id'],'request_id':'chat-select:'+request.request_id,
+                'previous_problem':self.current_problem(identity)}
+
+    def _commit_selected_practice(self,identity,state):
+        selection=state.get('recommended_selection')
+        if not selection or not selection['new_assignment']:return
+        row=self.db.execute('SELECT response FROM runs WHERE id=? AND student=? AND session=?',(selection['proposal_run_id'],identity.student,identity.session)).fetchone()
+        if not row or not row['response']:raise Denied('selected recommendation is not an accepted owned result')
+        response=json.loads(row['response']);ids={i['id'] for value in response.get('student_tasks',[]) if value['kind']=='recommend' for i in value.get('items',[])}
+        if selection['entry']['id'] not in ids:raise Denied('selected question differs from the accepted slate')
+        a=selection['assignment'];digest=fingerprint({'item_id':a['item']['id'],'request_id':selection['request_id']})
+        self.db.execute('INSERT INTO practice_assignments VALUES(?,?,?,?,?,?,?,?)',(a['id'],identity.student,identity.session,a['item']['id'],self.catalogue.version,selection['request_id'],digest,time.time()))
+
+    def _commit_student_tasks(self,identity,state,response,run_id):
+        for value in response.get('student_tasks',[]):
+            if value['kind']!='recommend' or not value.get('items'):continue
+            data={'result':{'items':value['items']},'previous':[],'evidence_key':''}
+            self.db.execute('INSERT INTO practice_events(student,assignment,request_id,payload_hash,kind,data,at) VALUES(?,NULL,?,?,?,?,?)',
+                            (identity.student,'chat-recommend:'+str(run_id),fingerprint(state['task_plan']),'chat_recommendations',canonical(data),time.time()))
 
     @staticmethod
     def _numeric_work_complete(request):

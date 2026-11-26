@@ -11,9 +11,10 @@ from dataclasses import replace
 from .domain_tools import number
 from .request_controls import NEGATION,negated_before,strip_denied
 
-VERSION = 'teaching_policy_v18'
+VERSION = 'teaching_policy_v19'
 LABELS = {'socratic': '苏格拉底式教学', 'heuristic': '启发式提示', 'explain': '分步讲解', 'answer': '参考解答',
           'confirm': '确认正确作答', 'chat': '闲聊', 'course': '课程查询', 'clarify': '先澄清问题'}
+LABELS.update({'recommend':'相似练习','learning_path':'学习路径','learning_dashboard':'学情摘要','unsupported':'需求说明'})
 PREFERENCES = {
     'socratic': r'苏格拉底|追问|引导我',
     'heuristic': r'启发式(?:提示|教学)?|(?:给|来|要|先).*?(?:提示|启发)|只(?:需|要).*?提示|hint',
@@ -208,7 +209,8 @@ def choose(request, route, recent, *, continuing_problem=False, prior_no_answer=
 def final_decision(initial, result, checked):
     decision = dict(initial)
     action = result['teaching_action']
-    mode = {'ask': 'socratic', 'explain': 'explain', 'give_answer': 'answer', 'clarify': 'clarify', 'greet': 'chat', 'chat': 'chat', 'confirm': 'confirm'}[action]
+    mode = {'ask':'socratic','explain':'explain','give_answer':'answer','clarify':'clarify','greet':'chat','chat':'chat','confirm':'confirm',
+            'recommend':'recommend','learning_path':'learning_path','learning_dashboard':'learning_dashboard'}[action]
     if action == 'ask' and initial['mode'] == 'heuristic':
         mode = 'heuristic'
     if initial['display_mode'] == 'course' and action != 'clarify':

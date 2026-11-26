@@ -34,5 +34,20 @@
       "review"
     ],
     "sha256": "429abc2cddc2fd5483b8822b963541df353dba4257a46e7e06cb87c490dbdf86"
+  },
+  {
+    "id": "student-recommendation",
+    "intents": [
+      "recommend"
+    ],
+    "sha256": "d406aadd747881e766b498a330a170ce80a5b96857f7184425167f05fd666d37"
+  },
+  {
+    "id": "student-learning-views",
+    "intents": [
+      "learning_path",
+      "learning_dashboard"
+    ],
+    "sha256": "a87b8d6a232d520ba2745afd3066863da0b9b5faa600ecefe7a87ce7c0cf70d5"
   }
 ]

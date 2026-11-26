@@ -12,6 +12,7 @@
 
 | 文件                                                                           | 简要说明                                                   |
 | ------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| [codex-current-task-v1.md](codex-current-task-v1.md)                           | 当前任务与工具执行审查 · 2026-11-26：说明文档。            |
 | [codex-streaming-recovery-v1.md](codex-streaming-recovery-v1.md)               | 流式教学与截断恢复审查 · 2026-11-25：说明文档。            |
 | [composer-model-selection-v1.md](composer-model-selection-v1.md)               | 对话选模与推理档位 · 2026-11-25：说明文档。                |
 | [contextual-teaching-visual-pair-v1.md](contextual-teaching-visual-pair-v1.md) | 上下文教学模式与讲解图 / 动画配对 · 2026-11-25：说明文档。 |

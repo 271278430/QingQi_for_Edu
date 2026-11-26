@@ -1,10 +1,11 @@
 """Concrete processing steps; documentation only, no additional runtime state owner."""
 STEPS={
  'tutoring':[
-  ('图片先成为学生所属资源；历史题绑定assignment。prepare恢复同会话原题，明确换题时重新绑定。','POST /api/tutor/images → prepare / Store.current_problem'),
-  ('tutoring_scope逐问拆分问题和操作，记录本轮教哪一问，各问的答案许可分别判断。','tutoring_scope.build / ScopedTutorController.next'),
+  ('当前输入先识别教学、推荐与学习查询，否定和数量按本轮消息决定；旧题不能覆盖任务。','student_tasks.inspect_request / Agent.run'),
+  ('图片成为学生所属资源，原题与最近推荐来源作为独立资料引用；查询不会替换当前教学题。','student_tasks.source_reference / Store.current_problem'),
+  ('纯查询执行学生工具；教学才逐问确定教法与许可，复合请求按同一DAG处理。','StudentTaskController / tutoring_scope.build / ScopedTutorController.next'),
   ('Agent根据任务与上下文决定回答或调用工具，观察工具结果后继续；回复须通过原题和归因核验。','Agent.run → Controller.next → Registry.call'),
-  ('临时文字用SSE展示；最终正文、题目状态和图示由Store提交，done交付规范历史。','Store.commit → WebStore.detail → SSE done'),
+  ('SSE展示临时文字；Store同事务接受教学或题卡、摘要和路径预览，查询只记录曝光而不计成绩。','Store.commit → WebStore.detail → SSE done / StudentTaskResults'),
  ],
  'path':[
   ('Store读取学习目标、时间、路线选择、独立作答及帮助事件，生成同一时点的学习快照。','Store._learning_snapshot → learning_projection'),
@@ -40,8 +41,8 @@ STEPS={
  ],
  'routing':[
   ('保留学生原始文字，拆出教学操作和明确否定；图片/题干始终是数据，不是系统指令。','Request.parse / request_controls.strip_denied'),
-  ('prepare结合当前题和最近同题轮次解析“上一问、再提示、画这个”等引用，明确新题时切换。','prepare / Store.current_problem / problem_turns'),
-  ('LayeredRouter识别任务，tutoring_scope将多问、多操作变为有序任务；各问授权彼此隔离。','LayeredRouter.route / tutoring_scope.build'),
+  ('先识别本轮操作；不明确的学习操作沿既有受约束分类器处理，学生输入不能注册新能力。','student_tasks.inspect_request / LayeredRouter.route'),
+  ('source_reference绑定所属原题、图片或最近推荐来源；查询与教法分离，教学小问的许可彼此隔离。','student_tasks.source_reference / tutoring_scope.build'),
   ('choose读取同题teaching_mode并结合当前意图、困惑与真实学情选择教法；答案许可独立按问判断，build确定长度。','teaching_policy.choose / teaching_plan.build'),
   ('输出每问教学计划、视觉需要和有限能力集合，Skills限制可用工具，交由Agent Loop执行。','Skills.load / Agent.run'),
  ],

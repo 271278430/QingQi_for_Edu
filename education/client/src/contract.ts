@@ -1,5 +1,6 @@
 import type { TeachingResponse as Response } from "./teaching-decision.js";
 import type { ModelStatus, SystemSettings } from "./management-contract.js";
+import type { PracticeItem, LearningSummary } from "./student-task-contract.js";
 export type { TeachingVisual } from "./teaching-visual.js";
 export type * from "./problem-reasoning.js";
 export type {
@@ -10,6 +11,7 @@ export type {
 } from "./teaching-decision.js";
 export type * from "./management-contract.js";
 export type * from "./chat-model-contract.js";
+export type * from "./student-task-contract.js";
 export interface Bootstrap {
   can_manage?: boolean;
   settings?: SystemSettings;
@@ -139,28 +141,12 @@ export interface EducationService {
   stream?<T>(
     path: string,
     body: unknown,
-    onEvent: (event: import("./teaching-decision.js").TeachingStreamEvent) => void,
+    onEvent: (
+      event: import("./teaching-decision.js").TeachingStreamEvent,
+    ) => void,
   ): Promise<T>;
 }
 
-export interface PracticeItem {
-  id: string;
-  topic: string;
-  title: string;
-  expression: string;
-  level: number;
-  version: string;
-  reason?: string;
-  options?: string[];
-  answer_kind?: string;
-  answer_count?: number;
-  source?: string;
-  usable?: boolean;
-  quality_note?: string;
-  purpose?: string;
-  kind?: string;
-  group?: string;
-}
 export interface PracticeFeedback {
   correct: boolean;
   independent: boolean;
@@ -234,15 +220,7 @@ export interface LearningOverview {
     today_minutes: number;
     today_items: number;
   };
-  summary: {
-    turns: number;
-    attempts: number;
-    items: number;
-    independent_attempts: number;
-    independent_correct: number;
-    assisted_attempts: number;
-    accuracy: number | null;
-  };
+  summary: LearningSummary;
   daily: { date: string; attempts: number; correct: number }[];
   recommendations: PracticeItem[];
   recommendation_info?: {

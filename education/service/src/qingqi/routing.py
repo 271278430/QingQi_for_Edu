@@ -14,6 +14,10 @@ class Router:
 
     def route(self, request: Request) -> Route:
         q = request.question.casefold()
+        from .student_tasks import inspect_request
+        operation=inspect_request(request)
+        if operation['only_queries'] and operation['actions']:
+            return Route(tuple(a['kind'] for a in operation['actions']),('current_user_operation',))
         from .teaching_goals import is_teaching
         if is_teaching(q) and not request.expression and not request.steps and not request.course_query:
             return Route(('tutor',),('clear_concept_or_step_request',))

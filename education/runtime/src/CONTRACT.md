@@ -1,5 +1,7 @@
 # 教育后台 ZCode adapter
 
+固定只读学生工具recommend_practice、preview_learning_path、read_learning_dashboard按当前任务计划执行；Node不持有学情缓存，Python回调读取同一Store。参数不携带学生身份或路径，Owner验证原题引用与本轮请求。完整模型部署的注册上限为16，工具名仍为固定白名单。见specs/education/current-task-tools-v1.md。
+
 函数工具保留精确分数/根式，display元数据只接受当前符号工具批准的图；渲染器仍执行同一个只读schema与调用账本。系统配置是Python Store的运维状态，不在Node持有第二套设置缓存。见specs/education/system-management-v1.md。
 
 analyze_function是固定只读有界函数工具，经原Registry/Executor和账本执行。题干提取参数归Python owner；Node白名单不允许学生新增工具。原函数与导数图来自核验后的批准数据，仍用render_teaching_visual，不创建第二个可写题目缓存。见specs/education/conversation-problem-v2.md。

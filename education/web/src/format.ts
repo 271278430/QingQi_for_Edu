@@ -6,6 +6,9 @@ export const actionLabels: Record<string, string> = {
   clarify: "需要补充信息",
   greet: "学习对话",
   chat: "学习对话",
+  recommend: "相似练习",
+  learning_path: "学习路径",
+  learning_dashboard: "学情摘要",
 };
 export const toolLabels: Record<string, string> = {
   course_search: "检索课程图谱",

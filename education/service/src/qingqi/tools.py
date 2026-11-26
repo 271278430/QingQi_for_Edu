@@ -8,10 +8,11 @@ from .visual_teaching import TOOL as VISUAL_TOOL, render_visuals
 from .geometry_solver import TOOL as GEOMETRY_TOOL, solve_geometry, prepare_geometry
 from .function_solver import TOOL as FUNCTION_TOOL, analyze_function
 from .zcode_runtime import ZCodeRuntime
+from .student_task_tools import StudentTaskTools, SPECS as STUDENT_SPECS
 
 
 class Registry:
-    def __init__(self, graph, workers=None, *, root):
+    def __init__(self, graph, workers=None, *, root, student_store=None):
         prepare_geometry()
         self.specs = dict(SPECS)
         self.specs[VISUAL_TOOL.name] = VISUAL_TOOL
@@ -19,6 +20,9 @@ class Registry:
         self.specs[FUNCTION_TOOL.name] = FUNCTION_TOOL
         self.local = {"difficulty_candidates": difficulty, VISUAL_TOOL.name: render_visuals,GEOMETRY_TOOL.name:solve_geometry}
         self.local[FUNCTION_TOOL.name]=analyze_function
+        self.specs.update(STUDENT_SPECS)
+        self.student_tasks=StudentTaskTools(student_store)
+        self.local.update(self.student_tasks.handlers())
         self.workers = workers or {}
         for name, (spec, function) in self.workers.items():
             self.specs[name] = spec

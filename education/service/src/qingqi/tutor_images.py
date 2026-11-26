@@ -39,7 +39,8 @@ def describes_image(question):
     return bool(re.search(r'图片|照片|截图|这张图|图中|图表|这张表|表中|表格', question) and re.search(r'表达|内容|描述|什么意思|总结|分析|介绍|说明|比较|解读|含义', question) and not positive_teaching)
 
 def refers_to_image(question):
-    return bool(re.search(r'图片|照片|截图|这张图|图中|图表|这张表|表中|表格|这行|这一列|第[一二三四五六七八九十0-9]+[行列]', question) and not re.search(r'新问题|新题|取消|结束当前', question))
+    # “图里这道题”也是明确的同会话图片引用，不应要求学生再贴一次题目。
+    return bool(re.search(r'图片|照片|截图|这张图|图中|图里|图上的题|图表|这张表|表中|表格|这行|这一列|第[一二三四五六七八九十0-9]+[行列]', question) and not re.search(r'新问题|新题|取消|结束当前', question))
 
 def normalize(data_url):
     from PIL import Image, ImageOps, UnidentifiedImageError

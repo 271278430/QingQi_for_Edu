@@ -66,7 +66,8 @@ class ScopedTutorController:
     """One loop, shared tool observations, independent reply validation per unit."""
     def __init__(self,inner,validate_reply,emit=None):
         self.inner=inner;self.name=inner.name;self.uses_model=inner.uses_model
-        self.deployment_signature=inner.deployment_signature;self.validator=validate_reply;self.emit=emit
+        # 规则控制器没有远端配置签名；分问包装仍沿用同一控制器身份。
+        self.deployment_signature=getattr(inner,'deployment_signature',inner.name);self.validator=validate_reply;self.emit=emit
     def next(self,request,state,context,registry):
         from .planning import reply
         scope=state['tutoring_scope']
@@ -105,7 +106,10 @@ class ScopedTutorController:
                 if selected:
                     selected=sorted(selected,key=lambda v:v[0]);state['scoped_visual_parts']=[v[0] for v in selected]
                     return {'kind':'call','tool':'render_teaching_visual','arguments':{'visuals':[v[2] for v in selected]}}
-            action=self.inner.next(local_request,local,local['context'],registry)
+            if self.inner.name=='offline_rules_and_symbolic_v2' and local.get('practice_entry'):
+                from .practice_tutoring import reply_for
+                action=reply_for(local['practice_entry'],local_request.question,unit['teaching'],local['practice_assessment'])
+            else:action=self.inner.next(local_request,local,local['context'],registry)
             if action['kind']=='call':return action
             result=action['reply']
             if unit['mode']=='socratic' and result['teaching_action']=='explain':

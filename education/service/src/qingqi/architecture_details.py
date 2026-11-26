@@ -1,12 +1,12 @@
 """Source-aligned business scope and navigable steps for the sixteen real modules."""
 FLOW={
- 'tutoring':('文字、原图、历史题与当前问题','按当前小问组织的辅导回复与批准图示','绑定当前题|按小问确定任务|执行教学循环|交付当前问回复','routing,loop,visuals,persistence'),
+ 'tutoring':('文字、原图、历史题与当前问题','教学回复、批准图示或学生查询产物','识别本轮操作|独立绑定资料引用|选择教学或学生工具|执行同一循环|交付规范结果','routing,loop,tools,visuals,persistence'),
  'path':('目标、时间、学情、先修图谱和可用题','多链路地图；所选路线影响三题','读取目标与学情|检查真实先修|生成可用路线|保存学生选择','data,persistence,practice'),
  'dashboard':('初始估计、独立作答与帮助事件','学情摘要、图谱与节点依据','读取学习事件|聚合证据与置信度|映射知识图谱|输出摘要与行动','data,memory,persistence'),
  'practice':('所选路线、近期学情、合格题与曝光','每组三题、核对反馈与学习事件','筛选完整同年级题|按学情与路线排序|形成多样三题|核验作答并回流','data,path,tutoring,persistence'),
  'permissions':('身份、来源、资源编号与操作类型','允许执行的有限请求或明确拒绝','确认访问身份|校验Host与CSRF|检查学生资源归属|检查管理与工具权限','management,loop,tools,persistence'),
  'loop':('分问任务、有界上下文、能力和预算','工具观察、已核验回复与规范提交','准入与恢复|构建上下文|决定回复或调用|观察结果再决策|核验候选输出|向Store提交','routing,models,tools,memory,persistence'),
- 'routing':('当前输入、原题和同题上下文','小问任务、每问教法、长度和答案许可','预处理原始请求|恢复当前任务|按小问拆意图|确定教法与长度|生成任务及能力集合','memory,skills,loop,models'),
+ 'routing':('当前输入、原题和同题上下文','本轮任务与引用；教学小问、教法和许可','预处理原始请求|识别操作与否定|绑定所属资料引用|教学时按问确定模式|生成任务及能力集合','memory,skills,loop,models'),
  'models':('已保存连接、会话选模、推理档位与本轮任务','冻结模型客户端；文字、工具动作或识图结果','管理连接与加密凭据|对话框选择模型和档位|点击发送冻结配置|校验版本能力并用ZCode CEL映射|编码文字图片工具并消费增量|校验结果返回观察','management,permissions,persistence,loop'),
  'tools':('Controller动作、原题参数与工具白名单','经Schema核验的工具观察','绑定原题参数|计算能力交集|检查Schema与权限|按DAG执行本地/MCP/Worker|核验返回观察','permissions,skills,data,models,visuals'),
  'memory':('当前题、当前问、同题历史与学习依据','授权且有界的上下文','定位学生与会话|读取原题和当前问|过滤历史候选|按预算召回|提交时写回运行记忆','persistence,data,routing'),

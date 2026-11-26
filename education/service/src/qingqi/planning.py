@@ -4,7 +4,7 @@ from .contracts import SHORT, TEXT, obj
 from .teaching_responses import calculation_steps, chat_reply, heuristic_prompt, completed_numeric_work
 
 
-REPLY_SCHEMA = obj({"text": {"type":"string","maxLength":6000}, "teaching_action": {"type": "string", "enum": ["ask", "confirm", "explain", "give_answer", "clarify", "greet", "chat"]},
+REPLY_SCHEMA = obj({"text": {"type":"string","maxLength":6000}, "teaching_action": {"type": "string", "enum": ["ask", "confirm", "explain", "give_answer", "clarify", "greet", "chat", "recommend", "learning_path", "learning_dashboard"]},
     "evidence_refs": {"type": "array", "items": SHORT, "maxItems": 40},
     "step_refs": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 29}, "maxItems": 30}})
 ACTION_SCHEMA = obj({"kind": {"type": "string", "enum": ["call", "respond", "clarify"]}, "tool": SHORT, "arguments": {"type": "object"}, "reply": REPLY_SCHEMA}, ["kind"])
@@ -17,6 +17,7 @@ def find(state: dict, name: str):
 TOOL_INTENTS = {"course_search": "course", "worker_course8b": "course", "course_context": "course",
                 "review_arithmetic": "review", "worker_review27b": "review",
                 "difficulty_candidates": "diagnosis", "worker_difficulty8b": "diagnosis"}
+TOOL_INTENTS.update({'recommend_practice':'recommend','preview_learning_path':'learning_path','read_learning_dashboard':'learning_dashboard'})
 
 
 def next_tool_intent(state):
@@ -24,7 +25,10 @@ def next_tool_intent(state):
     tasks = {node["id"]: node["intent"] for node in state["route"]["task_dag"]["nodes"]}
     done = {"course": find(state, "course_context") is not None,
             "review": find(state, "review_arithmetic") is not None or find(state, "worker_review27b") is not None,
-            "diagnosis": find(state, "difficulty_candidates") is not None or find(state, "worker_difficulty8b") is not None}
+            "diagnosis": find(state, "difficulty_candidates") is not None or find(state, "worker_difficulty8b") is not None,
+            "recommend":find(state,'recommend_practice') is not None,
+            "learning_path":find(state,'preview_learning_path') is not None,
+            "learning_dashboard":find(state,'read_learning_dashboard') is not None}
     for node_id in state["native_schedule"]["order"]:
         intent = tasks[node_id]
         if intent in done and not done[intent]:
