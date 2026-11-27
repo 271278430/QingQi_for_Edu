@@ -12,6 +12,10 @@ START='<!-- qingqi-directory-index:start -->'
 END='<!-- qingqi-directory-index:end -->'
 BASIS='清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。'
 COMMON={
+ 'model_deployment.py':'启动时幂等导入已有模型、凭据和用途，保留用户配置与稳定型号ID。',
+ 'model-uses.tsx':'型号卡片中的默认用途与可选专项用途，直接提交同一配置命令。',
+ 'unified_model_settings_acceptance.py':'部署导入、同一配置目录、用途、参数、凭据与重启边界的HTTP验收。',
+ 'unified-model-configuration-v1.md':'统一供应商、型号与用途配置，保持已有参数及加密凭据的设计和验收。',
  'number-line.tsx':'数轴短编号、近邻布局、完整标签换行与标注快照的图内说明。',
  'current_instruction_acceptance.py':'当前答案命令、前后否定、小问例外、原题数字和坏历史过滤验收。',
  'instruction_visual_fixture.py':'截图数轴和八点长标签的独立历史夹具。',

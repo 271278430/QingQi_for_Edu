@@ -27,7 +27,7 @@ class ChatModels(ModelSettings):
         validate(selection,MODEL_SELECTION_SCHEMA);providers=self.catalogue();result={}
         for role,choice in selection.items():
             p=providers.get(choice['model_id'])
-            if not p or not p['model_enabled'] or not p['model'] or p.get('requires_key',True) and not self.manager.credential(p) or role=='vision' and not p['supports_image']:
+            if not p or not p['model_enabled'] or not p['model'] or not self.manager.ready(p) or role=='vision' and not p['supports_image']:
                 raise RuntimeFailure('model_changed','所选模型已不可用，请在输入框重新选择。')
             if strict and p['version']!=choice['model_version']:raise RuntimeFailure('model_changed','模型配置已更新，请重新读取模型后发送。')
             if choice['reasoning_level'] not in reasoning_spec(p)['values']:raise RuntimeFailure('model_changed','所选推理档位已失效，请重新选择。')
@@ -40,7 +40,7 @@ class ChatModels(ModelSettings):
             try:selection.update(self.normalize({role:choice},strict=False))
             except RuntimeFailure as error:selection[role]=choice;issues.append(str(error))
         for p in providers.values():
-            ready=bool(self.manager.credential(p)) or not p.get('requires_key',True)
+            ready=self.manager.ready(p)
             levels=reasoning_spec(p)['values']
             items.append({'id':p['id'],'name':p['model'],'provider_id':p['connection_id'],'provider_label':p['display_name'],'version':p['version'],
                           'supports_image':p['supports_image'],'available':bool(p['model_enabled'] and p['model'] and ready),'levels':levels,'default_level':initial_level(levels)})

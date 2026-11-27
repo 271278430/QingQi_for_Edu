@@ -7,7 +7,7 @@ FLOW={
  'permissions':('身份、来源、资源编号与操作类型','允许执行的有限请求或明确拒绝','确认访问身份|校验Host与CSRF|检查学生资源归属|检查管理与工具权限','management,loop,tools,persistence'),
  'loop':('分问任务、有界上下文、能力和预算','工具观察、已核验回复与规范提交','准入与恢复|构建上下文|决定回复或调用|观察结果再决策|核验候选输出|向Store提交','routing,models,tools,memory,persistence'),
  'routing':('当前输入、原题和同题上下文','本轮任务与引用；教学小问、教法和许可','预处理原始请求|识别操作与否定|绑定所属资料引用|教学时按问确定模式|生成任务及能力集合','memory,skills,loop,models'),
- 'models':('已保存连接、会话选模、推理档位与本轮任务','冻结模型客户端；文字、工具动作或识图结果','管理连接与加密凭据|对话框选择模型和档位|点击发送冻结配置|校验版本能力并用ZCode CEL映射|编码文字图片工具并消费增量|校验结果返回观察','management,permissions,persistence,loop'),
+ 'models':('已保存连接、会话选模、推理档位与本轮任务','冻结模型客户端；文字、工具动作或识图结果','启动导入并管理连接|型号卡片设置默认用途|为本轮冻结型号与配置|编码协议和文字图片工具|读取流并核验调用账本|返回Loop或执行受控专项','management,permissions,persistence,loop'),
  'tools':('Controller动作、原题参数与工具白名单','经Schema核验的工具观察','绑定原题参数|计算能力交集|检查Schema与权限|按DAG执行本地/MCP/Worker|核验返回观察','permissions,skills,data,models,visuals'),
  'memory':('当前题、当前问、同题历史与学习依据','授权且有界的上下文','定位学生与会话|读取原题和当前问|过滤历史候选|按预算召回|提交时写回运行记忆','persistence,data,routing'),
  'skills':('已识别意图与实际注册工具','教学指导与有限工具集合','选择当前教学技能|核对manifest版本与哈希|加载指导内容|限制允许工具','routing,tools,permissions'),

@@ -9,6 +9,7 @@ export interface ModelStatus {
 }
 export interface ModelProvider {
   model_enabled: boolean;
+  uses?: ModelRole[];
   id: string;
   display_name: string;
   model: string;
@@ -29,6 +30,12 @@ export interface ModelProvider {
     { success: boolean; tested_at: number; message: string; code?: string }
   >;
 }
+export type ModelRole =
+  | "text"
+  | "vision"
+  | "course8b"
+  | "difficulty8b"
+  | "review27b";
 export interface ModelSettingsView {
   version: number;
   scope: string;
@@ -40,6 +47,9 @@ export interface ModelSettingsView {
     text_provider_id: string | null;
     vision_provider_id: string | null;
     source: "custom" | "deployment";
+    worker_provider_ids?: Partial<
+      Record<"course8b" | "difficulty8b" | "review27b", string | null>
+    >;
   };
 }
 export interface ModelDefinition {
@@ -48,6 +58,7 @@ export interface ModelDefinition {
   config: Record<string, unknown>;
 }
 export interface ModelConnection {
+  origin?: "deployment" | "custom";
   id: string;
   display_name: string;
   base_url: string;

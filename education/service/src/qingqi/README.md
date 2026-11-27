@@ -46,6 +46,7 @@
 | [management.py](management.py)                       | 系统设置、管理权限和版本化维护命令。                                      |
 | [math_display.py](math_display.py)                   | 把计算结果表示为分数、根式或其他精确标签。                                |
 | [mcp.py](mcp.py)                                     | 有边界的本地 MCP stdio 连接、发现和调用。                                 |
+| [model_deployment.py](model_deployment.py)           | 启动时幂等导入已有模型、凭据和用途，保留用户配置与稳定型号ID。            |
 | [model_options.py](model_options.py)                 | 推理档位等参数到 ZCode CEL 参数映射的桥接。                               |
 | [model_protocol.py](model_protocol.py)               | OpenAI 兼容和 Anthropic 的请求、授权与响应适配。                          |
 | [model_settings.py](model_settings.py)               | 供应商连接、模型角色与版本化配置的 Store 接口。                           |

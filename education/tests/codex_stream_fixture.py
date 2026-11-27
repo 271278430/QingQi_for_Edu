@@ -39,7 +39,9 @@ class Fixture:
         config=self.root/'stream.local.json';config.write_text(json.dumps({'turn_seconds':35,'lease_seconds':40,'models':{'vision':{'enabled':True,'base_url':f'http://127.0.0.1:{self.model.server_port}/v1','model':'glm-5.3-flash','key_env':'EDU_CODEX_STREAM_FIXTURE_KEY','allowed_hosts':['127.0.0.1'],'timeout':20,'max_tokens':4096,'reasoning_effort':'low','json_mode':True}}}),encoding='utf-8')
         deployment=Deployment(config);self.instance=server(0,root=self.root,deployment=deployment)
         owner=Store(self.root)
-        try:deployment.model_settings(owner).select({'request_id':'select-production-vision','version':0,'mode':'split','text_provider_id':None,'vision_provider_id':'deployment-vision'})
+        try:
+            manager=deployment.model_settings(owner)
+            manager.select({'request_id':'select-production-vision','version':manager.view()['version'],'mode':'split','text_provider_id':None,'vision_provider_id':'deployment-vision'})
         finally:owner.close()
         # 验证浏览器实际支持CRLF流，而不通过拦截后整段缓冲的假流来测试。
         handler=self.instance.RequestHandlerClass

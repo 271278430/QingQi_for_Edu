@@ -40,6 +40,7 @@
 | [main.tsx](main.tsx)                                         | React 应用挂载入口。                                           |
 | [math-number.ts](math-number.ts)                             | 精确数值、分数与根式的可读标签。                               |
 | [model-settings.tsx](model-settings.tsx)                     | 模型连接与文本、视觉角色设置页面。                             |
+| [model-uses.tsx](model-uses.tsx)                             | 型号卡片中的默认用途与可选专项用途，直接提交同一配置命令。     |
 | [module.ts](module.ts)                                       | 教育 Web 模块与依赖声明。                                      |
 | [number-line.tsx](number-line.tsx)                           | 数轴短编号、近邻布局、完整标签换行与标注快照的图内说明。       |
 | [opposite-animation.tsx](opposite-animation.tsx)             | 相反数的同步对称点、等距线段和抵消关系的动画视图。             |

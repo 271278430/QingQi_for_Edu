@@ -10,7 +10,7 @@ f=Fixture();owner=Store(f.root);manager=f.deployment.model_settings(owner)
 p={'id':'custom-composer','display_name':'测试供应商','model':'','base_url':f.model_base,'protocol':'openai','supports_image':True,'supports_tools':False,'requires_key':True,'timeout':15,'max_tokens':1600,'json_mode':False,'api_key':KEY,'key_action':'replace'}
 c=model_config(p);c['optionSpecs']['reasoningLevel']={'values':['low','high','max'],'map':'{"reasoning_effort": reasoningLevel}'}
 p['models']=[{'key':'text','model':'text-local','config':c},{'key':'vision','model':'vision-local','config':c},{'key':'gated','model':'gated-model','config':c}]
-v=manager.update_provider({'version':0,'request_id':'seed','operation':'upsert','provider':p})
+v=manager.update_provider({'version':manager.view()['version'],'request_id':'seed','operation':'upsert','provider':p})
 manager.select({'version':v['version'],'request_id':'defaults','mode':'split','text_provider_id':'custom-composer~text','vision_provider_id':'custom-composer~vision'});owner.close()
 class Control(BaseHTTPRequestHandler):
     def log_message(self,*args):pass

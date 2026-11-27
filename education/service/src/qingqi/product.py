@@ -95,8 +95,7 @@ class Deployment:
             try:custom=self.model_settings(owner).resolve()
             finally:owner.close()
             if custom is not None:
-                models={name:model for name,model in models.items() if name not in {'glm','vision'}}
-                models.update(custom)
+                models=custom
         return models
 
     def status(self):
@@ -117,8 +116,9 @@ def server(port=18772, *, root=None, deployment=None, assets=None, origins=()):
     root = (root or PROJECT / "runs/product").resolve()
     deployment = deployment or Deployment()
     deployment.model_root=root
-    assets = (assets or PROJECT.parent / "web/dist").resolve()
+    assets = (assets or (Path(os.environ['QINGQI_WEB_ASSETS']) if os.environ.get('QINGQI_WEB_ASSETS') else PROJECT.parent / "web/dist")).resolve()
     initial = WebStore(root)
+    deployment.model_settings(initial.owner).sync_deployment()
     c = initial.owner.catalogue
     deployment.graph_path = Path(c.config['path']) if c.config else PROJECT / 'data/curriculum.sqlite'
     deployment.student_only = bool(c.config)

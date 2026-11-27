@@ -28,6 +28,7 @@ BINDINGS={
 }
 
 BINDINGS['models'] += [(P+'model_settings.py','ModelSettings.resolve'),(P+'model_settings.py','ModelSettings.select'),(P+'secret_store.py','SecretStore.seal'),(P+'model_protocol.py','normalize_anthropic')]
+BINDINGS['models'] += [(P+'model_settings.py','ModelSettings.sync_deployment'),(P+'model_settings.py','ModelSettings.select_role'),(W+'model-uses.tsx','ModelUses')]
 BINDINGS['management'] += [(W+'architecture-board.tsx','ArchitectureCanvas')]
 BINDINGS['web'] += [(W+'visual-annotation.tsx','VisualAnnotation'),(W+'visual-annotation.tsx','snapshotVisual')]
 BINDINGS['permissions'] += [(P+'storage.py','Store.visual_source')]

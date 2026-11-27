@@ -1,5 +1,7 @@
 # 教育学习工作台
 
+模型适配只显示ZCode供应商与嵌套型号编辑器，默认用途直接放在型号卡片。用途标签来自已接受ModelSettingsView，点击沿原model-selection命令保存；没有独立“教学模型”草稿或应用按钮。导入的部署连接在同一编辑器中维护；既有会话选择与生成中的模型快照保持原边界。见specs/education/unified-model-configuration-v1.md。
+
 数轴布局由NumberLine根据实际宽度确定短编号和独立说明行，不改变已批准数学位置。原题数值由后端保留，未知长小数才作近似显示；短编号及完整标签仍进入标注快照和所属图示引用。完整解答与重画属于同轮两个目标，图示回执不能遮盖答案。见specs/education/current-intent-and-number-line-v1.md。
 
 相反数动画读取服务端批准帧，播放器连续到末尾、前后按钮沿关键阶段，刷新采用同一规范历史。旧截断消息重新回答以新编号发送，不能修改旧失败记录。见specs/education/owned-visual-followup-v1.md。

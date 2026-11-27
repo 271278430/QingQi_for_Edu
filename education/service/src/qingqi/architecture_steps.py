@@ -47,8 +47,8 @@ STEPS={
   ('输出每问教学计划、视觉需要和有限能力集合，Skills限制可用工具，交由Agent Loop执行。','Skills.load / Agent.run'),
  ],
  'models':[
-  ('管理员保存供应商地址、协议、共享凭据和各模型的独立ID、能力与Token预算；密钥由本机用户加密，配置版本与幂等回执保存在同一Store。','ModelSettings.update_provider / provider_models.validated / SecretStore.seal'),
-  ('文本与视觉角色选择供应商下的具体模型，或共用同一多模态模型；未选型号、缺凭据或无图片能力不能绑定视觉角色。','ModelSettings.select'),
+  ('启动时将已有文本、视觉与专项配置幂等导入Store，保持型号ID、预算、推理参数和密文凭据。之后供应商与型号编辑器是唯一保存入口，重启不覆盖用户配置。','ModelSettings.sync_deployment / update_provider / SecretStore.seal'),
+  ('默认用途直接在型号卡片中选择并立即保存；单角色命令不覆盖其他角色，文本和图片可共享一个多模态型号，专项用途可取消。','ModelSettings.select_role / ModelUses'),
   ('Deployment为新请求解析当前配置；JSONModel捕获凭据，整轮保持同一快照，已完成历史仍可重放。','Deployment.current_models / ModelSettings.resolve'),
   ('OpenAI编码image_url和function工具；Anthropic编码base64图片及tool_use。无工具能力时使用自然回复。','anthropic_body / JSONModel._generate'),
   ('JSONModel管理鉴权、地址、调用账本和预算；model_stream分离元数据流量与正文/参数，草稿先受教学检查。','JSONModel._generate / read / read_anthropic'),

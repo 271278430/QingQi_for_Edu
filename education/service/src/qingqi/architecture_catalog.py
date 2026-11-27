@@ -7,7 +7,7 @@ from .visual_teaching import TOOL as VISUAL
 from .geometry_solver import TOOL as GEOMETRY
 from .function_solver import TOOL as FUNCTION
 from .student_task_tools import SPECS as STUDENT_TOOLS
-VERSION='source_architecture_v14'
+VERSION='source_architecture_v15'
 
 def item(id,title,group,owner,summary,files,interfaces,reuse,limits):
     return {'id':id,'title':title,'group':group,'owner':owner,'summary':summary,
@@ -101,11 +101,12 @@ def architecture(deployment):
             module['files'] += [W+'architecture-panel.tsx',W+'architecture-module.tsx']
         if module['id']=='models':
             module['description']='用户选择文本/视觉或共享多模态连接；正式适配器负责协议、凭据、流式输出及受控专项模型。'
-            module['interfaces'] += ['GET /api/settings/models','GET/POST /api/chat/models','ChatModels.select/resolve_selection','ModelSettings.update_provider/select/resolve','JSONModel.generate_teaching','SecretStore.seal/open']
+            module['interfaces'] += ['GET /api/settings/models','GET/POST /api/chat/models','ChatModels.select/resolve_selection','ModelSettings.sync_deployment/update_provider/select_role/resolve','JSONModel.generate_teaching','SecretStore.seal/open']
             module['limits'] += ['API Key不回传浏览器；模型标记与连接测试不等于完整教学效果评测']
             module['files'] += [P+'model_settings.py',P+'provider_models.py',W+'model-settings.tsx',W+'provider-editor.tsx',W+'provider-form.ts',P+'secret_store.py',P+'model_protocol.py',P+'model_stream.py','packages/ui/src/settings/model-provider-section/SectionLayout.tsx','packages/ui/src/settings/model-provider-section/ProviderCardSections.tsx','packages/ui/src/settings/model-provider-section/ProviderFormControls.tsx','packages/ui/src/settings/model-provider-section/ProviderModelMetadataDialog.tsx']
             module['files'] += [P+'chat_models.py',P+'model_options.py',R+'model-options.ts',W+'composer-models.tsx',W+'use-chat-models.ts','packages/ui/src/ModelConfigSelect.tsx','packages/model-option-map/src/compiler.ts']
             module['files'] += ['education/client/src/chat-model-contract.ts']
+            module['files'] += [P+'model_deployment.py',W+'model-uses.tsx']
             module['reuse'] += ['原ModelConfigSelect / ComposerModelMenu / 受限CEL推理参数映射']
         module['scope']=details(module)
         module['files']=list(dict.fromkeys(module['files']))

@@ -26,7 +26,7 @@ try:
     p={'id':'custom-reason','display_name':'可调推理','model':'','base_url':f.model_base,'protocol':'openai','supports_image':True,'supports_tools':False,'requires_key':True,'timeout':15,'max_tokens':1600,'json_mode':False,'api_key':KEY,'key_action':'replace'}
     c=model_config(p);c['optionSpecs']['reasoningLevel']={'values':['low','high','max'],'map':'{"reasoning_effort": reasoningLevel}'}
     p['models']=[{'key':'text','model':'text-local','config':c},{'key':'vision','model':'vision-local','config':c}]
-    config=post('/api/settings/model-providers',{'version':0,'request_id':'provider','operation':'upsert','provider':p})
+    config=post('/api/settings/model-providers',{'version':get('/api/settings/models')['version'],'request_id':'provider','operation':'upsert','provider':p})
     post('/api/settings/model-selection',{'version':config['version'],'request_id':'defaults','mode':'split','text_provider_id':'custom-reason~text','vision_provider_id':'custom-reason~vision'})
     v=view();check('default_high_in_both_roles_and_safe_student_catalogue',all(x['reasoning_level']=='high' for x in v['selection'].values()) and all('base_url' not in m and 'map' not in m for m in v['models']) and KEY not in json.dumps(v))
     selection={**v['selection'],'text':{**v['selection']['text'],'reasoning_level':'low'}}

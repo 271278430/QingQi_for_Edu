@@ -10,7 +10,12 @@ import {
   useProviderModelDraft,
 } from "@zcode/ui/model-provider-settings";
 import type { ProviderSettingsFormModel } from "@zcode/ui/model-provider-settings";
-import type { ModelConnection, ModelDefinition } from "./contract.js";
+import type {
+  ModelConnection,
+  ModelDefinition,
+  ModelRole,
+} from "./contract.js";
+import { ModelUses } from "./model-uses.js";
 import {
   completeModelConfig,
   defaultModelConfig,
@@ -33,7 +38,11 @@ function AddModel({
     model: "",
     config: defaultModelConfig() as Record<string, unknown>,
   });
-  const editor = useProviderModelDraft({ model: initial, open: true, scopeKey: "new-model" });
+  const editor = useProviderModelDraft({
+    model: initial,
+    open: true,
+    scopeKey: "new-model",
+  });
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const commit = async () => {
@@ -80,6 +89,10 @@ function AddModel({
 export function ProviderEditor({
   connection,
   selectionIds,
+  roles,
+  modelUses,
+  availableModels,
+  onUse,
   busy,
   error,
   onSave,
@@ -90,6 +103,14 @@ export function ProviderEditor({
 }: {
   connection: ModelConnection;
   selectionIds: (string | null)[];
+  roles: ModelRole[];
+  modelUses: Record<string, ModelRole[]>;
+  availableModels: Set<string>;
+  onUse: (
+    model: ModelDefinition,
+    role: ModelRole,
+    remove: boolean,
+  ) => Promise<void>;
   busy: boolean;
   error: string;
   onSave: (connection: ModelConnection, key?: string) => Promise<void>;
@@ -119,7 +140,11 @@ export function ProviderEditor({
     selectionIds.includes(modelSelectionId(draft, model)),
   );
   return (
-    <section aria-label="供应商详情" data-provider-source="ZCode" className="space-y-6">
+    <section
+      aria-label="供应商详情"
+      data-provider-source="ZCode"
+      className="space-y-6"
+    >
       <ProviderCardHeader
         actionsVisible={!busy}
         providerName={draft.display_name}
@@ -133,9 +158,16 @@ export function ProviderEditor({
         }}
         onStartEditName={() => setEditingName(true)}
         onDelete={
-          !draft.readonly && !active ? () => void onDelete().catch(() => undefined) : undefined
+          !draft.readonly && !active
+            ? () => void onDelete().catch(() => undefined)
+            : undefined
         }
       />
+      {connection.origin === "deployment" && (
+        <p className="text-ui-caption text-foreground-subtle">
+          已同步本机模型配置，可在此编辑。默认用途作用于系统配置，对话框仍可单独选模。
+        </p>
+      )}
       {error && (
         <p role="alert" className="text-ui-base">
           {error}
@@ -145,11 +177,18 @@ export function ProviderEditor({
         <ProviderConnectionSection
           provider={provider}
           readOnly={draft.readonly}
-          apiFormat={draft.protocol === "openai" ? "openai-chat-completions" : "anthropic-messages"}
+          apiFormat={
+            draft.protocol === "openai"
+              ? "openai-chat-completions"
+              : "anthropic-messages"
+          }
           apiFormatOptions={["openai-chat-completions", "anthropic-messages"]}
           baseUrlValue={draft.base_url}
           onApiFormatChange={(type) =>
-            setDraft({ ...draft, protocol: type === "anthropic-messages" ? "anthropic" : "openai" })
+            setDraft({
+              ...draft,
+              protocol: type === "anthropic-messages" ? "anthropic" : "openai",
+            })
           }
           onBaseUrlChange={(base_url) => setDraft({ ...draft, base_url })}
           onBaseUrlBlur={() => undefined}
@@ -174,7 +213,9 @@ export function ProviderEditor({
             <input
               type="checkbox"
               checked={draft.requires_key}
-              onChange={(e) => setDraft({ ...draft, requires_key: e.target.checked })}
+              onChange={(e) =>
+                setDraft({ ...draft, requires_key: e.target.checked })
+              }
             />
             接口需要 API Key
           </label>
@@ -186,20 +227,27 @@ export function ProviderEditor({
               aria-label="请求超时"
               type="number"
               min={1}
-              max={60}
+              max={90}
               value={draft.timeout}
-              onChange={(e) => setDraft({ ...draft, timeout: Number(e.target.value) })}
+              onChange={(e) =>
+                setDraft({ ...draft, timeout: Number(e.target.value) })
+              }
             />
           </label>
         )}
         <div className="flex flex-wrap gap-2">
           {!draft.readonly && (
-            <Button onClick={() => void save().catch(() => undefined)}>保存连接</Button>
+            <Button onClick={() => void save().catch(() => undefined)}>
+              保存连接
+            </Button>
           )}
           <Button variant="outline" onClick={onCopy}>
             复制供应商
           </Button>
-          <Button variant="outline" onClick={() => void onDiscover().catch(() => undefined)}>
+          <Button
+            variant="outline"
+            onClick={() => void onDiscover().catch(() => undefined)}
+          >
             读取模型列表
           </Button>
         </div>
@@ -208,7 +256,11 @@ export function ProviderEditor({
         <div className="flex items-center justify-between">
           <h3 className="text-ui-lg font-medium">模型</h3>
           {!draft.readonly && (
-            <Button variant="outline" disabled={busy} onClick={() => setAdding(true)}>
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() => setAdding(true)}
+            >
               添加模型
             </Button>
           )}
@@ -237,7 +289,9 @@ export function ProviderEditor({
                             model: next.modelId,
                             config: completeModelConfig(
                               next.config,
-                              model.config as Parameters<typeof completeModelConfig>[0],
+                              model.config as Parameters<
+                                typeof completeModelConfig
+                              >[0],
                             ) as Record<string, unknown>,
                           }
                         : item,
@@ -245,7 +299,8 @@ export function ProviderEditor({
                   )
                 }
                 onDelete={
-                  !draft.readonly && !selectionIds.includes(modelSelectionId(draft, model))
+                  !draft.readonly &&
+                  !selectionIds.includes(modelSelectionId(draft, model))
                     ? () =>
                         void updateModels(
                           draft.models.filter((item) => item.key !== model.key),
@@ -270,7 +325,10 @@ export function ProviderEditor({
                     ? { success: true }
                     : {
                         success: false,
-                        error: { code: "model-unavailable", message: result.message },
+                        error: {
+                          code: "model-unavailable",
+                          message: result.message,
+                        },
                       };
                 }}
               />
@@ -279,8 +337,8 @@ export function ProviderEditor({
                   <input
                     type="checkbox"
                     checked={
-                      (model.config.properties as Record<string, unknown>)?.supportsToolCall !==
-                      false
+                      (model.config.properties as Record<string, unknown>)
+                        ?.supportsToolCall !== false
                     }
                     onChange={(e) =>
                       void updateModels(
@@ -291,7 +349,10 @@ export function ProviderEditor({
                                 config: {
                                   ...item.config,
                                   properties: {
-                                    ...(item.config.properties as Record<string, unknown>),
+                                    ...(item.config.properties as Record<
+                                      string,
+                                      unknown
+                                    >),
                                     supportsToolCall: e.target.checked,
                                   },
                                 },
@@ -305,12 +366,33 @@ export function ProviderEditor({
                 </label>
               )}
             </fieldset>
-            {(model.config.properties as { inputFormat?: { supportsImage?: boolean } })?.inputFormat
-              ?.supportsImage && (
+            <ModelUses
+              roles={roles}
+              uses={modelUses[modelSelectionId(connection, model)] ?? []}
+              supportsImage={
+                !!(
+                  model.config.properties as {
+                    inputFormat?: { supportsImage?: boolean };
+                  }
+                )?.inputFormat?.supportsImage
+              }
+              available={availableModels.has(
+                modelSelectionId(connection, model),
+              )}
+              busy={busy}
+              onUse={(role, remove) => onUse(model, role, remove)}
+            />
+            {(
+              model.config.properties as {
+                inputFormat?: { supportsImage?: boolean };
+              }
+            )?.inputFormat?.supportsImage && (
               <Button
                 variant="ghost"
                 disabled={busy}
-                onClick={() => void onTest(model, "vision").catch(() => undefined)}
+                onClick={() =>
+                  void onTest(model, "vision").catch(() => undefined)
+                }
               >
                 测试图片识别
               </Button>
@@ -318,7 +400,9 @@ export function ProviderEditor({
           </article>
         ))}
         {!draft.models.length && (
-          <p className="text-ui-base text-foreground-subtle">添加一个模型，然后选择其教学角色。</p>
+          <p className="text-ui-base text-foreground-subtle">
+            添加一个模型，然后选择其教学角色。
+          </p>
         )}
       </div>
       {adding && (
@@ -331,7 +415,10 @@ export function ProviderEditor({
               {
                 key: crypto.randomUUID(),
                 model: model.modelId,
-                config: completeModelConfig(model.config) as Record<string, unknown>,
+                config: completeModelConfig(model.config) as Record<
+                  string,
+                  unknown
+                >,
               },
             ])
           }

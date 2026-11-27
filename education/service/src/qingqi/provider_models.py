@@ -3,7 +3,7 @@ import copy,re
 from .contracts import ContractError
 
 def model_config(provider):
-    return {'enabled':True,'properties':{'contextWindow':provider.get('context_window',128000),'inputFormat':{'supportsText':True,'supportsImage':bool(provider.get('supports_image')),'supportsVideo':False,'supportsAudio':False,'supportsPdf':False},'supportsToolCall':provider.get('supports_tools',True),'supportsJsonSchemaOutput':provider.get('json_mode',False)},'optionSpecs':{'maxOutputTokens':{'max':provider.get('max_tokens',1600)},'reasoningLevel':{'values':['default'],'map':'{}'}}}
+    return {'enabled':provider.get('enabled',True),'properties':{'contextWindow':provider.get('context_window',128000),'inputFormat':{'supportsText':True,'supportsImage':bool(provider.get('supports_image')),'supportsVideo':False,'supportsAudio':False,'supportsPdf':False},'supportsToolCall':provider.get('supports_tools',True),'supportsJsonSchemaOutput':provider.get('json_mode',False)},'optionSpecs':{'maxOutputTokens':{'max':provider.get('max_tokens',1600)},'reasoningLevel':{'values':['default'],'map':'{}'}}}
 
 def definitions(provider):
     return provider.get('models', [{'key':'main','model':provider.get('model',''),'config':model_config(provider)}])

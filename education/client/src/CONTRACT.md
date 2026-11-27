@@ -1,5 +1,7 @@
 # 教育 HTTP 客户端
 
+统一模型配置沿同一ModelSettingsView：连接可标明deployment来源，型号uses与selection.worker_provider_ids是Store的接受用途。model-selection支持单角色role/provider_id命令，保留旧批量协议；UI不另存待应用角色。部署首次导入保持型号ID和密文凭据，默认配置不覆盖会话手动选模。见specs/education/unified-model-configuration-v1.md。
+
 TeachingVisual新增opposite_numbers有限动画，保留同一frames、inspection_steps与播放契约。图示续接仍由服务端授权原题，不在客户端推导新的教学事实。见specs/education/owned-visual-followup-v1.md。
 
 POST /api/teach/stop 使用原会话和原 TeachingRequest，返回停止状态；Message.trace.running 只读描述服务端有效租约。turn_cancelled 是已停止的未完成轮次，不能同编号重新生成。见 specs/education/codex-turn-control-v1.md。

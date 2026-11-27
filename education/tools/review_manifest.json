@@ -3,6 +3,10 @@
   "scope": "current education product; isolated controlled endpoints, no live student writes",
   "suites": [
     {
+      "script": "unified_model_settings_acceptance.py",
+      "domain": "editable deployment import, one saved directory, role commands, worker options, restart and credential boundaries"
+    },
+    {
       "script": "current_instruction_acceptance.py",
       "domain": "current full-answer commands, per-part exceptions, source decimals and invalid-history filtering"
     },

@@ -7,9 +7,9 @@ import type {
   ModelConnection,
   ModelDefinition,
   ModelSettingsView,
+  ModelRole,
 } from "./contract.js";
 import { EducationRequestError } from "./contract.js";
-import { EducationSelect } from "./controls.js";
 import { errorText } from "./format.js";
 import {
   defaultModelConfig,
@@ -29,7 +29,6 @@ export function ModelSettingsPanel({
   onChanged: () => void;
 }) {
   const [data, setData] = useState<ModelSettingsView>();
-  const [selection, setSelection] = useState<ModelSettingsView["selection"]>();
   const [selected, setSelected] = useState("");
   const [created, setCreated] = useState<ModelConnection>();
   const [revision, setRevision] = useState(0);
@@ -37,9 +36,9 @@ export function ModelSettingsPanel({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState<PendingCommand>();
-  const [discovered, setDiscovered] = useState<{ id: string; supports_image: boolean | null }[]>(
-    [],
-  );
+  const [discovered, setDiscovered] = useState<
+    { id: string; supports_image: boolean | null }[]
+  >([]);
   const mounted = useRef(true);
   const acceptedVersion = useRef(-1);
   useEffect(() => {
@@ -53,12 +52,29 @@ export function ModelSettingsPanel({
     service
       .get<ModelSettingsView>("/api/settings/models", abort.signal)
       .then((view) => {
-        if (abort.signal.aborted || view.version < acceptedVersion.current) return;
+        if (abort.signal.aborted || view.version < acceptedVersion.current)
+          return;
         acceptedVersion.current = view.version;
         setData(view);
-        setSelection(view.selection);
         setSelected((id) =>
-          view.connections.some((p) => p.id === id) ? id : (view.connections[0]?.id ?? ""),
+          view.connections.some((p) => p.id === id)
+            ? id
+            : (view.connections.find((p) =>
+                p.models.some(
+                  (model) =>
+                    modelSelectionId(p, model) ===
+                    view.selection.text_provider_id,
+                ),
+              )?.id ??
+              view.connections.find((p) =>
+                p.models.some(
+                  (model) =>
+                    modelSelectionId(p, model) ===
+                    view.selection.vision_provider_id,
+                ),
+              )?.id ??
+              view.connections[0]?.id ??
+              ""),
         );
       })
       .catch((e) => {
@@ -74,12 +90,14 @@ export function ModelSettingsPanel({
     setError("");
     setMessage("");
     try {
-      const view = await service.post<ModelSettingsView>(current.path, current.body);
+      const view = await service.post<ModelSettingsView>(
+        current.path,
+        current.body,
+      );
       acceptedVersion.current = view.version;
       onChanged();
       if (mounted.current) {
         setData(view);
-        setSelection(view.selection);
         setPending(undefined);
         setCreated(undefined);
         setMessage("设置已保存，新请求使用当前模型配置。");
@@ -101,15 +119,20 @@ export function ModelSettingsPanel({
       if (mounted.current) setBusy(false);
     }
   };
-  if (!data || !selection)
+  if (!data)
     return (
       <div className="edu-card text-ui-base">
         {error || "读取供应商设置…"}
-        <Button onClick={() => setRevision((value) => value + 1)}>重新读取</Button>
+        <Button onClick={() => setRevision((value) => value + 1)}>
+          重新读取
+        </Button>
       </div>
     );
-  const connections = created ? [...data.connections, created] : data.connections;
-  const connection = connections.find((p) => p.id === selected) ?? connections[0];
+  const connections = created
+    ? [...data.connections, created]
+    : data.connections;
+  const connection =
+    connections.find((p) => p.id === selected) ?? connections[0];
   const save = (provider: ModelConnection, key = "") =>
     command("/api/settings/model-providers", {
       request_id: crypto.randomUUID(),
@@ -121,7 +144,7 @@ export function ModelSettingsPanel({
         base_url: provider.base_url,
         protocol: provider.protocol,
         requires_key: provider.requires_key,
-        timeout: Math.min(60, provider.timeout),
+        timeout: provider.timeout,
         models: provider.models,
         model: "",
         supports_image: false,
@@ -164,89 +187,42 @@ export function ModelSettingsPanel({
       })),
     },
   ];
-  const options = (vision: boolean) => [
-    { value: "", label: "未选择" },
-    ...data.providers
-      .filter(
-        (p) => p.model && p.model_enabled && p.credential_ready && (!vision || p.supports_image),
-      )
-      .map((p) => ({ value: p.id, label: `${p.display_name} · ${p.model}` })),
+  const roles: ModelRole[] = [
+    "text",
+    "vision",
+    ...(Object.keys(data.selection.worker_provider_ids ?? {}) as ModelRole[]),
   ];
+  const modelUses = Object.fromEntries(
+    data.providers.map((p) => [p.id, p.uses ?? []]),
+  );
+  const availableModels = new Set(
+    data.providers
+      .filter((p) => p.model && p.model_enabled && p.credential_ready)
+      .map((p) => p.id),
+  );
   return (
-    <section aria-label="模型适配" className="space-y-5" data-zcode-model-settings="true">
-      <div className="edu-card space-y-4">
-        <h3 className="text-ui-lg font-semibold">教学模型</h3>
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <p className="text-ui-base">文本导师</p>
-            <EducationSelect
-              label="文本导师"
-              value={selection.text_provider_id ?? ""}
-              options={options(false)}
-              disabled={busy || !!pending}
-              onValueChange={(id) => setSelection({ ...selection, text_provider_id: id || null })}
-            />
-          </div>
-          <div className="space-y-2">
-            <p className="text-ui-base">图片理解模型</p>
-            <EducationSelect
-              label="图片理解模型"
-              value={selection.vision_provider_id ?? ""}
-              options={options(true)}
-              disabled={busy || !!pending}
-              onValueChange={(id) => setSelection({ ...selection, vision_provider_id: id || null })}
-            />
-          </div>
-        </div>
-        <p className="text-ui-caption text-foreground-subtle">
-          同一多模态模型可同时承担文本与图片教学。
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            disabled={busy || !!pending}
-            onClick={() =>
-              void command("/api/settings/model-selection", {
-                request_id: crypto.randomUUID(),
-                version: data.version,
-                mode:
-                  selection.text_provider_id &&
-                  selection.text_provider_id === selection.vision_provider_id
-                    ? "shared"
-                    : "split",
-                text_provider_id: selection.text_provider_id,
-                vision_provider_id: selection.vision_provider_id,
-              }).catch(() => undefined)
-            }
-          >
-            应用教学模型
-          </Button>
-          <Button
-            variant="outline"
-            disabled={busy || !!pending}
-            onClick={() =>
-              void command("/api/settings/model-selection", {
-                request_id: crypto.randomUUID(),
-                version: data.version,
-                mode: "deployment",
-              }).catch(() => undefined)
-            }
-          >
-            恢复部署模型
-          </Button>
-        </div>
-      </div>
+    <section
+      aria-label="模型适配"
+      className="space-y-5"
+      data-zcode-model-settings="true"
+    >
+      <h3 className="text-ui-lg font-semibold">模型配置</h3>
       {message && (
         <p role="status" className="text-ui-base">
           {message}
         </p>
       )}
       {pending && !busy && (
-        <Button onClick={() => void command(pending.path, pending.body).catch(() => undefined)}>
+        <Button
+          onClick={() =>
+            void command(pending.path, pending.body).catch(() => undefined)
+          }
+        >
           重试上次保存
         </Button>
       )}
       <ModelProviderSectionLayout
-        description="配置供应商连接，在供应商下添加和测试模型。"
+        description="管理供应商、型号与默认用途，保存后新请求使用当前配置。"
         refreshLabel="刷新"
         loadingLabel="处理中"
         presetLoading={false}
@@ -279,7 +255,24 @@ export function ModelSettingsPanel({
           <ProviderEditor
             key={`${connection.id}:${connection.version}`}
             connection={connection}
-            selectionIds={[data.selection.text_provider_id, data.selection.vision_provider_id]}
+            selectionIds={[
+              data.selection.text_provider_id,
+              data.selection.vision_provider_id,
+              ...Object.values(data.selection.worker_provider_ids ?? {}),
+            ].filter((id): id is string => !!id)}
+            roles={roles}
+            modelUses={modelUses}
+            availableModels={availableModels}
+            onUse={(model, role, remove) =>
+              command("/api/settings/model-selection", {
+                request_id: crypto.randomUUID(),
+                version: data.version,
+                role,
+                provider_id: remove
+                  ? null
+                  : modelSelectionId(connection, model),
+              }).then(() => undefined)
+            }
             busy={busy || !!pending}
             error={error}
             onSave={save}
@@ -297,10 +290,13 @@ export function ModelSettingsPanel({
                 id: `custom-${crypto.randomUUID()}`,
                 display_name: connection.display_name + " · 复制",
                 readonly: false,
-                timeout: Math.min(60, connection.timeout),
+                timeout: connection.timeout,
                 version: 0,
                 credential_ready: false,
-                credential_ref: connection.readonly ? connection.id : "",
+                credential_ref:
+                  connection.readonly || connection.origin === "deployment"
+                    ? connection.id
+                    : "",
               };
               setCreated(copy);
               setSelected(copy.id);
@@ -312,7 +308,9 @@ export function ModelSettingsPanel({
               try {
                 const result = await service.post<{
                   models: { id: string; supports_image: boolean | null }[];
-                }>("/api/settings/models/discover", { provider_id: connection.id });
+                }>("/api/settings/models/discover", {
+                  provider_id: connection.id,
+                });
                 if (mounted.current) {
                   setDiscovered(result.models);
                   setMessage(`读取到 ${result.models.length} 个模型`);
@@ -333,7 +331,9 @@ export function ModelSettingsPanel({
                 key={model.id}
                 variant="outline"
                 disabled={
-                  busy || connection.readonly || connection.models.some((m) => m.model === model.id)
+                  busy ||
+                  connection.readonly ||
+                  connection.models.some((m) => m.model === model.id)
                 }
                 onClick={() => {
                   const defaults = defaultModelConfig();

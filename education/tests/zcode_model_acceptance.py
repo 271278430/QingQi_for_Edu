@@ -22,7 +22,7 @@ def check(name,ok):
 def save(provider,expected=200):
     return post('/api/settings/model-providers',{'request_id':'save-'+str(get('/api/settings/models')['version'])+str(expected),'version':get('/api/settings/models')['version'],'operation':'upsert','provider':provider},expected)
 try:
-    initial=get('/api/settings/models');check('old_connections_project_main_models_without_migration_write',len(initial['connections'])==2 and all(p['models'][0]['key']=='main' for p in initial['connections']) and initial['version']==0)
+    initial=get('/api/settings/models');check('deployment_connections_import_once_as_editable_main_models',len(initial['connections'])==2 and all(p['models'][0]['key']=='main' and not p['readonly'] for p in initial['connections']) and initial['version']==1)
     p={'id':'custom-multiple','display_name':'multiple','base_url':f.model_base,'protocol':'openai','requires_key':True,'timeout':15,'model':'','supports_image':False,'supports_tools':True,'max_tokens':1600,'json_mode':False,'key_action':'replace','api_key':KEY}
     text=model_config(p);text['properties']['contextWindow']=65536;text['optionSpecs']['maxOutputTokens']['max']=768
     vision=model_config({**p,'supports_image':True});p['models']=[{'key':'text','model':'text-local','config':text},{'key':'vision','model':'vision-local','config':vision}]

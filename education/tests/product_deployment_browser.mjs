@@ -77,13 +77,19 @@ try {
     checks.push({ name: `${port}_设置管理`, passed: true });
     await page.getByRole("tab", { name: "模型适配", exact: true }).click();
     await page
-      .getByRole("heading", { name: "教学模型", exact: true })
+      .getByRole("heading", { name: "模型配置", exact: true })
       .waitFor();
-    await page.getByLabel("文本导师").waitFor();
+    await page.locator("[data-model-uses]").waitFor();
     const models = await (
       await page.request.get(`http://127.0.0.1:${port}/api/settings/models`)
     ).json();
-    await page.getByLabel("图片理解模型").waitFor();
+    assert.equal(
+      await page
+        .getByRole("heading", { name: "教学模型", exact: true })
+        .count(),
+      0,
+    );
+    assert(models.connections.every((p) => !p.readonly));
     assert(models.providers.length > 0 && models.selection);
     assert(
       models.providers.every(
@@ -100,7 +106,7 @@ try {
       )
     ).json();
     assert.equal(arch.modules.length, 16);
-    assert.equal(arch.version, "source_architecture_v14");
+    assert.equal(arch.version, "source_architecture_v15");
     assert(!arch.request_flow && !arch.business_flow);
     assert(
       arch.modules.every(
