@@ -106,10 +106,14 @@ class WebStore:
             raise Denied("session not owned by selected student")
         return dict(row)
 
-    def admit_teaching(self,student,session):
+    def admit_teaching(self,student,session,request=None):
         with self.db:
             self.db.execute('BEGIN IMMEDIATE')
             self.own(student,session)
+            # 资源归属必须早于运行/停止记录，否则非法图片会使会话投影无法读取。
+            if request:
+                for image_id in request.images:self.owner.image(student,image_id)
+                if request.visual_context:self.owner.visual_source(Identity(student,session),request.visual_context)
             return self.owner.history_status()['epoch']
 
     def touch(self, student, session, question):
@@ -120,7 +124,7 @@ class WebStore:
     def detail(self, student, session):
         meta = self._session_view(student, self.own(student, session))
         messages = []
-        for r in self.db.execute("SELECT id,request_id,request,state,response FROM runs WHERE student=? AND session=? ORDER BY id", (student, session)):
+        for r in self.db.execute("SELECT id,request_id,request,state,response,lease,expires FROM runs WHERE student=? AND session=? ORDER BY id", (student, session)):
             state = json.loads(r["state"])
             request = json.loads(r["request"])
             effective = state.get('effective_request', request)
@@ -139,7 +143,7 @@ class WebStore:
                              "phase": state["phase"], "trace": {"route": safe_route(state.get("route")), "skills": list(state.get("skill_hashes", {})),
                              "observations": observations, "context": {"metrics": state.get("context", {}).get("metrics", {})}, "events": events,
                              "input_provenance": state.get('input_provenance', []),
-                             "error": state.get("error_type"), "error_code": error_code}})
+                             "error": state.get("error_type"), "error_code": error_code,'running':bool(r['lease'] and r['expires']>time.time())}})
         row = self.db.execute('SELECT id FROM practice_assignments WHERE student=? AND session=? ORDER BY created DESC LIMIT 1', (student, session)).fetchone()
         # 历史 assignment 不等于当前教学任务，投影必须服从同一个已提交的任务态。
         detached = bool(self.owner.dialogue(Identity(student,session)).get('practice_detached'))

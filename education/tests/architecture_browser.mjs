@@ -46,7 +46,7 @@ try {
   ).json();
   const svg = page.locator("svg[data-system-panorama]");
   await check("single_system_map_has_sixteen_verified_modules", async () => {
-    assert.equal(data.version, "source_architecture_v11");
+    assert.equal(data.version, "source_architecture_v12");
     assert.equal(data.modules.length, 16);
     assert(
       data.modules.every(
@@ -95,7 +95,7 @@ try {
         browser,
         svg,
         new URL(
-          "../.local/reports/architecture-v11-system.png",
+          "../.local/reports/architecture-v12-system.png",
           import.meta.url,
         ),
       );
@@ -106,7 +106,7 @@ try {
         .click();
       const file = fileURLToPath(
         new URL(
-          "../.local/reports/architecture-v11-system.svg",
+          "../.local/reports/architecture-v12-system.svg",
           import.meta.url,
         ),
       );
@@ -121,7 +121,7 @@ try {
         .screenshot({
           path: fileURLToPath(
             new URL(
-              "../.local/reports/architecture-v11-export.png",
+              "../.local/reports/architecture-v12-export.png",
               import.meta.url,
             ),
           ),
@@ -171,7 +171,7 @@ try {
     await saveFullDiagram(
       browser,
       svg,
-      new URL("../.local/reports/architecture-v11-light.png", import.meta.url),
+      new URL("../.local/reports/architecture-v12-light.png", import.meta.url),
     );
     assert.deepEqual(await geometryFailures(svg, data.panorama), []);
     await page.setViewportSize({ width: 390, height: 844 });
@@ -183,7 +183,7 @@ try {
     await page.screenshot({
       path: fileURLToPath(
         new URL(
-          "../.local/reports/architecture-v11-mobile.png",
+          "../.local/reports/architecture-v12-mobile.png",
           import.meta.url,
         ),
       ),
@@ -192,7 +192,7 @@ try {
   });
   await writeFile(
     new URL(
-      "../.local/reports/architecture-v11-browser.local.json",
+      "../.local/reports/architecture-v12-browser.local.json",
       import.meta.url,
     ),
     JSON.stringify({ passed: checks.length, checks, modules: 16 }, null, 2),

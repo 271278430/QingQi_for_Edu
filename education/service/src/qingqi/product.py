@@ -439,8 +439,8 @@ def server(port=18772, *, root=None, deployment=None, assets=None, origins=()):
                     return self.reply(201, {"ok": True})
                 if self.path == "/api/teach":
                     validate(body, obj({"session": SHORT, "request": {"type": "object"}}))
-                    history_epoch=store.admit_teaching(student,body['session'])
                     request = Request.parse({"request_id": uuid.uuid4().hex, **body["request"]})
+                    history_epoch=store.admit_teaching(student,body['session'],request)
                     acquired = jobs.acquire(blocking=False)
                     if not acquired:
                         raise Busy("capacity")
@@ -458,9 +458,16 @@ def server(port=18772, *, root=None, deployment=None, assets=None, origins=()):
                     response = agent.run(Identity(student, body["session"]), request,expected_history_epoch=history_epoch,on_event=self.stream_event if streaming else None)
                     store.touch(student, body["session"], request.question)
                     return self.reply(200, {"response": project_response(response), "session": store.detail(student, body["session"])})
+                if self.path == '/api/teach/stop':
+                    validate(body,obj({'session':SHORT,'request':{'type':'object'}}))
+                    request=Request.parse(body['request'])
+                    history_epoch=store.admit_teaching(student,body['session'],request)
+                    result=store.owner.stop_turn(Identity(student,body['session']),request,expected_history_epoch=history_epoch)
+                    if result['status']=='stopping':store.touch(student,body['session'],request.question)
+                    return self.reply(200,result)
                 return self.reply(404, {"error": "not_found"})
             except RuntimeFailure as error:
-                self.reply(429 if error.code == "model_busy" else 422 if error.code == "unsupported_input" else 409 if error.code in {"model_unknown", "model_changed", "settings_conflict", "history_busy", "history_changed"} else 502,
+                self.reply(429 if error.code == "model_busy" else 422 if error.code == "unsupported_input" else 409 if error.code in {"model_unknown", "model_changed", "settings_conflict", "history_busy", "history_changed", "turn_cancelled"} else 502,
                            {"error": error.code, "message": str(error), "recoverable": error.recoverable, "retry_after": error.retry_after})
             except Busy:
                 self.reply(429, {"error": "busy", "message": "请求正在处理或尝试过于频繁，请稍后重试。"})

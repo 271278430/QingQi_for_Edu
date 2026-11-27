@@ -28,7 +28,7 @@ def panorama(module_ids=None):
       node('dashboard',580,414,240,88,module_id='dashboard',lines=['只读学习快照与证据','摘要 / 学情图谱 / 节点依据']),
       node('practice',850,414,240,88,module_id='practice',lines=['路线 + 学情 + 曝光 → 三题','核验作答 / 原题绑定提示']),
       node('learning-bus',310,539,780,42,kind='compact',title='学习服务：路径 / 看板 / 练习 → Store命令与学习投影'),
-      node('loop',365,650,435,370,module_id='loop',kind='frame',lines=['同一任务 / 有界上下文 / 执行预算']),
+      node('loop',365,650,435,370,module_id='loop',kind='frame',lines=['同一任务 / 有界上下文 / 预算与停止']),
       node('decision',390,720,385,54,kind='compact',title='决策：候选回复 / 工具动作'),
       node('action',590,820,185,54,kind='process',title='工具调用',lines=['登记编号 / 受控执行']),
       node('observe',590,900,185,54,kind='process',title='观察 → 再决策',lines=['工具结果 / 检查点']),

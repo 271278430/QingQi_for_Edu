@@ -1,5 +1,7 @@
 # 教育 HTTP 客户端
 
+POST /api/teach/stop 使用原会话和原 TeachingRequest，返回停止状态；Message.trace.running 只读描述服务端有效租约。turn_cancelled 是已停止的未完成轮次，不能同编号重新生成。见 specs/education/codex-turn-control-v1.md。
+
 TeachingResponse.student_tasks为已接受的学生任务结果，包含题卡、学情摘要或路线预览；不含题库答案、内部工具账本或凭据。增量仍是草稿，done和历史共用规范结果，题卡选择使用已有练习入口。见specs/education/current-task-tools-v1.md。
 
 ChatModelsView来自安全GET/POST /api/chat/models，只有模型目录、能力、档位与会话版本，不含地址和凭据。TeachingRequest.model_selection冻结具体模型身份/配置版本/reasoning_level；旧请求不补字段。发送前图片上传、新会话初始化、重试与明确重新回答遵循specs/education/zcode-composer-model-selection-v1.md。

@@ -8,6 +8,7 @@ import signal
 import subprocess
 import sys
 import threading
+import time
 from dataclasses import asdict
 from pathlib import Path
 
@@ -32,6 +33,8 @@ class ZCodeRuntime:
         self.messages = queue.Queue()
         self.scope = {"trace_id": fingerprint({"root": str(root)}), "session_id": "education-runtime"}
         self.callback_trace = None
+        self.deadline=None
+        self.cancellation=None
 
     def bind_scope(self, identity, request_id):
         if self.process:
@@ -81,14 +84,21 @@ class ZCodeRuntime:
             raise RuntimeFailure("runtime_unavailable", "教学后台连接中断，进度已保留。", True) from error
 
     def rpc(self, op, value, timeout=30, *, start=True):
+        # 整个 RPC 使用绝对截止时间，回调和额外帧不能不断续期。
+        deadline=time.perf_counter()+timeout
+        if self.deadline is not None and op!='close':deadline=min(deadline,self.deadline)
         if start:
             self.start()
         self.counter += 1
         request_id = self.counter
         self._write({"id": request_id, "op": op, "input": value})
+        seen_callbacks=set()
         while True:
+            if self.cancellation and op!='close':self.cancellation.check()
             try:
-                response = self.messages.get(timeout=timeout)
+                remaining=deadline-time.perf_counter()
+                if remaining<=0:raise queue.Empty
+                response = self.messages.get(timeout=remaining)
             except queue.Empty:
                 self.close(force=True)
                 raise RuntimeFailure("runtime_timeout", "教学后台超时，已保留请求进度。") from None
@@ -99,6 +109,9 @@ class ZCodeRuntime:
                                      "教学后台未返回有效协议结果，进度已保留。", isinstance(response, EOFError)) from response
             if "callback" in response:
                 callback = response["callback"]
+                if type(callback) is not int or callback<=0 or callback in seen_callbacks:
+                    raise RuntimeFailure('runtime_protocol','后台回调编号重复或无效，已阻止重复执行。')
+                seen_callbacks.add(callback)
                 try:
                     name, args = response["name"], response["arguments"]
                     # Node 只能执行当前已授权调用；回调不能另开工具或改写本轮输入。
@@ -147,3 +160,11 @@ class ZCodeRuntime:
                 os.killpg(process.pid, signal.SIGTERM)
             process.wait(timeout=5)
         self.process = None
+
+    def interrupt(self):
+        """Signal only this turn's owned tree; the owner performs final cleanup."""
+        process=self.process
+        if not process or process.poll() is not None:return
+        if os.name=='nt':
+            subprocess.run(['taskkill','/PID',str(process.pid),'/T','/F'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,creationflags=subprocess.CREATE_NO_WINDOW,timeout=5)
+        else:os.killpg(process.pid,signal.SIGTERM)

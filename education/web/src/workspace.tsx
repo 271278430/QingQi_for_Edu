@@ -6,7 +6,6 @@ import { ZCodeIntlProvider } from "@zcode/ui/intl";
 import { TooltipProvider } from "@zcode/ui/tooltip";
 import { EducationSelect } from "./controls.js";
 import {
-  ArrowUp,
   BookOpen,
   Check,
   Clock,
@@ -29,12 +28,14 @@ import type { EducationService, SystemSettings } from "./contract.js";
 import { Login } from "./pages.js";
 import { LearningPanel } from "./learning.js";
 import { MathContent } from "./learning-content.js";
-import { TutorExtras, TutorIncompleteResponse } from "./tutor-extras.js";
+import { TutorExtras } from "./tutor-extras.js";
 import { TutorMessageImages } from "./tutor-message-images.js";
-import { errorText, retryBlocked } from "./format.js";
+import { errorText } from "./format.js";
 import { useEducationWorkspace } from "./use-workspace.js";
 import { SettingsPanel } from "./settings-panel.js";
 import { ComposerModels } from "./composer-models.js";
+import { ComposerActions } from "./composer-actions.js";
+import { TurnStatus } from "./turn-status.js";
 import { TutorReplyContent, tutoringLabel } from "./student-task-results.js";
 
 // 共享消息模块含数学、代码与图表插件；按需加载，避免空白工作台预载全部模块。
@@ -103,6 +104,9 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
     openSession,
     switchProfile,
     send,
+    stopping,
+    stopCurrent,
+    stopMessage,
     attachAnnotation,
     messages,
     resumeMessage,
@@ -581,43 +585,15 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                             </MessageContent>
                           </Message>
                         ) : (
-                          <div className="mt-3 text-ui-sm text-foreground-subtle">
-                            <TutorIncompleteResponse
-                              theme={theme}
-                              content={item.partial_response}
-                            />
-                            {retryBlocked(item.trace.error_code)
-                              ? item.trace.error_code === "model_truncated"
-                                ? "本轮输出预算已用完，可保留原题和标注重新回答。"
-                                : item.trace.error_code === "model_protocol"
-                                  ? "此请求已停止，记录已保留。模型回复格式异常，可以编辑后重新提问。"
-                                  : "此请求已停止，记录已保留。模型结果无法安全重发，可以开始新的学习问题。"
-                              : "此请求尚未完成，可使用原输入与请求编号继续。"}
-                            {!retryBlocked(item.trace.error_code) && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="ml-3"
-                                disabled={busy}
-                                onClick={() => resumeMessage(item)}
-                              >
-                                <RefreshCw />
-                                继续此请求
-                              </Button>
-                            )}
-                            {item.trace.error_code === "model_truncated" && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="ml-3"
-                                disabled={busy}
-                                onClick={() => restartMessage(item)}
-                              >
-                                <RefreshCw />
-                                重新回答
-                              </Button>
-                            )}
-                          </div>
+                          <TurnStatus
+                            item={item}
+                            busy={busy}
+                            stopping={stopping}
+                            theme={theme}
+                            onStop={() => void stopMessage(item)}
+                            onResume={() => resumeMessage(item)}
+                            onRestart={() => restartMessage(item)}
+                          />
                         )}
                       </article>
                     ))}
@@ -739,9 +715,10 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                     canManage={boot.can_manage === true}
                     onManage={() => setView("settings")}
                   />
-                  <Button
-                    type="submit"
-                    size="lg"
+                  <ComposerActions
+                    canStop={busy && Boolean(pending)}
+                    stopping={stopping}
+                    onStop={() => void stopCurrent()}
                     disabled={
                       busy ||
                       chatModels.blocked ||
@@ -749,11 +726,7 @@ function EducationWorkspaceContent({ service }: { service: EducationService }) {
                       Boolean(pending) ||
                       (!question.trim() && !draftImages.length)
                     }
-                    aria-label="发送学习问题"
-                  >
-                    <ArrowUp />
-                    发送
-                  </Button>
+                  />
                 </div>
               </form>
             </section>

@@ -16,6 +16,7 @@
 | [architecture-and-history-v2.md](architecture-and-history-v2.md)               | 系统分区架构与全部历史清理：说明文档。                   |
 | [architecture-visual-audit-v6.md](architecture-visual-audit-v6.md)             | 架构可视化与可用性审查 v6：说明文档。                    |
 | [codex-streaming-recovery-v1.md](codex-streaming-recovery-v1.md)               | 对照Codex的真实流式教学与失败恢复：说明文档。            |
+| [codex-turn-control-v1.md](codex-turn-control-v1.md)                           | 轮次停止、权限准入、终态竞争与工具预算规格。             |
 | [combined-presentation-v1.md](combined-presentation-v1.md)                     | 多种教学呈现与否定作用域：说明文档。                     |
 | [contextual-teaching-visual-pair-v1.md](contextual-teaching-visual-pair-v1.md) | 上下文教学模式与有效的图像/动画配对：说明文档。          |
 | [conversation-problem-v2.md](conversation-problem-v2.md)                       | 同会话当前题的持久绑定与函数动画：说明文档。             |

@@ -63,6 +63,7 @@ class JSONModel:
         self.invocation_id = None
         self.text_observer = None
         self.draft_validator = None
+        self.cancellation = None
 
     def generate(self, system: str, payload: dict, schema: dict, *, images=(), result_adapter=None, schema_in_system=False) -> dict:
         return self._generate(system, payload, schema, images=images, result_adapter=result_adapter, schema_in_system=schema_in_system)
@@ -75,6 +76,7 @@ class JSONModel:
         return self._generate(system, payload, None, images=images, teaching_tools=tools)
 
     def _generate(self, system, payload, schema, *, images=(), result_adapter=None, teaching_tools=None, schema_in_system=False):
+        if self.cancellation:self.cancellation.check()
         e = self.endpoint
         if not e.enabled:
             raise Denied("model network disabled by deployment config")
@@ -124,7 +126,8 @@ class JSONModel:
         if streaming:body['stream']=True
         request = urllib.request.Request(e.base_url.rstrip("/") + suffix, data=canonical(body).encode(), headers={"Content-Type": "application/json", **headers}, method="POST")
         # No automatic replay on ambiguous timeout; caller stops and logs unknown outcome.
-        opener = urllib.request.build_opener(NoRedirect, urllib.request.ProxyHandler({}))
+        from .turn_control import transport_handlers
+        opener = urllib.request.build_opener(NoRedirect, urllib.request.ProxyHandler({}),*transport_handlers(self.cancellation))
         timeout = min(e.timeout, self.deadline - time.perf_counter()) if self.deadline else e.timeout
         if timeout <= 0:
             raise TimeoutError("turn wall budget exceeded before model call")
@@ -159,9 +162,10 @@ class JSONModel:
         except (TimeoutError, OSError, EOFError) as error:
             if journal:
                 store.finish_invocation(run_id, self.invocation_id, "unknown")
+            if self.cancellation:self.cancellation.check()
             raise RuntimeFailure("model_unknown", "模型请求已发出但结果未确认；已阻止静默重发。") from error
         except RuntimeFailure as error:
-            if journal:store.finish_invocation(run_id,self.invocation_id,'unknown' if error.code=='model_unknown' else 'failed')
+            if journal:store.finish_invocation(run_id,self.invocation_id,'unknown' if error.code in {'model_unknown','turn_cancelled','history_changed'} else 'failed')
             raise
         if journal:
             # 完整 HTTP 响应已收到；后续 JSON/Schema 失败属于已知协议错误，不是未知结果。

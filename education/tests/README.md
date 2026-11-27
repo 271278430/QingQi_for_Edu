@@ -96,6 +96,7 @@
 | [README.md](README.md)                                                                 | 本目录用途、子目录与逐文件说明。                             |
 | [release_hint_live.py](release_hint_live.py)                                           | 真实服务探针：release hint live。                            |
 | [route_quality_acceptance.py](route_quality_acceptance.py)                             | 验收与检查：任务路由与教学策略。                             |
+| [runtime_bounds_acceptance.py](runtime_bounds_acceptance.py)                           | RPC绝对截止时间、重复回调和有界清理验收。                    |
 | [runtime_build_acceptance.mjs](runtime_build_acceptance.mjs)                           | 验收与检查：Node 运行层构建与原子发布。                      |
 | [runtime_reuse_acceptance.py](runtime_reuse_acceptance.py)                             | 验收与检查：ZCode 工具、MCP、Skills、记忆和子任务。          |
 | [save_full_diagram.mjs](save_full_diagram.mjs)                                         | 验收与检查：完整 SVG 导出。                                  |
@@ -114,6 +115,9 @@
 | [system_review.py](system_review.py)                                                   | 验收与检查：路由、核验与错误场景。                           |
 | [system_review_browser.mjs](system_review_browser.mjs)                                 | 浏览器交互验收：路由、核验与错误场景。                       |
 | [system_review_cases.json](system_review_cases.json)                                   | 可控服务或样例数据：路由、核验与错误场景。                   |
+| [turn_stop_acceptance.py](turn_stop_acceptance.py)                                     | 停止、输入归属、提交竞争、帮助曝光和双协议HTTP验收。         |
+| [turn_stop_browser.mjs](turn_stop_browser.mjs)                                         | 桌面和手机停止、刷新恢复、双提交与草稿保留的浏览器验收。     |
+| [turn_stop_fixture.py](turn_stop_fixture.py)                                           | 观察真实连接断开的本地模型与独立产品夹具。                   |
 | [tutoring_evolution_acceptance.py](tutoring_evolution_acceptance.py)                   | 验收与检查：教学方式、追问与步骤演示。                       |
 | [tutoring_evolution_browser_acceptance.mjs](tutoring_evolution_browser_acceptance.mjs) | 浏览器交互验收：教学方式、追问与步骤演示。                   |
 | [tutoring_evolution_deployment_check.py](tutoring_evolution_deployment_check.py)       | 验收与检查：教学方式、追问与步骤演示。                       |

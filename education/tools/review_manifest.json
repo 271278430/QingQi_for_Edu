@@ -3,6 +3,18 @@
   "scope": "current education product; isolated controlled endpoints, no live student writes",
   "suites": [
     {
+      "script": "turn_stop_acceptance.py",
+      "domain": "owned cancellation, provider disconnect, partial exposure, races and replay"
+    },
+    {
+      "script": "turn_stop_browser.mjs",
+      "domain": "stop controls, reload, mobile, preserved input and synchronous send admission"
+    },
+    {
+      "script": "runtime_bounds_acceptance.py",
+      "domain": "absolute operation deadlines, duplicate callbacks and cleanup"
+    },
+    {
       "script": "current_task_images_acceptance.py",
       "domain": "multi-image task references, OCR-only recommendation and subsequent teaching"
     },

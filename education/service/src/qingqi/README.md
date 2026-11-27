@@ -73,6 +73,7 @@
 | [teaching_responses.py](teaching_responses.py)       | 构造教学文字、计算步骤和基础教学回复。                                    |
 | [teaching_visual_pair.py](teaching_visual_pair.py)   | 每轮选择一张图或一段动画。                                                |
 | [tools.py](tools.py)                                 | 教育工具注册与受控调用契约。                                              |
+| [turn_control.py](turn_control.py)                   | Store停止命令、临时取消作用域及本轮HTTP连接中断。                         |
 | [tutor_images.py](tutor_images.py)                   | 上传图片的格式、尺寸和数量校验。                                          |
 | [tutoring_grounding.py](tutoring_grounding.py)       | 区分学生作答与教师解释，阻止虚构学生已完成的步骤。                        |
 | [tutoring_scope.py](tutoring_scope.py)               | 多问题的当前小问、各问意图和答案披露范围。                                |

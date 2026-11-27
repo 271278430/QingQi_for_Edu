@@ -58,6 +58,10 @@ export interface TutorImage {
   width: number;
   height: number;
 }
+export interface TeachingStopResult {
+  status: "stopping" | "stopped" | "completed";
+  request_id: string;
+}
 export interface HistoricalPractice {
   item: PracticeItem;
   session: string | null;
@@ -89,6 +93,7 @@ export interface Message {
     events: { kind: string; at: number }[];
     error?: string;
     error_code?: string;
+    running?: boolean;
   };
 }
 export interface Detail {

@@ -12,6 +12,15 @@ START='<!-- qingqi-directory-index:start -->'
 END='<!-- qingqi-directory-index:end -->'
 BASIS='清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。'
 COMMON={
+ 'turn_control.py':'Store停止命令、临时取消作用域及本轮HTTP连接中断。',
+ 'turn_stop_fixture.py':'观察真实连接断开的本地模型与独立产品夹具。',
+ 'turn_stop_acceptance.py':'停止、输入归属、提交竞争、帮助曝光和双协议HTTP验收。',
+ 'turn_stop_browser.mjs':'桌面和手机停止、刷新恢复、双提交与草稿保留的浏览器验收。',
+ 'runtime_bounds_acceptance.py':'RPC绝对截止时间、重复回调和有界清理验收。',
+ 'composer-actions.tsx':'生成期间的发送和停止按钮。',
+ 'turn-status.tsx':'运行、停止、失败与明确重新回答的消息操作。',
+ 'codex-agent-capabilities-v1.md':'Codex源码对照、通用能力修正、状态边界和验收范围。',
+ 'codex-turn-control-v1.md':'轮次停止、权限准入、终态竞争与工具预算规格。',
  'student_tasks.py':'当前输入的任务识别、资料引用、查询 Controller 与任务产物校验。',
  'student_task_tools.py':'推荐练习、学习路线预览和学情读取的同学生工具端口。',
  'student-task-contract.ts':'题卡、学习摘要和学生任务结果的公共类型。',

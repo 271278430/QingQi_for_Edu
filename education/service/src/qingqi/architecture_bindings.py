@@ -13,7 +13,7 @@ BINDINGS={
  'path':[(P+'learning_branches.py','branch_plan'),(P+'storage.py','Store.select_learning_route')],
  'practice':[(P+'storage.py','Store.practice_action'),(P+'storage.py','Store.prepare_model_hint'),(P+'storage.py','Store._commit_model_hint'),(P+'web_store.py','WebStore.start_practice')],
  'dashboard':[(P+'learning.py','learning_projection'),(P+'learning_map.py','project_map')],
- 'loop':[(P+'agent.py','Agent.run'),(P+'storage.py','Store.begin'),(P+'storage.py','Store.prepare_call'),(P+'storage.py','Store.commit')],
+ 'loop':[(P+'agent.py','Agent.run'),(P+'storage.py','Store.begin'),(P+'storage.py','Store.prepare_call'),(P+'storage.py','Store.commit'),(P+'storage.py','Store.stop_turn'),(P+'turn_control.py','CancellationScope.check')],
  'tools':[(P+'tools.py','Registry.authorize'),(P+'tools.py','Registry.call'),(P+'student_task_tools.py','StudentTaskTools.execute'),(R+'index.ts','createToolRegistry'),(R+'index.ts','createToolExecutor')],
  'memory':[(P+'storage.py','Store.current_problem'),(P+'storage.py','Store.retrieve'),(R+'memory.ts','selectScopedMemory')],
  'permissions':[(P+'product.py','Handler.principal'),(P+'product.py','Handler.host_ok'),(P+'web_store.py','WebStore.admit_teaching'),(P+'tools.py','Registry.authorize'),(R+'index.ts','PermissionService')],

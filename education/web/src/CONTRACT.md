@@ -1,5 +1,7 @@
 # 教育学习工作台
 
+生成中及刷新后的运行消息可通过原 EducationService 停止本轮；原请求引用与 generation/selection 保护迟到回包。读取服务端终态后确认停止，保留未完成文字与输入。见 specs/education/codex-turn-control-v1.md。
+
 ComposerModels直接复用ZCode原ModelConfigSelect和推理滑条；useChatModels只保留Store接受选择的投影与未确认操作。新会话默认high，已存low不覆盖。点击发送前冻结模型和档位；图片上传与运行中预选不改变本轮。刷新/切会话读取Owner，失效配置锁发送并保留输入，见specs/education/zcode-composer-model-selection-v1.md。
 
 solid整理：教育界面为完整中文；会话读取锁定输入并原子更新题目/预填草稿；学习三页共享一个生命周期且成功提示不跨页保留；设置由版本协调读取/保存并在子页卸载后通知工作区；非JSON代理失败保留原命令。见specs/education/product-solid-review-v1.md与47组验收清单。

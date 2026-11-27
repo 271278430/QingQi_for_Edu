@@ -32,12 +32,12 @@ STEPS={
   ('管理接口单独检查can_manage；工具执行检查意图、Skills和Registry交集，再经过ZCode权限服务。','Handler.do_POST / deployment.manage_profiles / Registry.authorize / PermissionService'),
  ],
  'loop':[
-  ('Store.begin按学生、会话、request_id接收请求。完成的请求重放，未完成请求须满足租约和原配置。','Store.begin / Agent.run'),
+  ('先验证图片和标注归属；Store.begin按学生、会话、request_id接收请求。完成的请求重放，未完成请求须满足租约和原配置。','WebStore.admit_teaching / Store.begin / Agent.run'),
   ('恢复当前题、小问与授权记忆，加载匹配Skills和工具白名单，在预算内形成Controller输入。','prepare / context.compose / Skills.load'),
   ('Controller.next提出自然回复或完整工具动作；工具参数绑定原题，调用前登记稳定编号。','Controller.next / Agent._bind / Store.prepare_call'),
   ('ZCode执行工具后校验结果Schema，保存观察和检查点，再把结果交回同一个Controller。','Registry.call / Store.finish_call / checkpoint'),
   ('按当前小问校验数学内容、学生归因、答案披露及长度；可修复错误受预算限制，未知网络结果停止。','Agent._validate_reply / teaching_plan.validate_text'),
-  ('Store在同一事务写入规范回复、episode、当前题和问；SSE done之后Web采用最终历史。','Store.commit → WebStore.detail'),
+  ('停止信号关闭本轮模型连接和所属工具；保留未完成片段，不提交成绩。同事务决定停止或完成，SSE终态后Web读取规范历史。','Store.stop_turn / CancellationScope.check / Store.commit → WebStore.detail'),
  ],
  'routing':[
   ('保留学生原始文字，拆出教学操作和明确否定；图片/题干始终是数据，不是系统指令。','Request.parse / request_controls.strip_denied'),

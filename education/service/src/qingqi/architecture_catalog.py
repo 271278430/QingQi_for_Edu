@@ -7,7 +7,7 @@ from .visual_teaching import TOOL as VISUAL
 from .geometry_solver import TOOL as GEOMETRY
 from .function_solver import TOOL as FUNCTION
 from .student_task_tools import SPECS as STUDENT_TOOLS
-VERSION='source_architecture_v11'
+VERSION='source_architecture_v12'
 
 def item(id,title,group,owner,summary,files,interfaces,reuse,limits):
     return {'id':id,'title':title,'group':group,'owner':owner,'summary':summary,
@@ -40,8 +40,8 @@ def architecture(deployment):
            ['真实复用ZCode PermissionService；Web账户和CSRF由教育服务实现'],
            ['客户端不能授予can_manage，学生内容不能注册工具或扩权']),
       item('loop','Agent Loop','核心系统','Agent.run决策；Store拥有已接受结果','决策 → 调用 → 观察 → 再决策，预算内核验后提交',
-           [P+'agent.py',P+'tutoring_scope.py',P+'planning.py',P+'context.py',P+'storage.py'],
-           ['Agent.run','Store.begin/prepare_call/checkpoint/commit','Controller.next'],
+           [P+'agent.py',P+'turn_control.py',P+'tutoring_scope.py',P+'planning.py',P+'context.py',P+'storage.py'],
+           ['Agent.run','Store.begin/prepare_call/checkpoint/commit/stop_turn','CancellationScope.check','Controller.next'],
            ['ZCode Registry、Executor、Scheduler与Trace'],
            ['教育Loop由Python适配，未原样运行ZCode编码Agent全部功能']),
       item('tools','工具系统','核心系统','Registry授权 + ZCodeRuntime执行','受控本地工具、图谱MCP和8B/27B模型Worker',

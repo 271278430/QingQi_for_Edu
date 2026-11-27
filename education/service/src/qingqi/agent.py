@@ -176,8 +176,9 @@ class Agent:
         start = time.perf_counter()
         clients = [self.vision_model, self.text_model, getattr(self.controller, "model", None)] + [getattr(f, "model_client", None) for _, f in self.registry.workers.values()]
         clients = list({id(c): c for c in clients if c is not None and hasattr(c, "usage")}.values())
-        stream_prefix={'text':''};stream_draft={'text':'','received':False}
+        stream_prefix={'text':''};stream_draft={'text':'','received':False};control=None
         def emit(event):
+            if control:control.check()
             if event['kind']=='scope':stream_prefix['text']=event.get('prefix','')
             if event['kind']=='reset':stream_draft['text']=event.get('text','')
             if event['kind']=='delta':
@@ -198,6 +199,13 @@ class Agent:
         for client in clients:
             client.journal = (self.store, run_id)
         try:
+            from .turn_control import CancellationScope
+            control=CancellationScope(self.store,identity,original_request)
+            self.registry.runtime.deadline=start+self.turn_seconds
+            self.registry.runtime.cancellation=control
+            control.attach(self.registry.runtime.interrupt)
+            for client in clients:client.cancellation=control
+            control.check()
             if practice_hint:
                 if practice_hint['session']!=identity.session:raise Denied('hint session mismatch')
                 if state.get('practice_hint') and state['practice_hint']['payload_hash']!=practice_hint['payload_hash']:raise Denied('hint command changed during resume')
@@ -614,6 +622,7 @@ class Agent:
                 if action:state['deferred_reply']=action
                 action={'kind':'call','tool':'render_teaching_visual','arguments':visual_task['arguments']}
             for _ in range(16):
+                control.check()
                 if time.perf_counter() - start > self.turn_seconds:
                     raise TimeoutError("turn wall budget exceeded")
                 try:
@@ -770,12 +779,18 @@ class Agent:
                     raise
             raise Denied("step budget exhausted")
         except BaseException as exc:
+            if control:
+                try:control.check()
+                except RuntimeFailure as stopped:exc=stopped
             # Codex区分文字增量与完成事件；中断片段只作为未接受草稿留在失败记录，不能计成绩。
             if stream_draft['received'] and stream_draft['text']:state['partial_text']=stream_draft['text'][:6000]
-            state.update(phase="interrupted" if isinstance(exc, InjectedInterruption) else "blocked", error_type=type(exc).__name__, error_code=getattr(exc, "code", None), error=str(exc)[:300])
+            state.update(phase="cancelled" if getattr(exc,'code',None)=='turn_cancelled' else "interrupted" if isinstance(exc, InjectedInterruption) else "blocked", error_type=type(exc).__name__, error_code=getattr(exc, "code", None), error=str(exc)[:300])
             # 原编号被停止规则拒绝时没有新调用，仍须保留第一次失败的提供方诊断。
             state.setdefault('model_usage', []).extend(u for c in clients for u in c.usage[usage_start[id(c)]:])
             self.store.checkpoint(run_id, state, "turn_stopped")
-            raise
+            raise exc
         finally:
+            if control:control.close()
+            for client in clients:client.cancellation=None
+            self.registry.runtime.cancellation=None
             self.store.release(run_id)

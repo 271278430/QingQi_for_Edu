@@ -29,7 +29,8 @@ export function retryBlocked(code?: string) {
     code === "model_protocol" ||
     code === "model_truncated" ||
     code === "model_changed" ||
-    code === "history_changed"
+    code === "history_changed" ||
+    code === "turn_cancelled"
   );
 }
 export function feedbackText(text: string, stepCount: number) {

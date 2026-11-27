@@ -55,7 +55,7 @@ try:
     check('demo_grading_updates_learning_evidence',result['correct'] and get('/api/learning')['summary']['attempts']==1)
     batch=post('/api/practice/recommendations',{'request_id':'demo-batch'})
     check('demo_can_renew_three_diverse_questions',len({i['id'] for i in batch['items']})==3)
-    arch=get('/api/settings/architecture');check('demo_exposes_current_single_architecture',arch['version']=='source_architecture_v11' and len(arch['modules'])==16 and 'request_flow' not in arch)
+    arch=get('/api/settings/architecture');check('demo_exposes_current_single_architecture',arch['version']=='source_architecture_v12' and len(arch['modules'])==16 and 'request_flow' not in arch)
     check('reopening_demo_keeps_the_same_student_state',prepare(root)==root and get('/api/learning')['summary']['attempts']==1)
     view=get('/api/settings/models')
     saved=post('/api/settings/model-providers',{'request_id':'demo-model','version':view['version'],'operation':'upsert','provider':{

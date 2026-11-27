@@ -12,6 +12,7 @@ import type {
   PracticeAssignment,
   TutorImage,
   TeachingScope,
+  TeachingStopResult,
 } from "./contract.js";
 import type { ImageDraft } from "./tutor-extras.js";
 import { EducationRequestError } from "./contract.js";
@@ -23,6 +24,8 @@ import {
 } from "@zcode/ui/chat-attachments";
 import type { AnnotatedImage } from "./visual-annotation.js";
 import { useChatModels } from "./use-chat-models.js";
+type TeachingJob = { session: string; request: TeachingRequest };
+type ActiveTurn = { job?: TeachingJob };
 export function useEducationWorkspace(service: EducationService) {
   const [boot, setBoot] = useState<Bootstrap | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -32,6 +35,8 @@ export function useEducationWorkspace(service: EducationService) {
   const [draftImages, setDraftImages] = useState<ImageDraft[]>([]);
   const [imagePreparing, setImagePreparing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [stopping, setStopping] = useState(false);
+  const activeTurn = useRef<ActiveTurn | null>(null);
   const [openingSession, setOpeningSession] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState("");
@@ -165,6 +170,8 @@ export function useEducationWorkspace(service: EducationService) {
     return () => document.removeEventListener("keydown", closeDrawers);
   }, []);
   const clearProjection = useCallback(() => {
+    activeTurn.current = null;
+    setStopping(false);
     selection.current++;
     setDetail(null);
     setOpeningSession(false);
@@ -309,6 +316,7 @@ export function useEducationWorkspace(service: EducationService) {
     recovered?: { session: string; request: TeachingRequest },
   ) => {
     if (
+      activeTurn.current ||
       busy ||
       initializing ||
       openingSession ||
@@ -318,10 +326,15 @@ export function useEducationWorkspace(service: EducationService) {
     )
       return;
     if (retry && !recovered && retryBlocked(requestErrorCode)) return;
+    // 同步在途引用只关联当前发送，防止同一帧双击越过 React 的 busy 更新。
+    const turn: ActiveTurn = {};
+    activeTurn.current = turn;
     const current = generation.current,
       selected = selection.current;
     const isCurrent = () =>
-      current === generation.current && selected === selection.current;
+      current === generation.current &&
+      selected === selection.current &&
+      activeTurn.current === turn;
     let job = recovered ?? (retry ? pending : null);
     setBusy(true);
     setError("");
@@ -382,6 +395,7 @@ export function useEducationWorkspace(service: EducationService) {
         };
         setPending(job);
       }
+      turn.job = job;
       const value = service.stream
         ? await service.stream<{ session: Detail }>(
             "/api/teach",
@@ -416,16 +430,23 @@ export function useEducationWorkspace(service: EducationService) {
       }
     } catch (e) {
       if (isCurrent()) {
-        setError(errorText(e));
+        setError(
+          e instanceof EducationRequestError && e.code === "turn_cancelled"
+            ? ""
+            : errorText(e),
+        );
         setRequestErrorCode(
           e instanceof EducationRequestError ? e.code : undefined,
         );
         // 已知回复格式失败不能重发同编号；保留文字和图片，让学生编辑新问题。
         if (
           e instanceof EducationRequestError &&
-          ["model_protocol", "model_truncated", "model_changed"].includes(
-            e.code,
-          )
+          [
+            "model_protocol",
+            "model_truncated",
+            "model_changed",
+            "turn_cancelled",
+          ].includes(e.code)
         )
           setPending(null);
         // 失败消息也由Store投影接管，避免只看见上一轮回复；读失败时保留当前流式草稿。
@@ -453,9 +474,87 @@ export function useEducationWorkspace(service: EducationService) {
         }
       }
     } finally {
-      if (current === generation.current) {
+      const live = activeTurn.current === turn;
+      if (live) activeTurn.current = null;
+      if (live && current === generation.current) {
         setBusy(false);
+        setStopping(false);
         setStreamStatus("");
+      }
+    }
+  };
+  const stopCurrent = async () => {
+    const turn = activeTurn.current;
+    if (!turn?.job || stopping) return;
+    setStopping(true);
+    try {
+      const result = await service.post<TeachingStopResult>(
+        "/api/teach/stop",
+        turn.job,
+      );
+      if (activeTurn.current === turn)
+        setStreamStatus(
+          result.status === "completed" ? "回复已完成。" : "正在停止生成…",
+        );
+    } catch (e) {
+      if (activeTurn.current === turn) {
+        setError(errorText(e));
+        setStopping(false);
+      }
+    }
+  };
+  const stopMessage = async (item: Message) => {
+    if (
+      !detail ||
+      busy ||
+      openingSession ||
+      activeTurn.current ||
+      !item.trace.running
+    )
+      return;
+    const current = generation.current,
+      seq = selection.current;
+    const turn: ActiveTurn = {
+      job: { session: detail.session.id, request: item.original_input },
+    };
+    activeTurn.current = turn;
+    setBusy(true);
+    setStopping(true);
+    setError("");
+    const live = () =>
+      activeTurn.current === turn &&
+      current === generation.current &&
+      seq === selection.current;
+    try {
+      await service.post<TeachingStopResult>("/api/teach/stop", turn.job);
+      for (let n = 0; n < 40; n++) {
+        const snapshot = await service.get<Detail>(
+          `/api/session?id=${encodeURIComponent(detail.session.id)}`,
+        );
+        if (!live()) return;
+        setDetail(snapshot);
+        const target = snapshot.messages.find(
+          (m) => m.request_id === item.request_id,
+        );
+        if (!target?.trace.running) {
+          if (target?.trace.error_code === "turn_cancelled") {
+            if (pending?.request.request_id === item.request_id)
+              setPending(null);
+            setRequestErrorCode("turn_cancelled");
+          }
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+      if (live())
+        setError("停止请求已接受，任务仍在退出；稍后重新打开会话查看结果。");
+    } catch (e) {
+      if (live()) setError(errorText(e));
+    } finally {
+      if (live()) {
+        activeTurn.current = null;
+        setBusy(false);
+        setStopping(false);
       }
     }
   };
@@ -502,7 +601,9 @@ export function useEducationWorkspace(service: EducationService) {
       !detail ||
       chatModels.blocked ||
       item.response ||
-      item.trace.error_code !== "model_truncated"
+      !["model_truncated", "turn_cancelled"].includes(
+        item.trace.error_code || "",
+      )
     )
       return;
     // 明确重新回答是新尝试，不能重放已截断的付费调用；原题和标注引用保持不变。
@@ -574,6 +675,9 @@ export function useEducationWorkspace(service: EducationService) {
     openSession,
     switchProfile,
     send,
+    stopping,
+    stopCurrent,
+    stopMessage,
     attachAnnotation,
     messages,
     resumeMessage,

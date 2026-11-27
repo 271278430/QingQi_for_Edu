@@ -36,6 +36,9 @@ class Store:
         CREATE TABLE IF NOT EXISTS model_invocations (
           run_id INTEGER REFERENCES runs(id), invocation_id TEXT, payload_hash TEXT,
           status TEXT, result TEXT, PRIMARY KEY(run_id,invocation_id));
+        CREATE TABLE IF NOT EXISTS turn_stop_commands (
+          student TEXT,session TEXT,request_id TEXT,payload_hash TEXT,epoch INTEGER,at REAL,
+          PRIMARY KEY(student,session,request_id));
         CREATE INDEX IF NOT EXISTS runs_session_lease ON runs(student,session,expires);
         CREATE INDEX IF NOT EXISTS events_run ON events(run_id,id);
         CREATE TABLE IF NOT EXISTS episodes (
@@ -128,7 +131,7 @@ class Store:
             if self.db.execute('SELECT 1 FROM runs WHERE lease IS NOT NULL AND expires>? LIMIT 1',(time.time(),)).fetchone():
                 raise RuntimeFailure('history_busy','有辅导任务正在执行，请等待结束后再清空历史。',recoverable=True)
             # 原Store按外键顺序清除所有相关记录；只留无正文的幂等回执，不能用旧编号再次删除新对话。
-            tables=('practice_events','practice_starts','practice_assignments','calls','model_invocations','events','episodes','facts','dialogue_state','runs','tutor_images','web_sessions','learning_routes')
+            tables=('turn_stop_commands','practice_events','practice_starts','practice_assignments','calls','model_invocations','events','episodes','facts','dialogue_state','runs','tutor_images','web_sessions','learning_routes')
             existing={r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             deleted={table:self.db.execute(f'DELETE FROM {table}').rowcount for table in tables if table in existing}
             # 会话选模是历史附属状态；清空历史时一并删除，但供应商和凭据配置仍保留。
@@ -210,14 +213,14 @@ class Store:
         entry = self.catalogue.item(assignment['item']['id'])
         correct = self.catalogue.grade(entry, submitted)
         prior = self.db.execute("SELECT 1 FROM practice_events e JOIN practice_assignments a ON a.id=e.assignment WHERE e.student=? AND a.item_id=? AND e.kind IN ('answer','hint') LIMIT 1", (student, entry['id'])).fetchone()
-        # 闲聊、澄清和未返回的请求没有提供教学帮助，不能降低独立作答证据。
-        helped = self.db.execute("SELECT 1 FROM runs r JOIN practice_assignments a ON a.session=r.session AND a.student=r.student WHERE r.student=? AND a.item_id=? AND r.response IS NOT NULL AND json_extract(r.response,'$.teaching_action') IN ('ask','explain','give_answer','confirm') AND (json_extract(r.state,'$.practice_assignment_id')=a.id OR replace(replace(replace(json_extract(r.state,'$.effective_request.expression'),' ',''),'×','*'),'÷','/')=?) AND (? IS NULL OR r.id<>?) LIMIT 1", (student,entry['id'],entry['expression'].replace(' ','').replace('×','*').replace('÷','/'),exclude_run,exclude_run)).fetchone()
+        # 已显示的本题片段也是帮助；停止不计成绩，但不能让后续作答伪装为独立完成。
+        helped = self.db.execute("SELECT 1 FROM runs r JOIN practice_assignments a ON a.session=r.session AND a.student=r.student WHERE r.student=? AND a.item_id=? AND ((r.response IS NOT NULL AND json_extract(r.response,'$.teaching_action') IN ('ask','explain','give_answer','confirm')) OR (r.response IS NULL AND length(json_extract(r.state,'$.partial_text'))>0)) AND (json_extract(r.state,'$.practice_assignment_id')=a.id OR replace(replace(replace(json_extract(r.state,'$.effective_request.expression'),' ',''),'×','*'),'÷','/')=? OR json_extract(r.state,'$.annotation_source.problem.assignment_id')=a.id) AND (? IS NULL OR r.id<>?) LIMIT 1", (student,entry['id'],entry['expression'].replace(' ','').replace('×','*').replace('÷','/'),exclude_run,exclude_run)).fetchone()
         # 清空后的源快照仍可含旧题标记；历史已停用时不能据此扣除新作答的独立性。
         historical=[] if self.history_status()['suppress_imported'] else self.catalogue.initial.get('historical_items', [])
         independent = not prior and not helped and entry['id'] not in historical
         current_work = self.db.execute("SELECT 1 FROM practice_events WHERE student=? AND assignment=? AND kind IN ('answer','hint') LIMIT 1", (student, assignment['id'])).fetchone()
         # 数学符号的等值表示不能成为绕过辅助记录、伪装独立作答的路径。
-        current_help = self.db.execute("SELECT 1 FROM runs WHERE student=? AND session=? AND response IS NOT NULL AND json_extract(response,'$.teaching_action') IN ('ask','explain','give_answer','confirm') AND (json_extract(state,'$.practice_assignment_id')=? OR replace(replace(replace(json_extract(state,'$.effective_request.expression'),' ',''),'×','*'),'÷','/')=?) AND (? IS NULL OR id<>?) LIMIT 1", (student,assignment['session'],assignment['id'],entry['expression'].replace(' ','').replace('×','*').replace('÷','/'),exclude_run,exclude_run)).fetchone()
+        current_help = self.db.execute("SELECT 1 FROM runs WHERE student=? AND session=? AND ((response IS NOT NULL AND json_extract(response,'$.teaching_action') IN ('ask','explain','give_answer','confirm')) OR (response IS NULL AND length(json_extract(state,'$.partial_text'))>0)) AND (json_extract(state,'$.practice_assignment_id')=? OR replace(replace(replace(json_extract(state,'$.effective_request.expression'),' ',''),'×','*'),'÷','/')=? OR json_extract(state,'$.annotation_source.problem.assignment_id')=?) AND (? IS NULL OR id<>?) LIMIT 1", (student,assignment['session'],assignment['id'],entry['expression'].replace(' ','').replace('×','*').replace('÷','/'),assignment['id'],exclude_run,exclude_run)).fetchone()
         # 复做可验证保持，但当前题被提示或重试后完成不能当作无辅助复测。
         unassisted = not current_work and not current_help
         from .practice_tutoring import identity_answer
@@ -419,6 +422,10 @@ class Store:
         except BaseException:
             self.db.rollback()
             raise
+
+    def stop_turn(self,identity,request,*,expected_history_epoch=None):
+        from .turn_control import request_stop
+        return request_stop(self,identity,request,expected_history_epoch=expected_history_epoch)
 
     def checkpoint(self, run_id: int, state: dict, event: str):
         with self.db:
@@ -661,9 +668,14 @@ class Store:
         # 恢复成功后当前投影不能继续带旧超时；原失败事件仍留在不可变事件记录中。
         for key in ('error','error_code','error_type'):state.pop(key,None)
         with self.db:
-            row = self.db.execute("SELECT student,session,response,lease FROM runs WHERE id=?", (run_id,)).fetchone()
+            # 停止与回复共用同一个事务顺序，不能在已接受停止后写入答案或成绩。
+            self.db.execute('BEGIN IMMEDIATE')
+            row = self.db.execute("SELECT student,session,response,lease,request FROM runs WHERE id=?", (run_id,)).fetchone()
             if (row["student"], row["session"]) != (identity.student, identity.session) or row["lease"] != self.owner:
                 raise Denied("commit identity/lease mismatch")
+            from .turn_control import stop_reason,stopped_error
+            reason=stop_reason(self.db,identity,Request.parse(json.loads(row['request'])),self.history_status()['epoch'])
+            if reason:raise stopped_error(reason)
             for h in request.history:
                 self.db.execute("INSERT OR IGNORE INTO episodes(student,session,run_id,kind,text,provenance,at) VALUES(?,?,?,?,?,?,?)",
                                 (identity.student, identity.session, run_id, h["kind"], h["text"], "request_history_unverified", time.time()))

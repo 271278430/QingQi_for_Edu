@@ -52,6 +52,8 @@ try {
   });
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(setup.base);
+  // 等待页面完成首次鉴权，再使用同一cookie；并发bootstrap会让夹具拿到旧CSRF。
+  await page.getByRole("textbox", { name: "你的学习问题" }).waitFor();
   const boot = await (
     await page.request.get(setup.base + "/api/bootstrap")
   ).json();
@@ -62,7 +64,7 @@ try {
       headers,
     })
   ).json();
-  await page.request.post(setup.base + "/api/teach", {
+  const story = await page.request.post(setup.base + "/api/teach", {
     data: {
       session: assignment.session,
       request: {
@@ -72,6 +74,7 @@ try {
     },
     headers,
   });
+  assert.equal(story.status(), 200, await story.text());
   await page.reload();
   await page.getByRole("textbox", { name: "你的学习问题" }).waitFor();
   const sourceDetail = await (
@@ -98,6 +101,11 @@ try {
     "reported_request_shows_one_question_instead_of_old_story",
     async () => {
       result = await send("给出推荐一个类似的题目");
+      assert.equal(
+        result.student_tasks[0].items.length,
+        1,
+        JSON.stringify(result),
+      );
       const card = page.getByRole("region", { name: "推荐练习" }).last();
       await card.waitFor();
       assert.equal(
