@@ -40,6 +40,7 @@
 | [conversation_problem_fixture.py](conversation_problem_fixture.py)                     | 可控服务或样例数据：同题上下文与多问续聊。                   |
 | [conversation_problem_live.py](conversation_problem_live.py)                           | 真实服务探针：同题上下文与多问续聊。                         |
 | [course_model_acceptance.py](course_model_acceptance.py)                               | 验收与检查：模型调用与结果边界。                             |
+| [current_instruction_acceptance.py](current_instruction_acceptance.py)                 | 当前答案命令、前后否定、小问例外、原题数字和坏历史过滤验收。 |
 | [current_task_acceptance.py](current_task_acceptance.py)                               | 验收与检查：本轮任务优先、多图查询、推荐与同题续聊。         |
 | [current_task_browser.mjs](current_task_browser.mjs)                                   | 浏览器交互验收：本轮任务优先、多图查询、推荐与同题续聊。     |
 | [current_task_browser_server.py](current_task_browser_server.py)                       | 可控服务或样例数据：本轮任务优先、多图查询、推荐与同题续聊。 |
@@ -68,6 +69,7 @@
 | [identity_animation_browser_server.py](identity_animation_browser_server.py)           | 可控服务或样例数据：恒等式动画与答案许可。                   |
 | [identity_animation_live.py](identity_animation_live.py)                               | 真实服务探针：恒等式动画与答案许可。                         |
 | [image_repair_live_acceptance.py](image_repair_live_acceptance.py)                     | 真实服务探针：Agent 请求、权限、工具和提交边界。             |
+| [instruction_visual_fixture.py](instruction_visual_fixture.py)                         | 截图数轴和八点长标签的独立历史夹具。                         |
 | [interaction_inventory_browser.mjs](interaction_inventory_browser.mjs)                 | 浏览器交互验收：页面全部操作入口。                           |
 | [launcher_acceptance.py](launcher_acceptance.py)                                       | 验收与检查：Agent 请求、权限、工具和提交边界。               |
 | [learning_evidence_acceptance.py](learning_evidence_acceptance.py)                     | 验收与检查：独立作答、保持与复习依据。                       |
@@ -84,6 +86,7 @@
 | [multimodal_browser.mjs](multimodal_browser.mjs)                                       | 浏览器交互验收：多图上传、识读与消息附件。                   |
 | [multimodal_browser_server.py](multimodal_browser_server.py)                           | 可控服务或样例数据：多图上传、识读与消息附件。               |
 | [multimodal_fixture.py](multimodal_fixture.py)                                         | 可控服务或样例数据：多图上传、识读与消息附件。               |
+| [number_line_browser.mjs](number_line_browser.mjs)                                     | 图文重叠、完整解答与重画、手机及标注返图验收。               |
 | [owned_visual_acceptance.py](owned_visual_acceptance.py)                               | 当前图转动画、模型Schema、答案保护与身份边界验收。           |
 | [owned_visual_browser.mjs](owned_visual_browser.mjs)                                   | 失败消息重答、真实对称运动、完整播放、单步和手机验收。       |
 | [owned_visual_fixture.py](owned_visual_fixture.py)                                     | 同题历史、旧截断记录与推理占满响应的隔离夹具。               |

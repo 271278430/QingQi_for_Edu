@@ -7,7 +7,7 @@ from .visual_teaching import TOOL as VISUAL
 from .geometry_solver import TOOL as GEOMETRY
 from .function_solver import TOOL as FUNCTION
 from .student_task_tools import SPECS as STUDENT_TOOLS
-VERSION='source_architecture_v13'
+VERSION='source_architecture_v14'
 
 def item(id,title,group,owner,summary,files,interfaces,reuse,limits):
     return {'id':id,'title':title,'group':group,'owner':owner,'summary':summary,
@@ -50,13 +50,13 @@ def architecture(deployment):
            ['真实复用@zcode/core与@zcode/adapters/mcp'],
            ['固定只读白名单；业务写入由Store命令负责，无任意Shell']),
       item('memory','记忆系统','核心系统','Store唯一可写owner；ZCode有界召回筛选','当前题、临时状态、episode/fact与学习证据分层',
-           [P+'storage.py',P+'conversation.py',P+'context.py',R+'memory.ts'],
-           ['Store.current_problem/problem_turns/retrieve/commit','selectScopedMemory','Store.clear_history'],
+           [P+'storage.py',P+'conversation.py',P+'context.py',P+'math_display.py',R+'memory.ts'],
+           ['Store.current_problem/problem_turns/retrieve/commit','math_display.model_history','selectScopedMemory','Store.clear_history'],
            ['ZCode recall合同和筛选预算适配；持久化由教育SQLite实现'],
            ['严格学生隔离与会话题目边界；推断不等于掌握事实']),
       item('routing','意图与教学策略','教学能力','prepare + LayeredRouter + choose + tutoring_scope','按小问拆分多意图；同题模式与会话意图决定教法，许可隔离，学情控制帮助深度',
            [P+'conversation.py',P+'layered_routing.py',P+'request_controls.py',P+'presentation.py',P+'teaching_policy.py',P+'teaching_plan.py',P+'tutoring_scope.py'],
-           ['prepare','LayeredRouter.route','presentation.resolve','choose/build'],
+           ['prepare','LayeredRouter.route','request_controls.answer_directives','presentation.resolve','choose/build'],
            ['参考ZCode任务路由与调度设计，教育识别为本项目实现'],
            ['TF-IDF相似度不是校准概率']),
       item('models','模型适配与子Agent','教学能力','Store/ModelSettings配置 + Deployment快照 + JSONModel协议','自选文本/视觉或共享多模态连接，流式导师及受控8B/27B专项任务',
@@ -70,7 +70,7 @@ def architecture(deployment):
            ['真实复用ZCode Node Skill Adapter'],
            ['学生题干/图片是数据，不能改Skill或权限']),
       item('visuals','数学与可视化','教学能力','teaching_plan择一；符号工具核验；播放器拥有进度','按当前小问目标选择一张讲解图或一段教学动画',
-           [P+'function_solver.py',P+'geometry_solver.py',P+'function_reasoning.py',P+'nonnegative_reasoning.py',P+'identity_animation.py',P+'visual_followup.py',P+'visual_model_contract.py',P+'animation_teaching.py',P+'teaching_visual_pair.py',P+'visual_teaching.py',W+'static-reasoning-diagram.tsx',W+'problem-animation.tsx',W+'teaching-animation.tsx',W+'opposite-animation.tsx'],
+           [P+'function_solver.py',P+'geometry_solver.py',P+'function_reasoning.py',P+'nonnegative_reasoning.py',P+'identity_animation.py',P+'visual_followup.py',P+'visual_model_contract.py',P+'animation_teaching.py',P+'teaching_visual_pair.py',P+'visual_teaching.py',P+'math_display.py',W+'number-line.tsx',W+'static-reasoning-diagram.tsx',W+'problem-animation.tsx',W+'teaching-animation.tsx',W+'opposite-animation.tsx'],
            ['analyze_function/solve_geometry','visual_followup.plan','visual_model_contract.select','render_teaching_visual','useTeachingAnimation'],
            ['ZCode工具链、Mermaid、图表与Dialog'],
            ['符号题型有明确范围；动画不替代数学证明']),

@@ -20,6 +20,7 @@
 | [combined-presentation-v1.md](combined-presentation-v1.md)                     | 多种教学呈现与否定作用域：说明文档。                     |
 | [contextual-teaching-visual-pair-v1.md](contextual-teaching-visual-pair-v1.md) | 上下文教学模式与有效的图像/动画配对：说明文档。          |
 | [conversation-problem-v2.md](conversation-problem-v2.md)                       | 同会话当前题的持久绑定与函数动画：说明文档。             |
+| [current-intent-and-number-line-v1.md](current-intent-and-number-line-v1.md)   | 当前指令优先、原题数字保留及数轴排版的行为规格。         |
 | [current-task-tools-v1.md](current-task-tools-v1.md)                           | 当前任务、原题引用与学生工具：说明文档。                 |
 | [curve-first-teaching-v1.md](curve-first-teaching-v1.md)                       | 围绕原题的函数图教学：说明文档。                         |
 | [four-features.md](four-features.md)                                           | 四项教育功能收敛：说明文档。                             |

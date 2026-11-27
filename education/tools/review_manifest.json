@@ -3,6 +3,14 @@
   "scope": "current education product; isolated controlled endpoints, no live student writes",
   "suites": [
     {
+      "script": "current_instruction_acceptance.py",
+      "domain": "current full-answer commands, per-part exceptions, source decimals and invalid-history filtering"
+    },
+    {
+      "script": "number_line_browser.mjs",
+      "domain": "reported label overlap, full answer plus redraw, long adjacent labels, mobile and annotation"
+    },
+    {
       "script": "owned_visual_acceptance.py",
       "domain": "owned mathematical animation, no reasoning-only call, current references and bounded model schemas"
     },

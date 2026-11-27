@@ -618,6 +618,8 @@ class Agent:
             if not state.get('tutoring_scope') and state.get('practice_entry') and (isinstance(self.controller, OfflineController) or state['practice_assessment']['status'] != 'unverified' or state['route']['teaching']['mode'] == 'answer' and state['route']['teaching']['allow_final_answer']):
                 action = reply_for(state['practice_entry'], request.question, state['route']['teaching'], state['practice_assessment'])
             if state.get('geometry_task') and not state['route'].get('clarify'):action=None
+            # 多问必须由同一个Scope Controller逐问执行；整题预置答案会越过其他小问的禁止许可。
+            if state.get('tutoring_scope'):action=None
             visual_task=state.get('visual_task') or {}
             if visual_task.get('arguments') and not find(state,'render_teaching_visual') and next_tool_intent(state) in {None,'tutor'}:
                 if action:state['deferred_reply']=action

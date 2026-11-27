@@ -47,6 +47,8 @@ def run():
         check('unknown_part_is_clarified',unknown['teaching_action']=='clarify')
         full=teach(s,'这道题的全部三问都给完整答案。','all-parts')['response']
         check('explicit_full_solution_includes_all_three_requested_parts',[u['part'] for u in full['tutoring_scope']['units']]==[1,2,3] and all(u['allow_final_answer'] for u in full['tutoring_scope']['units']))
+        mixed=teach(s,'把这道题的答案全部给我，但第2问先不要给答案。','whole-with-exception')['response']
+        check('whole_answer_with_exception_is_resolved_before_the_loop',{u['part']:u['allow_final_answer'] for u in mixed['tutoring_scope']['units']}=={1:True,2:False,3:True})
         events=teach(s,'第三问请先给一点提示，不要答案。','stream',stream=True)
         if events[-1]['kind']=='error':print(json.dumps(events[-1],ensure_ascii=False),flush=True)
         check('stream_uses_sequence_and_canonical_done',events[-1]['kind']=='done' and [e['seq'] for e in events]==list(range(1,len(events)+1)))

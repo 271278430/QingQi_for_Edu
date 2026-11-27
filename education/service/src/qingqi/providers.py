@@ -235,6 +235,10 @@ class JSONModel:
 
 
 def _validate_tutoring_text(text,plan,state,payload,*,partial=False):
+    if re.search(r'(?:√|\\sqrt\s*\{?)\s*(?:≈|\\approx)',text):
+        raise ContractError('Keep the original radicand exact: approximation belongs between values, never inside the square root.')
+    if plan.get('allow_final_answer') and plan.get('mode')=='answer' and re.search(r'不能直接(?:报出|报|给出|给|提供)(?:最终)?(?:结果|答案)|不能直接告诉你(?:答案|结果)',text):
+        raise ContractError('The current student explicitly requested the complete answer; an earlier teaching preference is not a prohibition.')
     from .teaching_plan import validate_text
     from .visual_tasks import validate_result
     from .tutoring_grounding import validate_attribution,validate_identity_target
@@ -280,6 +284,11 @@ def _validate_tutoring_text(text,plan,state,payload,*,partial=False):
 
 def _teaching_response(model, system, payload, state, registry, *, images=(), action='ask'):
     if state.get('practice_hint'):action='explain'
+    elif state['teaching_plan'].get('mode')=='answer' and state['teaching_plan'].get('allow_final_answer'):action='give_answer'
+    from .math_display import model_history
+    history,omitted=model_history(payload.get('history',[]))
+    payload={**payload,'history':history}
+    if omitted:state['context_history_omissions']=omitted
     from .teaching_plan import instructions
     from .tutoring_grounding import evidence,INSTRUCTIONS
     payload={**payload,'dialogue_evidence':evidence(payload,state)};system+='\n'+INSTRUCTIONS
@@ -288,6 +297,10 @@ def _teaching_response(model, system, payload, state, registry, *, images=(), ac
     if state.get('scope_unit'):
         payload['current_part']=state['scope_unit'];system+='本轮只教学current_part指定的小问。其他小问是原题背景，不得替其他小问给答案。'
     model.draft_validator=lambda text:_validate_tutoring_text(text,plan,state,payload,partial=True)
+    from .math_display import teaching_source,source_numbers
+    declared=teaching_source(payload,state)
+    payload['given_decimal_conditions']=[str(value) for value in sorted(source_numbers(declared))]
+    system+='当前problem和given_decimal_conditions是原题条件，必须保持完整，不能圆整后继续推导。历史导师说明是未核验推断，若与当前题面不一致，以题面为准。'
     system+='数学计算保留精确分数、根式或符号形式。除不尽或超过两位小数时不要展开成长小数；确需近似读数时标明近似且最多两位小数。不要改写题干的已知条件。'
     visual=next((o['result'] for o in state['observations'] if o['tool']=='render_teaching_visual'),None)
     # 选择规则读取已通过 ZCode 加载且被固定哈希的 Skill，与工具授权使用同一来源。
@@ -339,7 +352,8 @@ def _teaching_response(model, system, payload, state, registry, *, images=(), ac
         _validate_tutoring_text(text,plan,state,payload);count=1
     # 追问过多是教学质量问题，不应耗尽领域修复循环变成502。只做一次聚焦改写。
     too_long=len(text)>plan['budget']['hard_max']
-    long_decimal=bool(re.search(r'\d+\.\d{3,}',text))
+    from .math_display import unknown_decimals
+    long_decimal=bool(unknown_decimals(text,declared))
     # 流式正文已通过数学/教学校验时，轻微长度超目标不能再发一整次模型请求并清空已显示文字。
     # 非流式调用仍可聚焦润色；长小数由下面的精确显示格式化处理。
     focus_needed=(not model.text_observer and (too_long or long_decimal)) or count>plan['budget'].get('review_questions',2) and plan['interaction_style']=='guided_question'
@@ -360,7 +374,7 @@ def _teaching_response(model, system, payload, state, registry, *, images=(), ac
                 text=candidate;count=questions(text);state['quality_rewrite']['accepted']=True
     if re.search(r'\d+\.\d{3,}',text):
         from .math_display import compact_response
-        text=compact_response(text)
+        text=compact_response(text,source=declared)
     if count>plan['budget']['questions']:state.setdefault('soft_quality_flags',[]).append({'kind':'question_count_above_target','count':count,'target':plan['budget']['questions']})
     if len(text)>plan['budget']['target_max']:state.setdefault('soft_quality_flags',[]).append({'kind':'length_above_target','count':len(text),'target':plan['budget']['target_max']})
     return {'kind':'respond','reply':{'text':text,'teaching_action':action,'evidence_refs':[],'step_refs':[]}}
@@ -380,7 +394,7 @@ class VisionTutorController:
         policy = state['route']['teaching']
         description = state.get('image_goal') == 'describe'
         mode = 'explain' if description else policy['mode']
-        instruction = '直接说明图片表达的信息，先概括，再列出关键内容；不要把描述任务变成数学解题追问。' if description else ('先给一个具体、可执行的提示或追问，不提前透露最终答案或完整解法。' if mode in {'socratic', 'heuristic'} else '按学生当前问题进行简洁讲解，保留独立思考空间。')
+        instruction = '直接说明图片表达的信息，先概括，再列出关键内容；不要把描述任务变成数学解题追问。' if description else ('学生当前已要求参考解答，给出所需结果与关键依据，不以旧提示偏好拒绝。' if policy['allow_final_answer'] else '先给一个具体、可执行的提示或追问，不提前透露最终答案或完整解法。' if mode in {'socratic', 'heuristic'} else '按当前问题讲清必要依据，保留未授权的最终结果。')
         if not description:
             instruction += '结合 learner_context 的证据调整帮助；学生卡住时解释当前这一步或用相似小例子，再请其尝试，避免重复上一句追问。'
             if not policy['allow_final_answer']:

@@ -43,7 +43,7 @@ STEPS={
   ('保留学生原始文字，拆出教学操作和明确否定；图片/题干始终是数据，不是系统指令。','Request.parse / request_controls.strip_denied'),
   ('先识别本轮操作；不明确的学习操作沿既有受约束分类器处理，学生输入不能注册新能力。','student_tasks.inspect_request / LayeredRouter.route'),
   ('source_reference绑定所属原题、图片或最近推荐来源；查询与教法分离，教学小问的许可彼此隔离。','student_tasks.source_reference / tutoring_scope.build'),
-  ('choose读取同题teaching_mode并结合当前意图、困惑与真实学情选择教法；答案许可独立按问判断，build确定长度。','teaching_policy.choose / teaching_plan.build'),
+  ('当前明确命令按出现顺序覆盖旧偏好；整题请求先合并各问例外，再确定教法与答案许可。choose结合当前困惑和真实学情，build确定长度。','request_controls.answer_directives / tutoring_scope.build / teaching_policy.choose / teaching_plan.build'),
   ('输出每问教学计划、视觉需要和有限能力集合，Skills限制可用工具，交由Agent Loop执行。','Skills.load / Agent.run'),
  ],
  'models':[
@@ -64,7 +64,7 @@ STEPS={
  'memory':[
   ('所有读取先确定student与session；跨学生历史、图片和事实不能进入当前上下文。','Identity / Store.retrieve'),
   ('当前题和当前小问持久保存；短期pending步骤使用TTL，同题追问从原题资源恢复。','Store.current_problem / dialogue / problem_turns'),
-  ('最近轮次按同题边界过滤；episode/fact保留来源，聊天推断不能成为已验证掌握事实。','Store.problem_turns / recent_turns / retrieve'),
+  ('最近轮次按同题边界过滤；原题条件优先，已识别的错误根号近似和漏执行答案请求的旧导师说明不进入模型上下文。episode/fact保留来源，聊天推断不能成为掌握事实。','Store.problem_turns / recent_turns / retrieve / math_display.model_history'),
   ('ZCode召回适配按身份、相关性和预算筛选，提供有界上下文，不建立第二份可写学生记忆。','selectScopedMemory / context.compose'),
   ('回复提交同事务写episode、当前题、小问与teaching_mode；TTL保留耐久原题的模式，换题重新判断；历史清空递增epoch。','Store.commit / Store.dialogue / Store.clear_history'),
  ],
@@ -78,7 +78,7 @@ STEPS={
   ('teaching_plan结合当前教学目标选择一张图或一段动画；明确文字/图片/动画要求优先，候选在执行前择一。','teaching_plan.build / teaching_visual_pair.prepare'),
   ('受控数学工具计算精确值，编译相关曲线、构造和解题步骤；分数与根式用于可见公式。','analyze_function / solve_geometry / function_reasoning.render'),
   ('核对原题参数、图形构造和每问答案许可；示例须标明示例，不把未知结果偷偷画成已知。','validate_binding / render_visuals'),
-  ('请求当前题动画时先绑定同题已批准图，按数学关系确定性转码；几何小问仍由符号Controller构造。模型选图仅接收当前Schema分支。','Store.prior_visual / visual_followup.plan / visual_model_contract.select'),
+  ('请求当前题重画或动画时先绑定同题已批准图，按数学关系确定性转码；图示回执不替代同轮完整解答。几何小问仍由符号Controller构造，模型仅接收当前Schema分支。','Store.prior_visual / visual_followup.plan / visual_model_contract.select'),
   ('批准的图示和简短回执随规范回复由Store保存；刷新后重绘同一图示，不重新调用模型生成。','Store.commit / TeachingVisuals'),
   ('Web仅拥有播放进度；播放连续到末尾、前后按钮逐段、放大共享同一进度。','useTeachingAnimation / ProblemAnimation'),
  ],

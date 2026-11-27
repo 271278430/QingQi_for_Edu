@@ -29,7 +29,10 @@ try:
     repeated=post('/api/teach',{'session':f.session,'request':{'request_id':'animation-again','question':'再给我一个动画帮助理解'}})['response']
     check('subsequent_animation_request_reuses_same_owned_scene',repeated['visuals'][0]['template']=='opposite_numbers' and not f.calls)
     f.reply_valid=True
-    result=post('/api/teach',{'session':f.session,'request':{'request_id':'concept-static','question':'从本质讲解相反数的概念，给我一张静态图帮助理解，不要最终答案。'}})['response']
+    static=post('/api/teach',{'session':f.session,'request':{'request_id':'concept-static','question':'从本质讲解相反数的概念，给我一张静态图帮助理解，不要最终答案。'}})['response']
+    check('owned_animation_converts_to_static_without_a_model_call',static['visuals'][0]['kind']=='number_line' and not f.calls)
+    fresh=post('/api/sessions',{})['id']
+    result=post('/api/teach',{'session':fresh,'request':{'request_id':'fresh-concept-static','question':'从本质讲解相反数的概念，给我一张静态图帮助理解，不要最终答案。'}})['response']
     tools=next(c['tools'] for c in f.calls if c.get('tools'))
     branches=tools[0]['function']['parameters']['properties']['visuals']['items']['oneOf']
     check('actual_model_request_uses_small_current_visual_contract',len(json.dumps(tools))<12000 and len(branches)<=6 and all(b['properties']['kind']['enum'][0]!='animation_scene' for b in branches))

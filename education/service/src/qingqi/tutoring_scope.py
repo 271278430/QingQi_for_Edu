@@ -20,7 +20,11 @@ def build(request,source,prior,route,recent,learner=None,prior_mode=None):
     for clause in clauses:
         matches=list(re.finditer(REF,clause))
         if not matches:
-            if re.search(r'下(?:一|个)(?:小)?问',clause):
+            from .request_controls import answer_directives
+            commands=answer_directives(clause)
+            if commands and re.search(r'全部|所有|各问|每一问',clause):
+                last_group=len(units);units.extend((p,clause) for p in available)
+            elif re.search(r'下(?:一|个)(?:小)?问',clause):
                 last=units[-1][0] if units else old.get('active_part',available[0])
                 last_group=len(units)
                 units.append((next((p for p in available if p>last),max(available)+1),clause))
@@ -40,16 +44,20 @@ def build(request,source,prior,route,recent,learner=None,prior_mode=None):
         from .request_controls import strip_denied
         whole=r'完整(?:答案|解答|解法)|全部(?:的)?(?:小问|问题|题目|答案)|所有(?:的)?(?:小问|问题|答案)|各问|每一问|三问'
         positive=strip_denied(request.question,whole)[0]
-        units=[(p,request.question) for p in available] if re.search(whole,positive) else [(old.get('active_part') if old.get('active_part') in available else available[0],request.question)]
-    merged=[]
+        from .request_controls import answer_directives
+        commands=answer_directives(request.question)
+        all_answers=bool(commands and commands[-1]['allowed'] and re.search(r'全部|所有|完整',commands[-1]['text']))
+        units=[(p,request.question) for p in available] if re.search(whole,positive) or all_answers else [(old.get('active_part') if old.get('active_part') in available else available[0],request.question)]
+    merged={}
     for part,text in units:
-        if merged and merged[-1][0]==part:merged[-1]=(part,merged[-1][1]+'，'+text)
-        else:merged.append((part,text))
-    units=merged
+        # 同轮同一小问先合并命令再执行；不能先泄露第二问答案，随后才处理“第二问不要答案”。
+        previous=merged.pop(part,'');merged[part]=previous+'，'+text if previous else text
+    units=list(merged.items())
     decisions=[]
     for part,text in units:
         q='，'.join([*presentation_prefix,text])
-        explicit_answer=bool(re.search(r'答案|解答|结果',q) and re.search(r'给|告诉|回答|公布|只要|只需|完整解答',q) and not re.search(r'不要.{0,8}(?:答案|解答|结果)|不用.{0,8}(?:答案|解答|结果)|别.{0,8}答案',q))
+        from .request_controls import answer_directives
+        directives=answer_directives(q);explicit_answer=bool(directives and directives[-1]['allowed'])
         local=replace(request,question=q,mode='answer' if explicit_answer else request.mode)
         decision=choose(local,route,recent if prior else [],learner=learner,problem={'expression':source},continuing_problem=bool(prior),prior_mode=prior_mode or (prior or {}).get('teaching_mode'),current_part=part,
                         prior_disclosed=part in old.get('answer_parts',[]),prior_no_answer=bool((prior or {}).get('no_final_requested')))

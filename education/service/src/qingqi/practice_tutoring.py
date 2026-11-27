@@ -332,6 +332,8 @@ def reply_for(entry, question, decision, checked):
         if entry['key']['kind']=='choice' and len(values[0])==1 and entry.get('options'):
             index=ord(values[0])-65
             if 0<=index<len(entry['options']):text+='对应选项内容：'+entry['options'][index]+'。'
+        if decision.get('full_walkthrough_requested') and entry.get('analysis'):
+            text+='\n'+entry['analysis']
         return reply(text+'如果想理解关键步骤，可以继续问我。', 'give_answer')
     if mode == 'explain':
         text = guidance(entry, 'heuristic', stage)

@@ -1,4 +1,11 @@
-import { lazy, Suspense, useId, useRef, useState, type ComponentProps } from "react";
+import {
+  lazy,
+  Suspense,
+  useId,
+  useRef,
+  useState,
+  type ComponentProps,
+} from "react";
 import { Button } from "@zcode/ui/button";
 import {
   Dialog,
@@ -7,14 +14,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@zcode/ui/dialog";
-import { ChevronDown, ChevronUp, Maximize2, Shapes, Pencil } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Maximize2,
+  Shapes,
+  Pencil,
+} from "lucide-react";
 import type { TeachingVisual } from "./contract.js";
 import { MathContent } from "./learning-content.js";
 import { TeachingAnimation } from "./teaching-animation.js";
 import { StaticReasoningDiagram } from "./static-reasoning-diagram.js";
-import { useTeachingAnimation, type AnimationState } from "./use-teaching-animation.js";
-import { CoordinateFigure, FunctionFigure, FractionFigure } from "./teaching-plots.js";
-import { numberLabel } from "./math-number.js";
+import {
+  useTeachingAnimation,
+  type AnimationState,
+} from "./use-teaching-animation.js";
+import {
+  CoordinateFigure,
+  FunctionFigure,
+  FractionFigure,
+} from "./teaching-plots.js";
+import { NumberLine } from "./number-line.js";
 import {
   VisualAnnotation,
   snapshotVisual,
@@ -44,119 +64,6 @@ const labels = {
   empty: "没有可展示的数据",
   itemsCount: (n: number) => `${n} 项`,
 };
-// 已接受数值不能按三位小数截断，小数题中的 0.0001 仍必须显示为 0.0001。
-const format = numberLabel;
-
-function NumberLine({ visual }: { visual: Extract<TeachingVisual, { kind: "number_line" }> }) {
-  const [step, setStep] = useState(0);
-  const id = useId();
-  const [lo, hi] = visual.range;
-  const x = (value: number) => 40 + ((value - lo) / (hi - lo)) * 560;
-  const tickStep = Math.max(1, Math.ceil((hi - lo) / 12));
-  const ticks = Array.from(
-    { length: 14 },
-    (_, i) => Math.ceil(lo / tickStep) * tickStep + i * tickStep,
-  ).filter((t) => t <= hi);
-  return (
-    <div>
-      <svg
-        viewBox="0 0 640 240"
-        role="img"
-        aria-labelledby={`${id}-title ${id}-description`}
-        className="edu-teaching-svg text-ui-caption"
-      >
-        <title id={`${id}-title`}>{visual.title}</title>
-        <desc id={`${id}-description`}>
-          数轴，
-          {visual.points.map((p) => `${p.label} ${format(p.x)}`).join("，")}
-          。点击演示下一步查看移动方向。
-        </desc>
-        <defs>
-          <marker
-            id={`${id}-arrow`}
-            viewBox="0 0 8 8"
-            refX="7"
-            refY="4"
-            markerWidth="6"
-            markerHeight="6"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 0 L 8 4 L 0 8 z" fill="currentColor" />
-          </marker>
-        </defs>
-        <line
-          x1="28"
-          y1="170"
-          x2="615"
-          y2="170"
-          className="edu-visual-axis"
-          markerEnd={`url(#${id}-arrow)`}
-        />
-        {ticks.map((t) => (
-          <g key={t}>
-            <line x1={x(t)} x2={x(t)} y1="164" y2="176" className="edu-visual-axis" />
-            <text x={x(t)} y="199" textAnchor="middle" className="edu-visual-label">
-              {format(t)}
-            </text>
-          </g>
-        ))}
-        {visual.points.map((p, i) => (
-          <g key={i}>
-            <circle cx={x(p.x)} cy="170" r="5" className="edu-visual-point" />
-            <text x={x(p.x)} y="224" textAnchor="middle" className="edu-visual-label">
-              {p.label} · {format(p.x)}
-            </text>
-          </g>
-        ))}
-        {visual.moves
-          .slice(0, visual.presentation_role === "picture" ? visual.moves.length : step)
-          .map((m, i) => {
-            const a = x(m.start),
-              b = x(m.end),
-              top = 134 - i * 28;
-            return (
-              <g key={i} data-move-visible="true" className="edu-visual-move">
-                <path
-                  d={`M ${a} 158 Q ${(a + b) / 2} ${top - 45} ${b} 155`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  markerEnd={`url(#${id}-arrow)`}
-                />
-                <text x={(a + b) / 2} y={top - 23} textAnchor="middle">
-                  {m.label} · {m.delta > 0 ? "+" : ""}
-                  {format(m.delta)}
-                </text>
-                <circle cx={b} cy="170" r="5" fill="currentColor" />
-                <text x={b} y="151" textAnchor="middle">
-                  {format(m.end)}
-                </text>
-              </g>
-            );
-          })}
-      </svg>
-      {visual.moves.length > 0 && visual.presentation_role !== "picture" && (
-        <div className="flex flex-wrap items-center gap-2 text-ui-xs text-foreground-subtle">
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={step >= visual.moves.length}
-            onClick={() => setStep((s) => Math.min(s + 1, visual.moves.length))}
-          >
-            演示下一步
-          </Button>
-          <Button size="sm" variant="ghost" disabled={step === 0} onClick={() => setStep(0)}>
-            重置演示
-          </Button>
-          <span aria-live="polite">
-            {step === 0 ? "先找到起点，再看移动方向" : `已演示 ${step} / ${visual.moves.length} 步`}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function Figure({
   visual,
   theme,
@@ -166,7 +73,8 @@ function Figure({
   theme?: TeachingTheme;
   animation?: AnimationState;
 }) {
-  if (visual.kind === "reasoning_diagram") return <StaticReasoningDiagram visual={visual} />;
+  if (visual.kind === "reasoning_diagram")
+    return <StaticReasoningDiagram visual={visual} />;
   if (visual.kind === "animation_scene")
     return animation ? (
       <TeachingAnimation visual={visual} animation={animation} />
@@ -174,8 +82,10 @@ function Figure({
       <p>动画未准备好。</p>
     );
   if (visual.kind === "number_line") return <NumberLine visual={visual} />;
-  if (visual.kind === "coordinates") return <CoordinateFigure visual={visual} />;
-  if (visual.kind === "function_plot") return <FunctionFigure visual={visual} />;
+  if (visual.kind === "coordinates")
+    return <CoordinateFigure visual={visual} />;
+  if (visual.kind === "function_plot")
+    return <FunctionFigure visual={visual} />;
   if (visual.kind === "area_model")
     return (
       <FractionFigure
@@ -187,12 +97,19 @@ function Figure({
   if (visual.kind === "scene")
     return (
       <div className="edu-scene-figure">
-        <MathContent theme={theme} content={`\`\`\`mermaid\n${visual.mermaid}\n\`\`\``} />
+        <MathContent
+          theme={theme}
+          content={`\`\`\`mermaid\n${visual.mermaid}\n\`\`\``}
+        />
       </div>
     );
   if (visual.kind === "table")
     return (
-      <Suspense fallback={<p className="text-ui-sm text-foreground-subtle">正在展示表格…</p>}>
+      <Suspense
+        fallback={
+          <p className="text-ui-sm text-foreground-subtle">正在展示表格…</p>
+        }
+      >
         <Table
           labels={labels}
           spec={{
@@ -211,7 +128,11 @@ function Figure({
       </Suspense>
     );
   return (
-    <Suspense fallback={<p className="text-ui-sm text-foreground-subtle">正在展示图表…</p>}>
+    <Suspense
+      fallback={
+        <p className="text-ui-sm text-foreground-subtle">正在展示图表…</p>
+      }
+    >
       <Chart
         labels={labels}
         spec={{
@@ -239,7 +160,14 @@ function AnimatedVisualCard({
   theme?: TeachingTheme;
 } & AnnotationProps) {
   const animation = useTeachingAnimation(visual.duration);
-  return <VisualCard visual={visual} theme={theme} animation={animation} {...annotation} />;
+  return (
+    <VisualCard
+      visual={visual}
+      theme={theme}
+      animation={animation}
+      {...annotation}
+    />
+  );
 }
 function VisualCard({
   visual,
@@ -327,15 +255,23 @@ function VisualCard({
               setExpanded((s) => !s);
             }}
           >
-            {expanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+            {expanded ? (
+              <ChevronUp className="size-4" />
+            ) : (
+              <ChevronDown className="size-4" />
+            )}
           </Button>
         </div>
       </div>
       {expanded && (
         <div ref={content} id={contentId} className="mt-3 min-w-0">
           <Figure visual={visual} theme={theme} animation={animation} />
-          {visual.caption && <MathContent content={visual.caption} theme={theme} />}
-          <p className="mt-3 text-ui-xs text-foreground-subtlest">{visual.provenance}</p>
+          {visual.caption && (
+            <MathContent content={visual.caption} theme={theme} />
+          )}
+          <p className="mt-3 text-ui-xs text-foreground-subtlest">
+            {visual.provenance}
+          </p>
         </div>
       )}
       {annotationError && (
@@ -366,7 +302,9 @@ function VisualCard({
           </DialogHeader>
           <div className="min-w-0 overflow-auto">
             <Figure visual={visual} theme={theme} animation={animation} />
-            {visual.caption && <MathContent content={visual.caption} theme={theme} />}
+            {visual.caption && (
+              <MathContent content={visual.caption} theme={theme} />
+            )}
           </div>
         </DialogContent>
       </Dialog>
@@ -396,7 +334,9 @@ export function TeachingVisuals({
             key={visual.id}
             visual={visual}
             theme={theme}
-            reference={runId ? { run_id: runId, visual_index: index } : undefined}
+            reference={
+              runId ? { run_id: runId, visual_index: index } : undefined
+            }
             onAnnotate={onAnnotate}
             locked={locked}
           />
@@ -405,7 +345,9 @@ export function TeachingVisuals({
             key={visual.id}
             visual={visual}
             theme={theme}
-            reference={runId ? { run_id: runId, visual_index: index } : undefined}
+            reference={
+              runId ? { run_id: runId, visual_index: index } : undefined
+            }
             onAnnotate={onAnnotate}
             locked={locked}
           />

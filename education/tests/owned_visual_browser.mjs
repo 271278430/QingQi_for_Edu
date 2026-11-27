@@ -82,17 +82,32 @@ try {
       await animation
         .getByRole("button", { name: "播放动画", exact: true })
         .click();
-      await page.waitForTimeout(1200);
+      await page.waitForFunction(
+        () => {
+          const progress = Number(
+            document
+              .querySelector('[data-teaching-animation="opposite_numbers"]')
+              .getAttribute("data-animation-progress"),
+          );
+          return progress > 0 && progress < 1;
+        },
+        {},
+        { timeout: 6000 },
+      );
       const progress = Number(
         await animation.getAttribute("data-animation-progress"),
       );
       assert(progress > 0 && progress < 1);
       const plot = animation.locator("[data-opposite-value]");
+      // 两个连续动画读数必须在同一帧读取，分别await可能取到前后帧，误报对称关系。
       assert(
-        Math.abs(
-          Number(await plot.getAttribute("data-opposite-value")) +
-            Number(await plot.getAttribute("data-opposite-mirror")),
-        ) < 1e-10,
+        await plot.evaluate(
+          (node) =>
+            Math.abs(
+              Number(node.getAttribute("data-opposite-value")) +
+                Number(node.getAttribute("data-opposite-mirror")),
+            ) < 1e-10,
+        ),
       );
       await page.waitForFunction(
         () =>

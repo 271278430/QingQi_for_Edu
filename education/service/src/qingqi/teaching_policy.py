@@ -9,9 +9,9 @@ import re
 from dataclasses import replace
 
 from .domain_tools import number
-from .request_controls import NEGATION,negated_before,strip_denied
+from .request_controls import NEGATION,negated_before,strip_denied,answer_directives
 
-VERSION = 'teaching_policy_v19'
+VERSION = 'teaching_policy_v20'
 LABELS = {'socratic': '苏格拉底式教学', 'heuristic': '启发式提示', 'explain': '分步讲解', 'answer': '参考解答',
           'confirm': '确认正确作答', 'chat': '闲聊', 'course': '课程查询', 'clarify': '先澄清问题'}
 LABELS.update({'recommend':'相似练习','learning_path':'学习路径','learning_dashboard':'学情摘要','unsupported':'需求说明'})
@@ -19,9 +19,7 @@ PREFERENCES = {
     'socratic': r'苏格拉底|追问|引导我',
     'heuristic': r'启发式(?:提示|教学)?|(?:给|来|要|先).*?(?:提示|启发)|只(?:需|要).*?提示|hint',
     'explain': r'分步讲解|分步讲|一步一步|一步步|逐步讲|从头.{0,4}(?:讲|解)|完整(?:讲解|解答|解法|解题步骤|解题过程)|详细(?:讲|解释)|讲(?:清楚|明白)|解释.*(?:步骤|顺序)|从基础',
-    'answer': r'直接(?:给|告诉|核对|计算|算)|(?:给出|给我|提供)(?:正确|完整|参考|最终|这题|题目|一个)?(?:的)?(?:答案|解答|结果)|只(?:需|要)(?:最终)?(?:答案|结果)',
 }
-NO_ANSWER = NEGATION+r'(?:再|先|直接|马上|把|给我|告诉我|给出|给|说|最终|我|的|正确|标准|这题|算出|公布|提供|任何|完整|参考|全部|\s){0,8}(?:答案|结果|解答|解法|解题步骤|解题过程)|不给答案|只(?:需|要).*?提示'
 FULL_WALKTHROUGH = r'完整[^，,。；;！？\n]{0,12}(?:解法|解答|讲解|解题步骤|解题过程)|从头讲|全过程|所有步骤'
 STRUGGLE = r'还是(?:不会|不懂|不明白|没懂)|仍(?:然)?(?:不会|不懂|不明白)|没听懂|听不懂|提示.*(?:不够|没用)|卡住|再讲|不明白'
 FOLLOW_UP = r'这(?:道题|一步|题)|刚才|上一(?:题|步)|还是(?:不会|不懂|不明白|没懂)|继续|再讲|没听懂|仍然不懂|从头讲|讲清楚|讲明白|分步讲解'
@@ -78,6 +76,7 @@ def _positive_preferences(question):
             if mode == 'explain' and m.group().startswith('怎么') and re.search(r'检查|核验', question):
                 continue
             found.append((m.start(), mode, m.group()))
+    found.extend((event['at'],'answer',event['text']) for event in answer_directives(question) if event['allowed'])
     return sorted(found)
 
 
@@ -86,11 +85,13 @@ def choose(request, route, recent, *, continuing_problem=False, prior_no_answer=
     from .teaching_plan import build
     q = request.question
     preferences = _positive_preferences(q)
-    explicit_answer = request.mode == 'answer' or bool(preferences and preferences[-1][1] == 'answer')
+    directives=answer_directives(q)
+    explicit_answer = request.mode == 'answer' or bool(directives and directives[-1]['allowed'])
     # 被否定的完整解答不能反向授权长解或答案，完整讲解许可必须来自正向命令。
     positive_walkthrough=strip_denied(q,FULL_WALKTHROUGH,distance=16)[0]
-    full_walkthrough = request.mode=='explain' or bool(re.search(FULL_WALKTHROUGH,positive_walkthrough))
-    no_answer = bool(re.search(NO_ANSWER, q)) or bool(prior_no_answer and continuing_problem and not explicit_answer)
+    full_walkthrough = request.mode=='explain' or bool(re.search(FULL_WALKTHROUGH,positive_walkthrough)) or bool(directives and directives[-1]['allowed'] and re.search(r'全部|所有|完整',directives[-1]['text']))
+    # 最新命令优先于旧教学偏好；不能漏掉“答案全部给我”，或让较早的否定锁死后续授权。
+    no_answer = not directives[-1]['allowed'] if directives else bool(prior_no_answer and continuing_problem and not (explicit_answer or full_walkthrough))
     purpose=goal(q)
     # 否定只能修饰邻近的追问，不能把“不要答案，请追问”错误理解成禁止追问。
     no_questions=bool(re.search(NEGATION+r'(?:再|一直|总是|总|给我|继续|那么多|老是|先){0,4}(?:反问|追问|问我)',q))

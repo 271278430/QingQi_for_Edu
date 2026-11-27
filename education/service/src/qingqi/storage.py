@@ -645,6 +645,9 @@ class Store:
         points=geometry.get('points',[]);segments=geometry.get('segments',[])
         known={'points':[p['label'] for p in points],
                'segments':[{'from':points[s['source']]['label'],'to':points[s['target']]['label'],'style':s.get('style','solid'),'role':s.get('role','edge')} for s in segments if 0<=s['source']<len(points) and 0<=s['target']<len(points)]}
+        if visual['kind']=='number_line':
+            known['display_labels']={f'P{i+1}':point['label'] for i,point in enumerate(points)}
+            known['moves']=[{'display_id':f'M{i+1}',**{k:v for k,v in move.items() if k in {'label','start','end'}}} for i,move in enumerate(visual.get('moves',[]))]
         solved=next((o['result'] for o in state.get('observations',[]) if o['tool']=='solve_geometry'),None)
         verified={'source_part':1,'angles':solved['midpoint']['angles']} if selected==1 and solved and solved.get('status')=='verified' and 'midpoint' in solved.get('parts',[]) else None
         # 原有CD不能被误说成学生新画的红色EF；只传点名/拓扑，不重复大段坐标或泄露解答。

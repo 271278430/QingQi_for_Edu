@@ -46,7 +46,7 @@ try {
   ).json();
   const svg = page.locator("svg[data-system-panorama]");
   await check("single_system_map_has_sixteen_verified_modules", async () => {
-    assert.equal(data.version, "source_architecture_v13");
+    assert.equal(data.version, "source_architecture_v14");
     assert.equal(data.modules.length, 16);
     assert(
       data.modules.every(
@@ -95,7 +95,7 @@ try {
         browser,
         svg,
         new URL(
-          "../.local/reports/architecture-v13-system.png",
+          "../.local/reports/architecture-v14-system.png",
           import.meta.url,
         ),
       );
@@ -106,7 +106,7 @@ try {
         .click();
       const file = fileURLToPath(
         new URL(
-          "../.local/reports/architecture-v13-system.svg",
+          "../.local/reports/architecture-v14-system.svg",
           import.meta.url,
         ),
       );
@@ -121,7 +121,7 @@ try {
         .screenshot({
           path: fileURLToPath(
             new URL(
-              "../.local/reports/architecture-v13-export.png",
+              "../.local/reports/architecture-v14-export.png",
               import.meta.url,
             ),
           ),

@@ -18,6 +18,10 @@
   max-height: 50dvh;
   color: var(--color-foreground-subtle);
 }
+.edu-teaching-svg[data-number-line] {
+  /* 标签逐行展开后保持真实字号，不能再把整张图压缩到半屏高度。 */
+  max-height: none;
+}
 .edu-visual-axis {
   stroke: var(--color-foreground-subtle);
   stroke-width: 1.2;

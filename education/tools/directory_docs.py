@@ -12,6 +12,12 @@ START='<!-- qingqi-directory-index:start -->'
 END='<!-- qingqi-directory-index:end -->'
 BASIS='清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。'
 COMMON={
+ 'number-line.tsx':'数轴短编号、近邻布局、完整标签换行与标注快照的图内说明。',
+ 'current_instruction_acceptance.py':'当前答案命令、前后否定、小问例外、原题数字和坏历史过滤验收。',
+ 'instruction_visual_fixture.py':'截图数轴和八点长标签的独立历史夹具。',
+ 'number_line_browser.mjs':'图文重叠、完整解答与重画、手机及标注返图验收。',
+ 'current-intent-and-number-line-v1.md':'当前指令优先、原题数字保留及数轴排版的行为规格。',
+ 'current-instruction-and-number-line-v1.md':'完整解答被拦截、原题数字与数轴标签修复及Codex采用范围。',
  'visual_followup.py':'将同题已批准的数学关系编译为对应动画及教学回执。',
  'visual_model_contract.py':'按本轮任务缩小模型可见图示Schema，不扩大Registry权限。',
  'opposite-animation.tsx':'相反数的同步对称点、等距线段和抵消关系的动画视图。',

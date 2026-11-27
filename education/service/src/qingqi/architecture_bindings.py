@@ -33,6 +33,9 @@ BINDINGS['web'] += [(W+'visual-annotation.tsx','VisualAnnotation'),(W+'visual-an
 BINDINGS['permissions'] += [(P+'storage.py','Store.visual_source')]
 BINDINGS['visuals'] += [(P+'geometry_solver.py','prepare_geometry'),(P+'geometry_animation.py','label_coordinates')]
 BINDINGS['visuals'] += [(P+'teaching_visual_pair.py','prepare'),(P+'teaching_visual_pair.py','static_lesson'),(W+'static-reasoning-diagram.tsx','StaticReasoningDiagram')]
+BINDINGS['routing'] += [(P+'request_controls.py','answer_directives')]
+BINDINGS['memory'] += [(P+'math_display.py','model_history')]
+BINDINGS['visuals'] += [(P+'math_display.py','compact_response'),(W+'number-line.tsx','NumberLine')]
 
 BINDINGS['models'] += [('packages/ui/src/settings/model-provider-section/SectionLayout.tsx','ModelProviderSectionLayout'),('packages/ui/src/settings/model-provider-section/ProviderCardSections.tsx','ProviderCardHeader'),('packages/ui/src/settings/model-provider-section/ProviderCardSections.tsx','ProviderConnectionSection'),('packages/ui/src/settings/model-provider-section/ProviderCardSections.tsx','ProviderApiKeySection'),('packages/ui/src/settings/model-provider-section/ProviderFormControls.tsx','ModelRowInput'),('packages/ui/src/settings/model-provider-section/ProviderModelMetadataDialog.tsx','ProviderModelMetadataDialog')]
 

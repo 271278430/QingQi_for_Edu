@@ -17,7 +17,7 @@ class Fixture:
                 body=json.loads(self.rfile.read(int(self.headers['Content-Length'])));fixture.calls.append(body)
                 message={'content':''};finish='length'
                 if fixture.reply_valid:
-                    finish='stop';message={'content':'相反数在零的两侧，到原点的距离相等。题干给定的两个解 $2$ 和 $-2$ 就是这一关系；先比较解的位置，不必先猜未知参数。'}
+                    finish='stop';message={'content':'相反数在零的两侧，到原点的距离相等。例如 $2$ 和 $-2$ 满足这一关系，它们的和为零；这体现了关于原点对称。'}
                     if body.get('tools'):message={'content':None,'tool_calls':[{'id':'owned-valid-tool','type':'function','function':{'name':'render_teaching_visual','arguments':json.dumps({'visuals':[{'kind':'number_line','basis':'example','title':'相反数的对称位置','points':[{'label':'第一个解','x':2},{'label':'另一个解','x':-2}]}]})}}]}
                 raw=json.dumps({'choices':[{'message':message,'finish_reason':finish}],'usage':{'completion_tokens':1600 if finish=='length' else 80,'completion_tokens_details':{'reasoning_tokens':1598 if finish=='length' else 0}}}).encode()
                 self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)

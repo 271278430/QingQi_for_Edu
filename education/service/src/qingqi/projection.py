@@ -20,6 +20,11 @@ def project_response(response,state=None):
     if state and not state.get('task_plan') and is_query_turn(state) and not response.get('student_tasks'):
         # 保留旧接受记录；明确告知它没有执行查询，不把旧讲解伪造成推荐结果。
         result['task_notice']='这条旧回复没有完成你的查询任务，原回复已保留。可以重新发送这条请求。'
+    from .math_display import invalid_teacher_reply
+    issue=invalid_teacher_reply(response.get('text',''),(state or {}).get('effective_request',{}).get('question',''))
+    if issue:
+        # 旧接受记录保留供审查；不能把错位的教学拒绝或根号内近似继续当作可信上下文。
+        result['task_notice']='这条历史回复没有执行你的完整解答要求，可重新回答。' if issue=='missed_answer_request' else '这条历史回复含有不规范的根号近似表达，请以原题数字为准并重新回答。'
     if result.get('visuals'):
         import re
         # 旧接受消息只修正展示标题与类型措辞；不把静态历史图伪造成一段新动画。

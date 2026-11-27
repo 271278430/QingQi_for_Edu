@@ -28,6 +28,9 @@ def wants_connections(question):
 def wants_explanation(question):
     # “不用讲解”不能被正向关键词当成讲解请求，否则只画图也会多调用模型。
     from .request_controls import strip_denied
+    from .request_controls import answer_directives
+    commands=answer_directives(question)
+    if commands and commands[-1]['allowed']:return True
     positive=strip_denied(question,r'解释|讲解|追问')[0]
     return bool(re.search(r'解释|讲解|讲清楚|讲明白|继续讲|为什么|理解|教学|辅导|教我|追问|苏格拉底|解题(?:过程|步骤)|推导|完整',positive))
 
@@ -259,7 +262,11 @@ def receipt(state):
             if text:return {'kind':'respond','reply':{'text':text,'teaching_action':'explain','evidence_refs':[],'step_refs':[]}}
         return None
     v=next((v for v in visuals if v['kind']=='animation_scene'),visuals[0])
-    if (state.get('visual_task') or {}).get('operation')=='owned_animation':
+    if (state.get('visual_task') or {}).get('operation') in {'owned_animation','owned_picture'}:
+        if state['route']['teaching']['allow_final_answer']:return None
+        if state['visual_task']['operation']=='owned_picture':
+            text='数轴已重新排版，编号对应下方完整点名和位置。请沿着当前图观察，原题数据保持不变。' if v['kind']=='number_line' else '图示已使用当前题同一组数据重绘，原题条件保持不变。'
+            return {'kind':'respond','reply':{'text':text,'teaching_action':'explain','evidence_refs':[],'step_refs':[]}}
         from .visual_followup import explanation
         return {'kind':'respond','reply':{'text':explanation(v),'teaching_action':'explain','evidence_refs':[],'step_refs':[]}}
     if (state.get('visual_task') or {}).get('operation')=='identity_probe' and v.get('algebra_lesson'):

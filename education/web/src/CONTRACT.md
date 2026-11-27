@@ -1,5 +1,7 @@
 # 教育学习工作台
 
+数轴布局由NumberLine根据实际宽度确定短编号和独立说明行，不改变已批准数学位置。原题数值由后端保留，未知长小数才作近似显示；短编号及完整标签仍进入标注快照和所属图示引用。完整解答与重画属于同轮两个目标，图示回执不能遮盖答案。见specs/education/current-intent-and-number-line-v1.md。
+
 相反数动画读取服务端批准帧，播放器连续到末尾、前后按钮沿关键阶段，刷新采用同一规范历史。旧截断消息重新回答以新编号发送，不能修改旧失败记录。见specs/education/owned-visual-followup-v1.md。
 
 生成中及刷新后的运行消息可通过原 EducationService 停止本轮；原请求引用与 generation/selection 保护迟到回包。读取服务端终态后确认停止，保留未完成文字与输入。见 specs/education/codex-turn-control-v1.md。

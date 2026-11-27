@@ -2,11 +2,25 @@
 import copy,math,re
 
 def plan(question,entry,prior,source):
-    from .visual_tasks import wants_animation,wants_connections
-    if not wants_animation(question) or wants_connections(question):return None
+    from .visual_tasks import wants_animation,wants_connections,wants_drawing
+    from .request_controls import negated_before
+    redraw=re.search(r'重画|重新(?:画|绘)|换(?:一)?张图',question)
+    redraw=bool(redraw and not negated_before(question,redraw.start()))
+    animation=wants_animation(question)
+    if wants_connections(question) or not (animation or wants_drawing(question) or redraw):return None
     source=' '.join((entry or {}).get(k,'') for k in ('title','expression'))+' '+source
     # 几何小问仍由原符号Controller决定构造与披露，不能用旧连线替代旋转/比例推理。
     if (prior or {}).get('layout')=='geometry':return None
+    if not animation and prior:
+        from .visual_teaching import FIELDS
+        from .teaching_visual_pair import companion
+        original=companion(prior,{}) if prior['kind']=='animation_scene' else prior
+        if not original or original['kind'] not in {'number_line','coordinates','function_plot','area_model','table','bar_chart','scene'}:return None
+        figure={k:copy.deepcopy(v) for k,v in original.items() if k in {'kind','title','basis','caption',*FIELDS[original['kind']]}}
+        if 'moves' in figure:figure['moves']=[{k:v for k,v in move.items() if k in {'start','delta','label'}} for move in figure['moves']]
+        if 'points' in figure:figure['points']=[{k:v for k,v in point.items() if k in {'label','x','y'}} for point in figure['points']]
+        if 'segments' in figure:figure['segments']=[{k:v for k,v in segment.items() if k in {'source','target','style','role','label'}} for segment in figure['segments']]
+        return {'version':'owned_visual_followup_v1','operation':'owned_picture','required_kind':figure['kind'],'parent_id':prior.get('id'),'arguments':{'visuals':[figure]}}
     figure=None
     if '相反数' in source:
         points=(prior or {}).get('points',[])

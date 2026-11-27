@@ -100,7 +100,7 @@ try {
       )
     ).json();
     assert.equal(arch.modules.length, 16);
-    assert.equal(arch.version, "source_architecture_v13");
+    assert.equal(arch.version, "source_architecture_v14");
     assert(!arch.request_flow && !arch.business_flow);
     assert(
       arch.modules.every(
