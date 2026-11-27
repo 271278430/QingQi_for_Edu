@@ -78,7 +78,8 @@ STEPS={
   ('teaching_plan结合当前教学目标选择一张图或一段动画；明确文字/图片/动画要求优先，候选在执行前择一。','teaching_plan.build / teaching_visual_pair.prepare'),
   ('受控数学工具计算精确值，编译相关曲线、构造和解题步骤；分数与根式用于可见公式。','analyze_function / solve_geometry / function_reasoning.render'),
   ('核对原题参数、图形构造和每问答案许可；示例须标明示例，不把未知结果偷偷画成已知。','validate_binding / render_visuals'),
-  ('批准的图示数据随规范回复由Store保存；刷新后重绘同一图示，不重新调用模型生成。','Store.commit / TeachingVisuals'),
+  ('请求当前题动画时先绑定同题已批准图，按数学关系确定性转码；几何小问仍由符号Controller构造。模型选图仅接收当前Schema分支。','Store.prior_visual / visual_followup.plan / visual_model_contract.select'),
+  ('批准的图示和简短回执随规范回复由Store保存；刷新后重绘同一图示，不重新调用模型生成。','Store.commit / TeachingVisuals'),
   ('Web仅拥有播放进度；播放连续到末尾、前后按钮逐段、放大共享同一进度。','useTeachingAnimation / ProblemAnimation'),
  ],
  'persistence':[

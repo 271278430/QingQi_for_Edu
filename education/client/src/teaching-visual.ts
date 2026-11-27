@@ -18,14 +18,26 @@ export type TeachingVisual = {
 } & (
   | {
       kind: "reasoning_diagram";
-      template: "function_reasoning" | "nonnegative_reasoning" | "identity_probe";
+      template:
+        | "function_reasoning"
+        | "nonnegative_reasoning"
+        | "identity_probe";
       params: Record<string, unknown>;
       reasoning_lesson?:
         | Pick<
             FunctionReasoning,
-            "kind" | "mode" | "problem" | "given" | "cases" | "curve" | "derivative_curve"
+            | "kind"
+            | "mode"
+            | "problem"
+            | "given"
+            | "cases"
+            | "curve"
+            | "derivative_curve"
           >
-        | Pick<NonnegativeReasoning, "kind" | "mode" | "problem" | "term_curves" | "steps">;
+        | Pick<
+            NonnegativeReasoning,
+            "kind" | "mode" | "problem" | "term_curves" | "steps"
+          >;
       algebra_lesson?: {
         mode: "hint" | "solution";
         equation: string;
@@ -81,6 +93,7 @@ export type TeachingVisual = {
   | {
       kind: "animation_scene";
       template:
+        | "opposite_numbers"
         | "absolute_distance"
         | "square_root"
         | "nonnegative_sum"

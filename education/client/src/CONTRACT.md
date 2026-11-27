@@ -1,5 +1,7 @@
 # 教育 HTTP 客户端
 
+TeachingVisual新增opposite_numbers有限动画，保留同一frames、inspection_steps与播放契约。图示续接仍由服务端授权原题，不在客户端推导新的教学事实。见specs/education/owned-visual-followup-v1.md。
+
 POST /api/teach/stop 使用原会话和原 TeachingRequest，返回停止状态；Message.trace.running 只读描述服务端有效租约。turn_cancelled 是已停止的未完成轮次，不能同编号重新生成。见 specs/education/codex-turn-control-v1.md。
 
 TeachingResponse.student_tasks为已接受的学生任务结果，包含题卡、学情摘要或路线预览；不含题库答案、内部工具账本或凭据。增量仍是草稿，done和历史共用规范结果，题卡选择使用已有练习入口。见specs/education/current-task-tools-v1.md。

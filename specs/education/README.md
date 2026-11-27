@@ -32,6 +32,7 @@
 | [learning-route.md](learning-route.md)                                         | 学习路线可视化：说明文档。                               |
 | [model-adaptation-architecture-v7.md](model-adaptation-architecture-v7.md)     | 可配置模型与分层架构 v7：说明文档。                      |
 | [multimodal-tutoring.md](multimodal-tutoring.md)                               | 图片与历史题自然辅导：说明文档。                         |
+| [owned-visual-followup-v1.md](owned-visual-followup-v1.md)                     | 当前题图示续接、有限动画、模型Schema和权限验收规格。     |
 | [problem-reasoning-animation-v1.md](problem-reasoning-animation-v1.md)         | 原题推理动画：说明文档。                                 |
 | [product-completion-v1.md](product-completion-v1.md)                           | 四功能产品修复与交互验收：说明文档。                     |
 | [product-solid-review-v1.md](product-solid-review-v1.md)                       | 学生Web产品完整审查与整理：说明文档。                    |

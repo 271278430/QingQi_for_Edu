@@ -606,7 +606,7 @@ class Store:
             if len(turns)>=limit:break
         return list(reversed(turns))
 
-    def prior_visual(self,identity,entry=None,image=None,part=None):
+    def prior_visual(self,identity,entry=None,image=None,part=None,*,all_kinds=False):
         """Only an accepted plot from this exact owned problem or image."""
         rows=self.db.execute('SELECT state,response FROM runs WHERE student=? AND session=? AND response IS NOT NULL ORDER BY id DESC LIMIT 12',(identity.student,identity.session)).fetchall()
         reference=(self.current_problem(identity) or {}).get('visual_reference')
@@ -615,7 +615,7 @@ class Store:
             if referenced:rows.insert(0,referenced)
         for row in rows:
             state=json.loads(row['state'])
-            same=bool(entry and state.get('practice_entry',{}).get('id')==entry['id']) or bool(image and self._same_image_problem(state.get('image_question'),image))
+            same=bool(entry and state.get('practice_entry',{}).get('id')==entry['id']) or bool(image and self._same_image_problem(state.get('image_question') or state.get('problem_question'),image))
             if not same:continue
             from .projection import project_response
             for visual in reversed(project_response(json.loads(row['response']),state).get('visuals',[])):
@@ -623,7 +623,7 @@ class Store:
                 named=re.search(r'第\s*[（(]?\s*([1-9])\s*[）)]?\s*问',visual.get('title','')+' '+state.get('geometry_question',''))
                 visual_part=visual.get('teaching_part') or (int(named[1]) if named else state.get('tutoring_scope',{}).get('active_part'))
                 if part and visual_part and part!=visual_part:continue
-                if visual['kind']=='coordinates' or visual.get('template')=='coordinate_drawing':return visual
+                if all_kinds or visual['kind']=='coordinates' or visual.get('template')=='coordinate_drawing':return visual
         return None
 
     def visual_source(self,identity,reference):

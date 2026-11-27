@@ -41,6 +41,7 @@
 | [math-number.ts](math-number.ts)                             | 精确数值、分数与根式的可读标签。                               |
 | [model-settings.tsx](model-settings.tsx)                     | 模型连接与文本、视觉角色设置页面。                             |
 | [module.ts](module.ts)                                       | 教育 Web 模块与依赖声明。                                      |
+| [opposite-animation.tsx](opposite-animation.tsx)             | 相反数的同步对称点、等距线段和抵消关系的动画视图。             |
 | [pages.tsx](pages.tsx)                                       | 四项学生功能的页面组织。                                       |
 | [plot-ticks.ts](plot-ticks.ts)                               | 函数图坐标刻度与标签。                                         |
 | [problem-animation.tsx](problem-animation.tsx)               | 绑定原题的解题步骤动画。                                       |

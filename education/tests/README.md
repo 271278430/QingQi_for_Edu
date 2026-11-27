@@ -84,6 +84,9 @@
 | [multimodal_browser.mjs](multimodal_browser.mjs)                                       | 浏览器交互验收：多图上传、识读与消息附件。                   |
 | [multimodal_browser_server.py](multimodal_browser_server.py)                           | 可控服务或样例数据：多图上传、识读与消息附件。               |
 | [multimodal_fixture.py](multimodal_fixture.py)                                         | 可控服务或样例数据：多图上传、识读与消息附件。               |
+| [owned_visual_acceptance.py](owned_visual_acceptance.py)                               | 当前图转动画、模型Schema、答案保护与身份边界验收。           |
+| [owned_visual_browser.mjs](owned_visual_browser.mjs)                                   | 失败消息重答、真实对称运动、完整播放、单步和手机验收。       |
+| [owned_visual_fixture.py](owned_visual_fixture.py)                                     | 同题历史、旧截断记录与推理占满响应的隔离夹具。               |
 | [precise_math_acceptance.py](precise_math_acceptance.py)                               | 验收与检查：分数、根式和精确数值展示。                       |
 | [problem_reasoning_acceptance.py](problem_reasoning_acceptance.py)                     | 验收与检查：函数与几何的解题步骤图示。                       |
 | [problem_reasoning_browser.mjs](problem_reasoning_browser.mjs)                         | 浏览器交互验收：函数与几何的解题步骤图示。                   |

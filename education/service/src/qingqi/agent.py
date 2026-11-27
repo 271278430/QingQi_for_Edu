@@ -411,7 +411,8 @@ class Agent:
                 from .tutoring_scope import NUMBERS
                 named_parts=re.findall(REF,original_request.question)
                 visual_part=NUMBERS[named_parts[-1]] if named_parts else (current_problem or {}).get('tutoring_scope',{}).get('active_part')
-                prior_visual=self.store.prior_visual(identity,entry if owned else None,image_context,part=visual_part)
+                from .visual_tasks import wants_connections
+                prior_visual=self.store.prior_visual(identity,entry if owned else None,image_context or text_problem,part=visual_part,all_kinds=not wants_connections(original_request.question))
                 visual_task=plan_visual(replace(task,question=original_request.question),entry,prior_visual,image_text=(image_context or text_problem or {}).get('text',''),presentation=state['presentation']) if not route.command and not (image_context or {}).get('unclear') else None
                 if visual_task:
                     state['visual_task']=visual_task

@@ -1,5 +1,7 @@
 # 教育后台 ZCode adapter
 
+opposite_numbers仍通过原render_teaching_visual注册、Schema和回调执行。服务端可缩小本轮模型可见Schema，但执行器使用完整能力授权；Node不拥有第二份动画任务或原题。见specs/education/owned-visual-followup-v1.md。
+
 本轮 RPC 使用整个操作的绝对 deadline，并受整轮剩余预算限制；回调帧不能续期，同一正整数回调编号只执行一次。Store 的停止命令由 Python 临时 CancellationScope 监听，只终止本轮所属 Node/MCP/子任务。close 是独立有界清理，运行时不拥有第二份停止或会话接受队列。见 specs/education/codex-turn-control-v1.md。
 
 固定只读学生工具recommend_practice、preview_learning_path、read_learning_dashboard按当前任务计划执行；Node不持有学情缓存，Python回调读取同一Store。参数不携带学生身份或路径，Owner验证原题引用与本轮请求。完整模型部署的注册上限为16，工具名仍为固定白名单。见specs/education/current-task-tools-v1.md。

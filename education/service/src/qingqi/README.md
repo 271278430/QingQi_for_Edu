@@ -78,6 +78,8 @@
 | [tutoring_grounding.py](tutoring_grounding.py)       | 区分学生作答与教师解释，阻止虚构学生已完成的步骤。                        |
 | [tutoring_scope.py](tutoring_scope.py)               | 多问题的当前小问、各问意图和答案披露范围。                                |
 | [visual_expressions.py](visual_expressions.py)       | 有限范围的多项式与函数表达式解析。                                        |
+| [visual_followup.py](visual_followup.py)             | 将同题已批准的数学关系编译为对应动画及教学回执。                          |
+| [visual_model_contract.py](visual_model_contract.py) | 按本轮任务缩小模型可见图示Schema，不扩大Registry权限。                    |
 | [visual_tasks.py](visual_tasks.py)                   | 选择当前问题所需的图示任务。                                              |
 | [visual_teaching.py](visual_teaching.py)             | 生成绑定原题的确定性教学图。                                              |
 | [web_store.py](web_store.py)                         | Web 会话列表与恢复投影，不保存第二份学习状态。                            |

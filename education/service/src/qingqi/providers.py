@@ -321,7 +321,8 @@ def _teaching_response(model, system, payload, state, registry, *, images=(), ac
         # 泛化解释没有新绘图请求；先把原题说清楚，不让模型凭历史参数宣称已创建新图。
         text=model.generate_text(system+('本轮只输出练习卡片的一条文字线索，不反问或索要回复。' if state.get('practice_hint') else '本轮是对当前题的自然追问，请结合problem与history直接解释学生当前疑问。')+'未调用图示工具时不要声称已画图、连线或创建动画；此前已公开的结论仍是历史，不用再要求提供原题。',payload,images=images)
     elif 'render_teaching_visual' in state['allowed_tools']:
-        text=model.generate_teaching(system+instruction,payload,registry.model_contracts(['render_teaching_visual']),images=images)
+        from .visual_model_contract import select
+        text=model.generate_teaching(system+instruction,payload,select(registry.model_contracts(['render_teaching_visual']),state),images=images)
         if isinstance(text,dict):return text
     else:
         text=model.generate_text(system,payload,images=images)

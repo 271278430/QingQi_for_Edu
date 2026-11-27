@@ -91,6 +91,10 @@ def plan(request,entry=None,prior=None,*,image_text='',presentation=None):
         spec=nonnegative_specification(entry or {'expression':image_text or q})
         if spec:return {'version':VERSION,'operation':'nonnegative_story','required_kind':'animation_scene','required_template':'nonnegative_reasoning','arguments':{'visuals':[spec]}}
     if not connect:
+        # 泛化“给我动画”必须绑定当前已批准图，而不是重发全部模板让模型重新猜原题。
+        from .visual_followup import plan as followup_plan
+        followup=followup_plan(q,entry,prior,image_text)
+        if followup:return followup
         if not animation and not re.search(r'(?:请|帮我|能|可以|给我|希望|想).{0,24}(?:画|绘|图示|可视化)|^(?:画|绘)|(?:用|来个|来一).{0,12}图示|可视化',q):return None
         kind='function_plot' if re.search(r'函数|曲线|抛物线',q) else 'area_model' if re.search(r'分数|分区|饼图',q) else 'coordinates' if re.search(r'坐标|辅助线|三角形|几何',q) else None
         template='fraction_fill' if re.search(r'分数|分区|饼图',q) and animation else 'pythagorean' if '勾股' in q and animation else None
@@ -255,6 +259,9 @@ def receipt(state):
             if text:return {'kind':'respond','reply':{'text':text,'teaching_action':'explain','evidence_refs':[],'step_refs':[]}}
         return None
     v=next((v for v in visuals if v['kind']=='animation_scene'),visuals[0])
+    if (state.get('visual_task') or {}).get('operation')=='owned_animation':
+        from .visual_followup import explanation
+        return {'kind':'respond','reply':{'text':explanation(v),'teaching_action':'explain','evidence_refs':[],'step_refs':[]}}
     if (state.get('visual_task') or {}).get('operation')=='identity_probe' and v.get('algebra_lesson'):
         # 自动配图不能用固定回执代替学生当前问题或作答核对；正文仍由原导师处理。
         lesson=v['algebra_lesson']

@@ -1,5 +1,7 @@
 # 教育学习工作台
 
+相反数动画读取服务端批准帧，播放器连续到末尾、前后按钮沿关键阶段，刷新采用同一规范历史。旧截断消息重新回答以新编号发送，不能修改旧失败记录。见specs/education/owned-visual-followup-v1.md。
+
 生成中及刷新后的运行消息可通过原 EducationService 停止本轮；原请求引用与 generation/selection 保护迟到回包。读取服务端终态后确认停止，保留未完成文字与输入。见 specs/education/codex-turn-control-v1.md。
 
 ComposerModels直接复用ZCode原ModelConfigSelect和推理滑条；useChatModels只保留Store接受选择的投影与未确认操作。新会话默认high，已存low不覆盖。点击发送前冻结模型和档位；图片上传与运行中预选不改变本轮。刷新/切会话读取Owner，失效配置锁发送并保留输入，见specs/education/zcode-composer-model-selection-v1.md。

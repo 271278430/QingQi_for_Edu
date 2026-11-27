@@ -17,6 +17,7 @@ import { MathContent } from "./learning-content.js";
 import { IdentityAnimation } from "./identity-animation.js";
 import { ProblemAnimation } from "./problem-animation.js";
 import { numberLabel } from "./math-number.js";
+import { OppositeAnimation } from "./opposite-animation.js";
 
 type Animation = Extract<TeachingVisual, { kind: "animation_scene" }>;
 function valueAt(visual: Animation, progress: number) {
@@ -81,6 +82,8 @@ function readout(visual: Animation, progress: number) {
     return `示例读数：DE ${fmt(g.de)} · DF ${fmt(g.df)} · DE/DF ${fmt(g.ratio)} · ${visual.template === "triangle_rotation" ? `旋转 ${fmt(g.degrees)}°` : `${visual.lesson?.symbols.x || "x"} ${fmt(g.x)} · ${visual.lesson?.symbols.y || "y"} ${fmt(g.y)}`}`;
   }
   const s = valueAt(visual, progress);
+  if (visual.template === "opposite_numbers")
+    return `两个位置：${fmt(s.value)} 与 ${fmt(-s.value)}；到原点距离相等，和为 0。`;
   if (visual.template === "absolute_distance")
     return `位置 ${fmt(s.value)} · 到零的距离 ${fmt(s.distance)}`;
   if (visual.template === "square_root")
@@ -203,6 +206,15 @@ function AnimationPlot({
   }
   const x = (n: number) =>
     45 + ((n - visual.range[0]) / (visual.range[1] - visual.range[0])) * 550;
+  if (visual.template === "opposite_numbers")
+    return (
+      <OppositeAnimation
+        value={s.value}
+        reveal={s.reveal}
+        range={visual.range}
+        title={visual.title}
+      />
+    );
   const line = (
     <>
       <line x1="35" x2="610" y1="155" y2="155" className="edu-visual-axis" />

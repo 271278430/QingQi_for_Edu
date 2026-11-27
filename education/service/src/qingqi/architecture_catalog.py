@@ -7,7 +7,7 @@ from .visual_teaching import TOOL as VISUAL
 from .geometry_solver import TOOL as GEOMETRY
 from .function_solver import TOOL as FUNCTION
 from .student_task_tools import SPECS as STUDENT_TOOLS
-VERSION='source_architecture_v12'
+VERSION='source_architecture_v13'
 
 def item(id,title,group,owner,summary,files,interfaces,reuse,limits):
     return {'id':id,'title':title,'group':group,'owner':owner,'summary':summary,
@@ -70,8 +70,8 @@ def architecture(deployment):
            ['真实复用ZCode Node Skill Adapter'],
            ['学生题干/图片是数据，不能改Skill或权限']),
       item('visuals','数学与可视化','教学能力','teaching_plan择一；符号工具核验；播放器拥有进度','按当前小问目标选择一张讲解图或一段教学动画',
-           [P+'function_solver.py',P+'geometry_solver.py',P+'function_reasoning.py',P+'nonnegative_reasoning.py',P+'identity_animation.py',P+'teaching_visual_pair.py',P+'visual_teaching.py',W+'static-reasoning-diagram.tsx',W+'problem-animation.tsx',W+'teaching-animation.tsx'],
-           ['analyze_function/solve_geometry','render_teaching_visual','useTeachingAnimation'],
+           [P+'function_solver.py',P+'geometry_solver.py',P+'function_reasoning.py',P+'nonnegative_reasoning.py',P+'identity_animation.py',P+'visual_followup.py',P+'visual_model_contract.py',P+'animation_teaching.py',P+'teaching_visual_pair.py',P+'visual_teaching.py',W+'static-reasoning-diagram.tsx',W+'problem-animation.tsx',W+'teaching-animation.tsx',W+'opposite-animation.tsx'],
+           ['analyze_function/solve_geometry','visual_followup.plan','visual_model_contract.select','render_teaching_visual','useTeachingAnimation'],
            ['ZCode工具链、Mermaid、图表与Dialog'],
            ['符号题型有明确范围；动画不替代数学证明']),
       item('persistence','持久化与Web接口','基础与运维','Store SQLite事务 + WebStore投影','唯一状态owner、幂等与租约、history epoch和响应投影',

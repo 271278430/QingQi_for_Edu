@@ -3,6 +3,14 @@
   "scope": "current education product; isolated controlled endpoints, no live student writes",
   "suites": [
     {
+      "script": "owned_visual_acceptance.py",
+      "domain": "owned mathematical animation, no reasoning-only call, current references and bounded model schemas"
+    },
+    {
+      "script": "owned_visual_browser.mjs",
+      "domain": "reported restart, real opposite animation, full playback, steps and mobile"
+    },
+    {
       "script": "turn_stop_acceptance.py",
       "domain": "owned cancellation, provider disconnect, partial exposure, races and replay"
     },

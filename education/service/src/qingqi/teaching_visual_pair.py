@@ -60,6 +60,8 @@ def choose_delivery(question):
 
 def companion(animation,state):
     template=animation.get('template');p=animation.get('params',{});common={k:animation[k] for k in ('basis','caption') if k in animation}
+    if template=='opposite_numbers':
+        return {**common,'kind':'number_line','title':'相反数：零两侧的对称位置','points':[{'label':'正向位置','x':p['value']},{'label':'相反位置','x':-p['value']}]}
     if template in {'function_reasoning','nonnegative_reasoning','identity_probe'}:
         return {**copy.deepcopy(animation),'kind':'reasoning_diagram','title':{'function_reasoning':'原题曲线：关键情形与条件','nonnegative_reasoning':'原式图解：两项的图像与非负条件','identity_probe':'原式图解：变化项与固定项'}[template]}
     geometry=next((o['result'] for o in state.get('observations',[]) if o['tool']=='solve_geometry'),None)

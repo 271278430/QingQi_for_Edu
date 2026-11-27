@@ -12,6 +12,14 @@ START='<!-- qingqi-directory-index:start -->'
 END='<!-- qingqi-directory-index:end -->'
 BASIS='清启是基于 [ZCode](https://github.com/zai-org/ZCode) 开发的学生端教育 Agent 项目。'
 COMMON={
+ 'visual_followup.py':'将同题已批准的数学关系编译为对应动画及教学回执。',
+ 'visual_model_contract.py':'按本轮任务缩小模型可见图示Schema，不扩大Registry权限。',
+ 'opposite-animation.tsx':'相反数的同步对称点、等距线段和抵消关系的动画视图。',
+ 'owned_visual_fixture.py':'同题历史、旧截断记录与推理占满响应的隔离夹具。',
+ 'owned_visual_acceptance.py':'当前图转动画、模型Schema、答案保护与身份边界验收。',
+ 'owned_visual_browser.mjs':'失败消息重答、真实对称运动、完整播放、单步和手机验收。',
+ 'owned-animation-budget-v1.md':'泛化动画请求截断的账本根因、修复路径和真实会话重放。',
+ 'owned-visual-followup-v1.md':'当前题图示续接、有限动画、模型Schema和权限验收规格。',
  'turn_control.py':'Store停止命令、临时取消作用域及本轮HTTP连接中断。',
  'turn_stop_fixture.py':'观察真实连接断开的本地模型与独立产品夹具。',
  'turn_stop_acceptance.py':'停止、输入归属、提交竞争、帮助曝光和双协议HTTP验收。',

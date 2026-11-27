@@ -11,6 +11,7 @@ from .nonnegative_reasoning import PARAMS as NONNEGATIVE_REASONING_PARAMS,render
 NUM={'type':'number','minimum':-10000,'maximum':10000}
 ARRAY={'type':'array','items':NUM,'minItems':1,'maxItems':6}
 PARAMS={
+    'opposite_numbers':obj({'value':{'type':'number','minimum':0,'maximum':10000}}),
     'absolute_distance':obj({'values':ARRAY}),
     'square_root':obj({'areas':{'type':'array','items':{'type':'number','minimum':0,'maximum':100},'minItems':1,'maxItems':6}}),
     'nonnegative_sum':obj({'pairs':{'type':'array','items':{'type':'array','items':{'type':'number','minimum':0,'maximum':100},'minItems':2,'maxItems':2},'minItems':1,'maxItems':6}}),
@@ -62,9 +63,17 @@ def render(spec):
     if kind=='function_reasoning':return render_function_reasoning(p,duration)
     if kind=='nonnegative_reasoning':return render_nonnegative_reasoning(p,duration)
     if kind in GEOMETRY_PARAMS:return render_geometry(kind,p,duration)
+    if kind=='opposite_numbers':
+        value=p['value'];extent=max(value,1)*1.3
+        steps=[{'at':0,'title':'从原点开始','explanation':'原点表示零，两个点从同一个中心同步展开。'},
+               {'at':.4,'title':'相反方向','explanation':'两点离开原点的方向相反，移动的距离始终相等。'},
+               {'at':.75,'title':'比较距离','explanation':'虚线两边等长；两个解互为相反数，这正是题干的定义。'},
+               {'at':1,'title':'和为零','explanation':'正负两部分抵消，和为零。把这一关系用于当前两个方程，未知参数仍由你求。'}]
+        return {'duration':duration,'frames':[{'at':duration*t,'values':{'value':value*min(1,t/.75),'opposite':-value*min(1,t/.75),'reveal':t}} for t in (0,.4,.75,1)],'range':[-extent,extent],'extent':extent,'inspection_steps':steps}
     if kind=='function_trace':
         plot=function_plot(p);lo,hi=p['domain']
-        steps=[{'at':0,'title':'先看显示范围','explanation':'描绘完整曲线；阴影内才是求最值区间。'}]+[{'at':(m['x']-lo)/(hi-lo),'title':m['label'],'explanation':f'当前关键点 x={m["x"]:.6g}，y={m["y"]:.6g}。注意该点在题目中扮演的角色。'} for m in sorted(p.get('markers',[]),key=lambda m:m['x'])]+[{'at':1,'title':'回到题目要求','explanation':'唯一正零点与区间最值是两个条件；比较区间端点和其中的驻点。'}]
+        # 通用函数描绘不能套用另一道“唯一正零点/区间最值”题的专用解说。
+        steps=[{'at':0,'title':'先看显示范围','explanation':'沿当前函数曲线观察位置和变化方向。'+('阴影标出当前题指定的区间。' if p.get('focus_interval') else '')}]+[{'at':(m['x']-lo)/(hi-lo),'title':m['label'],'explanation':f'当前关键点 x={m["x"]:.6g}，y={m["y"]:.6g}。注意该点在题目中扮演的角色。'} for m in sorted(p.get('markers',[]),key=lambda m:m['x'])]+[{'at':1,'title':'回到题目要求','explanation':'曲线已描绘完整；对照当前题的条件、标记与变化规律。'}]
         if p.get('display'):
             for step,marker in zip(steps[1:-1],p['display']['markers']):step['explanation']=f'关键点 $x={marker["x"]}$，$y={marker["y"]}$。'+step['title']+'。'
         return {'duration':duration,'frames':[{'at':duration*i/80,'values':{'x':sample['x'],'y':sample['y']}} for i,sample in enumerate(plot['samples'])],'range':[lo,hi],'extent':max(abs(v) for v in plot['y_range']),'plot':{**p,**plot},**({'inspection_steps':steps} if p.get('markers') else {})}
